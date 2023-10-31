@@ -9,9 +9,9 @@ const UserSchema = new Schema (
         birthdate: { type: Date, min: '1900-01-01', required: true },
         email: { type: String, min: 5, max: 25, unique: true, required: true },
         password: { type: String, min: 3, required: true },
-        friends: [ {type: Schema.Types.ObjectId, ref: "Friend"} ],
+        friends: [ {type: Schema.Types.ObjectId, ref: 'Friend'} ],
         avatar: { type: String },
-        posts: [ { type: Schema.Types.ObjectId, ref: "Post" } ],
+        posts: [ { type: Schema.Types.ObjectId, ref: 'Post'} ],
         privacy: {type: String, enum:["Public", "Friends", "Private"], default: "Public"}
     }, 
     {
@@ -34,4 +34,4 @@ UserSchema.virtual('url').get(function () {
     return `/users/${this._id}`
 })
 
-module.exports = mongoose.model("User", UserSchema)
+module.exports = mongoose.model('User', UserSchema)

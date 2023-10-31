@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const FriendSchema = new Schema (
     {
-        users: [{type: Schema.Types.ObjectId, ref: "User"}],
+        users: [{type: Schema.Types.ObjectId, ref: 'User'}],
         status: {type: String, enum:["Pending", "Friends"], default: "Pending"}
     },
     {
@@ -11,4 +11,4 @@ const FriendSchema = new Schema (
     }
 )
 
-module.exports = mongoose.model("Friend", FriendSchema)
+module.exports = mongoose.model('Friend', FriendSchema)

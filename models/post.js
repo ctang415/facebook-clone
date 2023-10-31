@@ -5,10 +5,10 @@ const { DateTime } = require('luxon')
 const PostSchema = new Schema (
     {
         message: {type: String, min: 1, required: true},
-        author: {type: Schema.Types.ObjectId, ref: "User"},
+        author: {type: Schema.Types.ObjectId, ref: 'User'},
         timestamp: {type: Date, default: Date.now()},
-        comments: [{type: Schema.Types.ObjectId, ref: "Comment"}],
-        likes: [{type: Schema.Types.ObjectId, ref: "User"}]
+        comments: [{type: Schema.Types.ObjectId, ref: 'Comment'}],
+        likes: [{type: Schema.Types.ObjectId, ref: 'User'}]
     },
     {
         minimize: false,
@@ -25,4 +25,4 @@ PostSchema.virtual('url').get(function () {
     return `/posts/${this._id}`
 })
 
-module.exports = mongoose.model("Post", PostSchema)
+module.exports = mongoose.model('Post', PostSchema)

@@ -6,7 +6,7 @@ const CommentSchema = new Schema (
     {
         message: {type: String, min: 1, required: true},
         timestamp: {type: Date, default: Date.now()},
-        author: {type: Schema.Types.ObjectId, ref: "User"},
+        author: {type: Schema.Types.ObjectId, ref: 'User'},
     },
     {
         toObject: { virtuals: true },
@@ -18,4 +18,4 @@ CommentSchema.virtual('timestamp_formatted').get(function () {
     return DateTime.fromJSDate(this.timestamp).toFormat('yyyy-MM-dd')
 })
 
-module.exports = mongoose.model("Comment", CommentSchema)
+module.exports = mongoose.model('Comment', CommentSchema)

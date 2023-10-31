@@ -36,7 +36,7 @@ exports.user_create_post = [
             }
         )
         if (!errors.isEmpty()) {
-            res.status(400).json({ errors: errors.array() })
+            res.status(401).json({ errors: errors.array() })
             return
         } else {
             await user.save()
@@ -52,30 +52,42 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
         return
     } 
     if (user === null) {
-        res.status(400).json({error: 'User not found'})
+        res.status(404).json({error: 'User not found'})
         return
     } 
      res.status(200).json({user_detail: user})
 })
 
 exports.user_update_put = [
-    body('password', 'Password must be at least 3 characters.').trim().isLength({min: 3}).escape(),
+    body('password', 'Password does not match').custom( async (value, {req}) => {
+        const user = await User.findById(req.params.userid)
+        try {
+    //      const match = await bcrypt.compare(value, user.password)
+          if (user.password !== req.body.password) {
+            throw new Error('Password is incorrect')
+          }
+        } catch(err) {
+          throw new Error(err)
+    }
+    }),
+    body('new_password', 'Password must be at least 3 characters.').trim().isLength({min: 3}).escape(),
     body('first_name', 'First name must be at least 2 characters').trim().isLength({min: 2}).escape(),
     body('last_name', 'Last name must be at least 2 characters.').trim().isLength({min: 2}).escape(),
     asyncHandler ( async (req, res, next) => {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
-            res.status(400).json({errors: errors.array()})
+            res.status(401).json({errors: errors.array()})
             return            
         }
- //       const updatedUser = await User.findByIdAndUpdate(req.params.userid, {'$set': {'first_name': }})
-})
+     const updatedUser = await User.findByIdAndUpdate(req.params.userid, {'$set': {'first_name': req.body.first_name, 'last_name': req.body.last_name, 'password': req.body.new_password} })
+        res.status(200).json({user: updatedUser, success: true})
+    })
 ]
 
 exports.user_delete = ( async (req, res, next) => {
     const user = await User.findById(req.params.userid)
     if (user === null) {
-        res.status(400).json({error: "User does not exist."})
+        res.status(404).json({error: "User does not exist."})
         return
     }
     await User.findByIdAndRemove(req.params.userid)
