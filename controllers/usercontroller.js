@@ -79,7 +79,7 @@ exports.user_update_put = [
             res.status(401).json({errors: errors.array()})
             return            
         }
-     const updatedUser = await User.findByIdAndUpdate(req.params.userid, {'$set': {'first_name': req.body.first_name, 'last_name': req.body.last_name, 'password': req.body.new_password} })
+     const updatedUser = await User.findByIdAndUpdate(req.params.userid, {'$set': {'first_name': req.body.first_name, 'last_name': req.body.last_name, 'password': req.body.new_password, 'avatar': req.body.avatar} })
         res.status(200).json({user: updatedUser, success: true})
     })
 ]
