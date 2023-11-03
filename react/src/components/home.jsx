@@ -1,9 +1,18 @@
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 import { LoginContext } from "./logincontext"
 import Navbar from "./navbar"
+import Post from './post'
+import NewMessage from '../assets/newmessage.svg'
+import User from '../assets/account.svg'
+import CreatePost from "./createpost"
 
 const Home = () => {
     const { login } = useContext(LoginContext)
+    const [ modal, setModal ] = useState(false)
+    
+    useEffect(() => {
+        console.log(modal)
+    }, [modal])
 
     if (!login) {
         return (
@@ -28,8 +37,17 @@ const Home = () => {
         return (
             <>
             <Navbar/>
-            <div>
-
+            <CreatePost modal={modal} setModal={setModal} />
+            <div className="flex flex-col items-center justify-center gap-[7.5vh]">
+            <div className="p-6 mt-[12.5vh] min-w-[42.5vw] bg-white flex flex-row justify-center rounded shadow-xl gap-2">
+                <img src={User} alt="User avatar"></img>
+                <input onClick={() => setModal(true)}
+                className="p-2 bg-slate-100 rounded-full min-w-full" placeholder="What's on your mind?" type="text"></input>
+            </div>
+            <img className="fixed right-1 bottom-1 min-h-[5vh]" src={NewMessage} alt="Chat icon"></img>
+            <div className="flex flex-col">
+                <Post/>
+            </div>
             </div>
             </>
         )
