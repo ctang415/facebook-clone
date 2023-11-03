@@ -4,6 +4,7 @@ import Home from './components/home'
 import Register from './components/register'
 import Error from './components/error'
 import Profile from './components/profile'
+import Post from './components/post'
 
 const Router = () => {
     const router = createBrowserRouter (
@@ -19,6 +20,10 @@ const Router = () => {
                     {
                         path: '/register',
                         element: <Register/>
+                    },
+                    {
+                        path: '/posts/:postid',
+                        element: <Post/>
                     },
                     {
                         path: '/profiles/:profileid',

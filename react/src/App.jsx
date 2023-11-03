@@ -5,13 +5,14 @@ import './index.css'
 
 function App() {
   const [ userData, setUserData ] = useState([])
+  const [ login, setLogin ] = useState(true)
 
   return (
-    <>
-      <LoginContext.Provider value={{ userData, setUserData }}>
+    <div className='bg-slate-100 min-h-screen w-screen'>
+      <LoginContext.Provider value={{ userData, setUserData, login, setLogin }}>
         <Outlet/>
       </LoginContext.Provider>
-    </>
+    </div>
   )
 }
 

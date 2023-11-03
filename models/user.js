@@ -12,6 +12,7 @@ const UserSchema = new Schema (
         friends: [ {type: Schema.Types.ObjectId, ref: 'Friend'} ],
         avatar: { type: String },
         posts: [ { type: Schema.Types.ObjectId, ref: 'Post'} ],
+        chats: [ {type: Schema.Types.ObjectId, ref: 'Chat'}],
         privacy: {type: String, enum:["Public", "Friends", "Private"], default: "Public"}
     }, 
     {
