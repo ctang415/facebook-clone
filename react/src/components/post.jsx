@@ -1,6 +1,7 @@
 import User from '../assets/account.svg'
 import Like from '../assets/like.svg'
-import Comment from '../assets/comment.svg'
+import CommentIcon from '../assets/comment.svg'
+import Comment from './comment'
 
 const Post = () => {
     
@@ -28,9 +29,10 @@ const Post = () => {
                         <img src={Like} alt="Like icon"/> Like
                     </div>
                     <div className='flex gap-2 hover:bg-slate-200 cursor-pointer p-1'>
-                        <img src={Comment} alt="Comment icon"/> Comment
-                        </div>
+                    <img src={CommentIcon} alt="Comment icon"/> Comment
+                    </div>
                 </div>
+                <Comment/>
             </div>
         </>
     )

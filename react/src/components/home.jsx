@@ -5,14 +5,12 @@ import Post from './post'
 import NewMessage from '../assets/newmessage.svg'
 import User from '../assets/account.svg'
 import CreatePost from "./createpost"
+import CreateMessage from "./createmessage"
 
 const Home = () => {
     const { login } = useContext(LoginContext)
     const [ modal, setModal ] = useState(false)
-    
-    useEffect(() => {
-        console.log(modal)
-    }, [modal])
+    const [ messageModal, setMessageModal ] = useState(false)    
 
     if (!login) {
         return (
@@ -39,12 +37,13 @@ const Home = () => {
             <Navbar/>
             <CreatePost modal={modal} setModal={setModal} />
             <div className="flex flex-col items-center justify-center gap-[7.5vh]">
+                <CreateMessage messageModal={messageModal} setMessageModal={setMessageModal}/>
             <div className="p-6 mt-[12.5vh] min-w-[42.5vw] bg-white flex flex-row justify-center rounded shadow-xl gap-2">
                 <img src={User} alt="User avatar"></img>
                 <input onClick={() => setModal(true)}
                 className="p-2 bg-slate-100 rounded-full min-w-full" placeholder="What's on your mind?" type="text"></input>
             </div>
-            <img className="fixed right-1 bottom-1 min-h-[5vh]" src={NewMessage} alt="Chat icon"></img>
+            <img onClick={() => setMessageModal(true)} className="fixed right-1 bottom-1 min-h-[5vh] cursor-pointer" src={NewMessage} alt="Chat icon"></img>
             <div className="flex flex-col">
                 <Post/>
             </div>
