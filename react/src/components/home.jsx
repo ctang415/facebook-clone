@@ -8,8 +8,7 @@ import CreatePost from "./createpost"
 import CreateMessage from "./createmessage"
 
 const Home = () => {
-    const { login } = useContext(LoginContext)
-    const [ modal, setModal ] = useState(false)
+    const { login, modal, setModal, editModal, setEditModal } = useContext(LoginContext)
     const [ messageModal, setMessageModal ] = useState(false)    
 
     if (!login) {
@@ -35,9 +34,9 @@ const Home = () => {
         return (
             <>
             <Navbar/>
-            <CreatePost modal={modal} setModal={setModal} />
+            <CreatePost />
             <div className="flex flex-col items-center justify-center gap-[7.5vh]">
-                <CreateMessage messageModal={messageModal} setMessageModal={setMessageModal}/>
+                <CreateMessage/>
             <div className="p-6 mt-[12.5vh] min-w-[42.5vw] bg-white flex flex-row justify-center rounded shadow-xl gap-2">
                 <img src={User} alt="User avatar"></img>
                 <input onClick={() => setModal(true)}

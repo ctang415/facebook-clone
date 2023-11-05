@@ -2,8 +2,11 @@ import Send from '../assets/send.svg'
 import User from '../assets/account.svg'
 import Message from './message'
 import { useState } from 'react'
+import { LoginContext } from './logincontext'
+import { useContext } from 'react'
 
-const CreateMessage = ( {messageModal, setMessageModal}) => {
+const CreateMessage = () => {
+    const { messageModal, setMessageModal} = useContext(LoginContext)
     const [ messageSender, setMessageSender ] = useState('')
     
     if (messageModal) {

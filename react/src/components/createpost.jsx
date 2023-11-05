@@ -1,19 +1,28 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useContext } from 'react'
 import User from '../assets/account.svg'
+import { LoginContext } from './logincontext'
 
-const CreatePost = ({modal, setModal}) => {
+const CreatePost = () => {
+    const { modal, setModal, editPost, setEditPost } = useContext(LoginContext)
     const postRef = useRef(null)
     const [ post, setPost ] = useState('')
 
     const closePostMenu = (e) => {
         if (postRef.current && modal && !postRef.current.contains(e.target)){
           setModal(false)
+          setEditPost(false)
         }
     }
 
     useEffect(() => {
         document.addEventListener("mousedown", closePostMenu);
       }, [closePostMenu]);
+
+    useEffect(() => {
+        if (editPost) {
+            setPost('')
+        }
+    }, [])
     
     if (modal) {
         return (
