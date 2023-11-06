@@ -27,10 +27,10 @@ const CreatePost = () => {
     if (modal) {
         return (
             <dialog open className="relative z-10">
-                <div className="fixed inset-0 bg-black/50" ref={postRef} />
+                <div className="fixed inset-0 bg-black/50"/>
                 <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4 text-center">
-                        <div className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                        <div className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all" ref={postRef}>
                             <div className="flex items-center border-b-2 p-2">
                                 <p className="text-lg font-bold leading-6 text-gray-900">
                                     Create Post
@@ -42,7 +42,7 @@ const CreatePost = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <form className="mt-2 gap-4 flex flex-col">
+                            <form className="mt-2 gap-4 flex flex-col" ref={postRef}>
                                 <div className='flex gap-2'>
                                     <img src={User} alt="User icon"/>
                                     <p>My name</p>

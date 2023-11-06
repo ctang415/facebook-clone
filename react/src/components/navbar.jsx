@@ -13,7 +13,7 @@ const Navbar = () => {
     const { userModal, setUserModal } = useContext(LoginContext)
     
     return (
-        <nav className="fixed bg-white flex flex-row justify-between items-center p-2 w-full shadow-2xl z-50">
+        <nav className="fixed bg-white flex flex-row justify-between items-center p-2 w-full shadow-md z-50">
             <div className='flex flex-row gap-4 items-center'>
                 <Link to="/">
                     <p className='cursor-pointer text-4xl text-white font-extrabold rounded-full py-1 px-3 bg-blue-600'>O</p>

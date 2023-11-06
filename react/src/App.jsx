@@ -11,11 +11,14 @@ function App() {
   const [ modal, setModal ] = useState(false)
   const [ messageModal, setMessageModal ] = useState(false)
   const [ settingMenu, setSettingMenu ] = useState(false)
+  const [ allFriends, setAllFriends ] = useState(false)
+  const [ friendsRequest, setFriendsRequest] = useState(false)
 
   return (
     <div className='bg-slate-100 min-h-screen w-screen'>
       <LoginContext.Provider value={{ modal, setModal, messageModal, setMessageModal, settingMenu, setSettingMenu,
-        userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost }}>
+        userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
+        friendsRequest, setFriendsRequest }}>
         <Outlet/>
       </LoginContext.Provider>
     </div>

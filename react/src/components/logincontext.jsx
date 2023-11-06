@@ -15,6 +15,10 @@ export const LoginContext = createContext(
         messageModal: null,
         setMessageModal: () => {},
         settingMenu: null,
-        setSettingMenu: () => {}
+        setSettingMenu: () => {},
+        friendsRequest: null,
+        setFriendsRequest: () => {},
+        allFriends: null,
+        setAllFriends: () => {}
     }
 )

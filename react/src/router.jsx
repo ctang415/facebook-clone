@@ -5,6 +5,7 @@ import Register from './components/register'
 import Error from './components/error'
 import Profile from './components/profile'
 import Post from './components/post'
+import Friends from './components/friends'
 
 const Router = () => {
     const router = createBrowserRouter (
@@ -29,6 +30,10 @@ const Router = () => {
                         path: '/profiles/:profileid',
                         element: <Profile/>
                     },
+                    {
+                        path: '/friends',
+                        element: <Friends/>
+                    }
                 ]
             }
         ]
