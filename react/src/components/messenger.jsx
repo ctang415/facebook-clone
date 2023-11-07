@@ -1,14 +1,15 @@
+import { useContext } from "react"
+import ChatModal from "./chatmodal"
 import CreateMessage from "./createmessage"
-import FriendsContent from "./friendscontent"
-import FriendsNav from "./friendsnav"
+import { LoginContext } from "./logincontext"
 import Navbar from "./navbar"
 import NewMessage from '../assets/newmessage.svg'
-import { useContext } from "react"
-import { LoginContext } from "./logincontext"
-import ChatModal from "./chatmodal"
+import MessengerNav from "./messengernav"
+import MessengerContent from "./messengercontent"
 
-const Friends = () => {
-     const {setMessageModal} = useContext(LoginContext)
+const Messenger = () => {
+    const { setMessageModal} = useContext(LoginContext)
+
     return (
         <>
             <Navbar/>
@@ -16,11 +17,11 @@ const Friends = () => {
             <ChatModal/>
             <img onClick={() => setMessageModal(true)} className="fixed right-1 bottom-1 min-h-[5vh] cursor-pointer" src={NewMessage} alt="Chat icon"></img>
             <div className="flex flex-row pt-16">
-            <FriendsNav/>
-            <FriendsContent/>
-            </div>
+                <MessengerNav/>
+                <MessengerContent/>
+        </div>
         </>
     )
 }
 
-export default Friends
+export default Messenger

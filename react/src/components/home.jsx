@@ -6,10 +6,12 @@ import NewMessage from '../assets/newmessage.svg'
 import User from '../assets/account.svg'
 import CreatePost from "./createpost"
 import CreateMessage from "./createmessage"
+import ChatModal from "./chatmodal"
+import Register from './register'
 
 const Home = () => {
-    const { login, modal, setModal, editModal, setEditModal } = useContext(LoginContext)
-    const [ messageModal, setMessageModal ] = useState(false)    
+    const { login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal } = useContext(LoginContext) 
+    const [ register, setRegister ] = useState(false)
 
     if (!login) {
         return (
@@ -19,13 +21,16 @@ const Home = () => {
                     <h1 className="text-blue-600 font-bold text-6xl">odinbook</h1>
                     <h2 className="text-3xl">Connect with your friends and the world around you on Odinbook</h2>
                 </div>
+                <Register register={register} setRegister={setRegister} />
                 <div className="flex flex-col border-slate border-2 rounded shadow-2xl bg-white w-1/3">
                     <form className="flex flex-col gap-5 p-4">
                         <input className="p-2 border-slate border-2 rounded" type="string" placeholder="Email" required></input>
                         <input className="p-2 border-slate border-2 rounded" type="password" placeholder="Password" required></input>
                         <button type="submit" className="p-3 rounded bg-blue-600 text-white font-medium">Log In</button>
-                        <button className="p-2 rounded bg-lime-600 text-white font-medium">Create new account</button>
                     </form>
+                    <div className="flex p-4">
+                    <button onClick={() => setRegister(true)} className="min-w-full p-2 rounded bg-lime-600 text-white font-medium">Create new account</button>
+                    </div>
                 </div>
                 </div>
             </>
@@ -35,6 +40,7 @@ const Home = () => {
             <>
             <Navbar/>
             <CreatePost />
+            <ChatModal/>
             <div className="flex flex-col items-center justify-center gap-[7.5vh]">
                 <CreateMessage/>
             <div className="p-6 mt-[12.5vh] min-w-[42.5vw] bg-white flex flex-row justify-center rounded shadow-xl gap-2">

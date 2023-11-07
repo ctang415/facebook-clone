@@ -19,6 +19,14 @@ export const LoginContext = createContext(
         friendsRequest: null,
         setFriendsRequest: () => {},
         allFriends: null,
-        setAllFriends: () => {}
+        setAllFriends: () => {},
+        feed: null,
+        setFeed: () => {},
+        discover: null,
+        setDiscover: () => {},
+        myGroups: null,
+        setMyGroups: () => {},
+        chatModal: null,
+        setChatModal: () => {}
     }
 )

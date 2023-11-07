@@ -1,11 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App'
 import Home from './components/home'
-import Register from './components/register'
 import Error from './components/error'
 import Profile from './components/profile'
 import Post from './components/post'
 import Friends from './components/friends'
+import Groups from './components/groups'
+import Messenger from './components/messenger'
 
 const Router = () => {
     const router = createBrowserRouter (
@@ -19,10 +20,6 @@ const Router = () => {
                         element: <Home/>
                     },
                     {
-                        path: '/register',
-                        element: <Register/>
-                    },
-                    {
                         path: '/posts/:postid',
                         element: <Post/>
                     },
@@ -31,8 +28,16 @@ const Router = () => {
                         element: <Profile/>
                     },
                     {
+                        path: '/groups',
+                        element: <Groups/>
+                    },
+                    {
                         path: '/friends',
                         element: <Friends/>
+                    },
+                    {
+                        path: '/messenger',
+                        element: <Messenger/>
                     }
                 ]
             }
