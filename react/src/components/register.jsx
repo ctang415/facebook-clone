@@ -1,5 +1,7 @@
 import { useState } from "react"
 import moment from 'moment'
+import User from '../assets/account.svg'
+
 const Register = ({register, setRegister}) => {
     const [ errors, setErrors ] = useState([])
     const [ firstName, setFirstName] = useState('')
@@ -18,7 +20,8 @@ const Register = ({register, setRegister}) => {
 
     const registerAccount = async (e) => {
         e.preventDefault()
-        const registerData = { first_name: firstName, last_name: lastName, email: email, password: password, birthdate: moment(birthday).format('YYYY-MM-DD')}
+        setErrors([])
+        const registerData = { first_name: firstName, last_name: lastName, email: email, password: password, birthdate: moment(birthday).format('YYYY-MM-DD'), avatar: User}
         console.log(registerData)
         try {
         const response = await fetch ('http://localhost:3000/users', {

@@ -3,7 +3,7 @@ import User from '../assets/account.svg'
 import { LoginContext } from './logincontext'
 
 const CreatePost = () => {
-    const { modal, setModal, editPost, setEditPost } = useContext(LoginContext)
+    const { modal, setModal, editPost, setEditPost, userData } = useContext(LoginContext)
     const postRef = useRef(null)
     const [ post, setPost ] = useState('')
 
@@ -11,6 +11,27 @@ const CreatePost = () => {
         if (postRef.current && modal && !postRef.current.contains(e.target)){
           setModal(false)
           setEditPost(false)
+        }
+    }
+
+    const createPost = async (e) => {
+        e.preventDefault()
+        const newPost = { message: post, author: userData._id }
+        try {
+            const response = await fetch(`http://localhost:3000/users/${userData._id}/posts`, {
+                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newPost)
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                alert('Post successfully created!')
+                setPost('')
+                setModal(false)
+            }
+        } catch (err) {
+            console.log(err)
         }
     }
 
@@ -42,10 +63,10 @@ const CreatePost = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <form className="mt-2 gap-4 flex flex-col" ref={postRef}>
+                            <form className="mt-2 gap-4 flex flex-col" onSubmit={createPost} ref={postRef}>
                                 <div className='flex gap-2'>
-                                    <img src={User} alt="User icon"/>
-                                    <p>My name</p>
+                                    <img src={userData.avatar} alt="User icon"/>
+                                    <p>{userData.full_name}</p>
                                 </div>
                                 <div>
                                     <textarea className='min-w-full resize-none' rows='5' onChange={(e) => setPost(e.target.value)} placeholder='What is on your mind?'></textarea>

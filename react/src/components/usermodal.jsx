@@ -1,12 +1,29 @@
-import { useEffect, useRef } from "react"
+import { useContext, useEffect, useRef } from "react"
 import { Link } from "react-router-dom"
 import User from '../assets/account.svg'
+import { LoginContext } from "./logincontext"
 
 const UserModal = ( {userModal, setUserModal}) => {
+    const { setLogin, userData } = useContext(LoginContext)
     const userMenuRef = useRef(null)
 
-    const logout = () => {
+    const logout = async () => {
         setUserModal(false)
+        try {
+            const response = await fetch ('http://localhost:3000/logout', {
+                method: 'POST', headers: {'Content-type': 'application/json'}
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                alert('Successfully logged out')
+                setLogin(false)
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     const closeUserMenu = (e) => {
@@ -25,12 +42,12 @@ const UserModal = ( {userModal, setUserModal}) => {
                 <Link to={`/profiles/profiles`} onClick={() => setUserModal(false)}>
                 <li className="p-4 cursor-pointer hover:bg-slate-100 rounded-md shadow-lg border-[1px]
                 font-medium flex flex-row gap-2">
-                    <img src={User} alt="User icon"></img>
-                    My account
+                    <img src={userData.avatar} alt="User icon"></img>
+                    {userData.full_name}
                 </li>
                 </Link>
                 <li className="p-4 cursor-pointer hover:bg-slate-100 rounded-md">Settings & privacy</li>
-                <li className="p-4 cursor-pointer hover:bg-slate-100 rounded-md">Log Out</li>
+                <li onClick={() => logout()} className="p-4 cursor-pointer hover:bg-slate-100 rounded-md">Log Out</li>
             </ul>
         )
         }

@@ -39,6 +39,7 @@ exports.user_create_post = [
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 birthdate: req.body.birthdate,
+                avatar: req.body.avatar
             }
         )
         if (!errors.isEmpty()) {

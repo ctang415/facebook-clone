@@ -10,13 +10,17 @@ import ChatModal from "./chatmodal"
 import Register from './register'
 
 const Home = () => {
-    const { login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal } = useContext(LoginContext) 
+    const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal,
+    setUserData } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
+    const [ errors, setErrors] = useState([])
+    const [ posts, setPosts ] = useState([])
 
     const loginToAccount = async (e) => {
         e.preventDefault()
+        setErrors([])
         const account = { email: email, password: password}
         try {
             const response = await fetch ('http://localhost:3000', {
@@ -28,12 +32,20 @@ const Home = () => {
             const data = await response.json()
             if (response.status === 200) {
                 alert('success')
+                setLogin(true)
+                setUserData(data.user)
+                setPosts(data.user.posts)
                 console.log(data)
             }
         } catch (err) {
             console.log(err)
+            setErrors(err.errors)
         }
     }
+
+    useEffect(() => {
+        console.log()
+    }, [])
 
     if (!login) {
         return (
@@ -53,6 +65,7 @@ const Home = () => {
                     <div className="flex p-4">
                     <button onClick={() => setRegister(true)} className="min-w-full p-2 rounded bg-lime-600 text-white font-medium">Create new account</button>
                     </div>
+                    <li className="self-center p-2 list-none text-red-500 font-bold">{errors.message}</li>
                 </div>
                 </div>
             </>
@@ -71,8 +84,12 @@ const Home = () => {
                 className="p-2 bg-slate-100 rounded-full min-w-full" placeholder="What's on your mind?" type="text"></input>
             </div>
             <img onClick={() => setMessageModal(true)} className="fixed right-1 bottom-1 min-h-[5vh] cursor-pointer" src={NewMessage} alt="Chat icon"></img>
-            <div className="flex flex-col">
-                <Post/>
+            <div className="flex flex-col gap-10">
+                {posts.map(post => {
+                    return (
+                        <Post key={post._id} post={post}/>
+                    )
+                })}
             </div>
             </div>
             </>

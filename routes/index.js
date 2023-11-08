@@ -14,19 +14,18 @@ passport.use(
       }, async( username, password, done) => {
       try {
         const user = await User.findOne({ email: username });
-         if (!user) {
-            done(new Error('User does not exist'))
-          return done(null, false, {message: "User does not exist" } );
+        if (!user) {
+            return done(null, false, {message: "User does not exist" } );
         } else {
-        const match = await bcrypt.compare(password, user.password)
-        if (!match) {
-            done(new Error('Password does not match'))
-          return done(null, false, { message: "Password does not match" });
-        } else {
-            const limitedUser = await User.findOne( {email: username}).select('-password') 
-            console.log(limitedUser)
-            return done(null, limitedUser);
-        }
+            const match = await bcrypt.compare(password, user.password)
+            if (!match) {
+                return done(null, false, { message: "Password does not match" });
+            } else {
+                const limitedUser = await User.findOne( {email: username}).select('-password').populate(
+                    [{path :'posts', populate: { path: 'author', select: 'first_name last_name avatar'  } }, { path: 'chats', }, {path: 'friends'} ])
+                console.log(limitedUser)
+                return done(null, limitedUser);
+            }
         }
       } catch(err) {
         return done(err);
@@ -38,18 +37,37 @@ passport.use(
     passport.authenticate('local', {session: false}, (err, user, info) => {
         if (err || !user) {
         return res.status(400).json({
-            message: 'Something is not right',
-            user : user
+            errors: info,
         });
-    }       req.login(user, {session: false}, (err) => {
-       if (err) {
-           res.send(err);
-       }
-       const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET);
-       return res.status(200).json({user, token})
-    });
-})(req, res);
+        }       
+        req.login(user, {session: false}, (err) => {
+            if (err) {
+                return res.status(401).json(err);
+            }
+            const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {expiresIn: '1hr' });
+            return res.status(200).json({user, token})
+        });
+    })(req, res);
 } )
+
+router.post('/logout', function(req, res, next){
+    req.logout( async function(err) {
+      if (err) { return next(err); }
+     
+      res.status(200).json({success: true})
+    })
+})
+
+function authenticateToken (req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if (token == null) return res.status(401).json({error: 'Token does not exist'})
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+       if (err) return res.status(403).json({error: err})
+       req.user = user 
+       next()
+    } )
+}
 
 router.use('/users', users)
 
