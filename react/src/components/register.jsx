@@ -1,11 +1,42 @@
 import { useState } from "react"
 import moment from 'moment'
 const Register = ({register, setRegister}) => {
+    const [ errors, setErrors ] = useState([])
     const [ firstName, setFirstName] = useState('')
     const [ lastName, setLastName ] = useState('')
     const [ email, setEmail] = useState('')
     const [ password, setPassword] = useState('')
     const [ birthday, setBirthday] = useState('')
+
+    const clearForm = () => {
+        setFirstName('')
+        setLastName('')
+        setEmail('')
+        setPassword('')
+        setBirthday('')
+    }
+
+    const registerAccount = async (e) => {
+        e.preventDefault()
+        const registerData = { first_name: firstName, last_name: lastName, email: email, password: password, birthdate: moment(birthday).format('YYYY-MM-DD')}
+        console.log(registerData)
+        try {
+        const response = await fetch ('http://localhost:3000/users', {
+            method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(registerData)})
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                alert('Account successfully created!')
+                setRegister(false)
+                clearForm()
+            }
+        } catch (err) {
+            setErrors(err.errors)
+            console.log(err)
+        }
+    }
 
     if (register) {
         return (
@@ -25,14 +56,19 @@ const Register = ({register, setRegister}) => {
                                 </svg>
                             </button>
                         </div>
-                        <form className="mt-2 gap-4 flex flex-col">
+                        <form className="mt-2 gap-4 flex flex-col" onSubmit={registerAccount}>
                             <div className='flex justify-center gap-2'>
-                                <input type="text" className="rounded-md p-2 border-2 bg-slate-100" placeholder="First name" required/>
-                                <input type="text" className="rounded-md p-2 border-2 bg-slate-100" placeholder="Last name" required/>
+                                <input type="text" className="rounded-md p-2 border-2 bg-slate-100" onChange={(e) => setFirstName(e.currentTarget.value)}
+                                placeholder="First name" required/>
+                                <input type="text" className="rounded-md p-2 border-2 bg-slate-100" onChange={(e) => setLastName(e.currentTarget.value)}
+                                placeholder="Last name" required/>
                             </div>
-                            <input type="email" className="rounded-md p-2 border-2 bg-slate-100" placeholder="Email" required/>
-                            <input type="password" className="rounded-md p-2 border-2 bg-slate-100" placeholder="Password" required/>
-                            <input type="date" className="border-2 p-2 rounded-md" value={moment().format('YYYY-MM-DD')} required/>
+                            <input type="email" className="rounded-md p-2 border-2 bg-slate-100" onChange={(e) => setEmail(e.currentTarget.value)}
+                            placeholder="Email" required/>
+                            <input type="password" className="rounded-md p-2 border-2 bg-slate-100" onChange={(e) => setPassword(e.currentTarget.value)}
+                            placeholder="Password" required/>
+                            <input type="date" className="border-2 p-2 rounded-md" onChange={(e) => setBirthday((e.currentTarget.value))}
+                            required/>
                             <div className="mt-4">
                                 <button type="submit" className="inline-flex min-w-full justify-center rounded-md border border-transparent text-white bg-green-600 px-4 py-2 text-sm font-medium hover:bg-green-700"
                                 >
@@ -40,6 +76,11 @@ const Register = ({register, setRegister}) => {
                                 </button>
                             </div>
                         </form>
+                        {errors.map(error => {
+                            return (
+                                <li className="text-red-500">{error.msg}</li>
+                            )
+                        })}
                     </div>
                 </div>
             </div>

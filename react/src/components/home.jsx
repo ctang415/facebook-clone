@@ -12,6 +12,28 @@ import Register from './register'
 const Home = () => {
     const { login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
+    const [ email, setEmail ] = useState('')
+    const [ password, setPassword ] = useState('')
+
+    const loginToAccount = async (e) => {
+        e.preventDefault()
+        const account = { email: email, password: password}
+        try {
+            const response = await fetch ('http://localhost:3000', {
+                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(account)
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            const data = await response.json()
+            if (response.status === 200) {
+                alert('success')
+                console.log(data)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     if (!login) {
         return (
@@ -23,9 +45,9 @@ const Home = () => {
                 </div>
                 <Register register={register} setRegister={setRegister} />
                 <div className="flex flex-col border-slate border-2 rounded shadow-2xl bg-white w-1/3">
-                    <form className="flex flex-col gap-5 p-4">
-                        <input className="p-2 border-slate border-2 rounded" type="string" placeholder="Email" required></input>
-                        <input className="p-2 border-slate border-2 rounded" type="password" placeholder="Password" required></input>
+                    <form className="flex flex-col gap-5 p-4" onSubmit={loginToAccount}>
+                        <input className="p-2 border-slate border-2 rounded" type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required></input>
+                        <input className="p-2 border-slate border-2 rounded" type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required></input>
                         <button type="submit" className="p-3 rounded bg-blue-600 text-white font-medium">Log In</button>
                     </form>
                     <div className="flex p-4">

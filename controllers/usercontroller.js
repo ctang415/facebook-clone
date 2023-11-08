@@ -2,6 +2,7 @@ const User = require('../models/user')
 const asyncHandler = require('express-async-handler')
 const { body, validationResult } = require('express-validator')
 const { isValidObjectId } = require('mongoose')
+const bcrypt = require('bcryptjs')
 
 exports.user_create_post = [
     body('email', "Email already exists").custom( async value => {
@@ -21,15 +22,20 @@ exports.user_create_post = [
         let today = new Date();
         let age = today.getFullYear() - year
         if (age < 13) {
-          throw new Error('Your age should be 13+')
+          throw new Error('Must be at least 13 years old.')
         } 
     }),
     asyncHandler( async (req, res, next) => {
+        try {
+            bcrypt.hash(req.body.password, 10, async (err, hash) => {
+            if (err) {
+                return err
+            }   
         const errors = validationResult(req);
         const user = new User (
             {
                 email: req.body.email,
-                password: req.body.password,
+                password: hash,
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 birthdate: req.body.birthdate,
@@ -41,8 +47,12 @@ exports.user_create_post = [
         } else {
             await user.save()
             res.status(200).json({ user: user })
-        }
+        }      
     } )
+    } catch (err) {
+        return next(err)
+    }
+    }) 
 ]
 
 exports.user_detail_get = asyncHandler (async (req, res, next) => {
@@ -62,8 +72,8 @@ exports.user_update_put = [
     body('password', 'Password does not match').custom( async (value, {req}) => {
         const user = await User.findById(req.params.userid)
         try {
-    //      const match = await bcrypt.compare(value, user.password)
-          if (user.password !== req.body.password) {
+            const match = await bcrypt.compare(value, user.password)
+          if (!match) {
             throw new Error('Password is incorrect')
           }
         } catch(err) {
