@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect, useContext } from 'react'
-import User from '../assets/account.svg'
 import { LoginContext } from './logincontext'
 
 const CreatePost = () => {
@@ -10,7 +9,7 @@ const CreatePost = () => {
     const closePostMenu = (e) => {
         if (postRef.current && modal && !postRef.current.contains(e.target)){
           setModal(false)
-          setEditPost(false)
+          setEditPost('')
         }
     }
 
@@ -35,15 +34,32 @@ const CreatePost = () => {
         }
     }
 
+    const updatePost = async (e) => {
+        e.preventDefault()
+        const updatedPost = { message: post}
+        try {
+            const response = await fetch (`http://localhost:3000/users/${userData._id}${editPost.url}`, {
+                method: 'PUT', headers: {'Content-type': 'application/json'}, body: JSON.stringify(updatedPost)
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                alert('Post successfully updated!')
+                setPost('')
+                setModal(false)
+                setEditPost('')
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     useEffect(() => {
         document.addEventListener("mousedown", closePostMenu);
       }, [closePostMenu]);
 
-    useEffect(() => {
-        if (editPost) {
-            setPost('')
-        }
-    }, [])
     
     if (modal) {
         return (
@@ -63,13 +79,13 @@ const CreatePost = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <form className="mt-2 gap-4 flex flex-col" onSubmit={createPost} ref={postRef}>
+                            <form className="mt-2 gap-4 flex flex-col" onSubmit={ editPost !== '' ? updatePost : createPost} ref={postRef}>
                                 <div className='flex gap-2'>
                                     <img src={userData.avatar} alt="User icon"/>
                                     <p>{userData.full_name}</p>
                                 </div>
                                 <div>
-                                    <textarea className='min-w-full resize-none' rows='5' onChange={(e) => setPost(e.target.value)} placeholder='What is on your mind?'></textarea>
+                                    <textarea className={'min-w-full resize-none'} rows='5' onChange={(e) => setPost(e.target.value)} defaultValue={editPost !== '' ? editPost.message : null} placeholder='What is on your mind?'></textarea>
                                 </div>
                                 <div className="mt-4">
                                     <button type="submit" disabled={ post === '' ? true : false} className={ post === '' ? 

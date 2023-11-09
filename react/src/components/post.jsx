@@ -8,11 +8,12 @@ import { LoginContext } from './logincontext'
 import SettingsModal from './settingsmodal'
 
 const Post = ( {post}) => {
-    const { editPost, setEditPost, setModal, modal, settingMenu, setSettingMenu  }  = useContext(LoginContext)
-  
+    const { editPost, setEditPost, setModal, modal }  = useContext(LoginContext)
+    const [settingMenu, setSettingMenu] = useState(false)
+
     return (
-        <>
-            <SettingsModal/>
+        <div className='relative'>
+            <SettingsModal post={post} settingMenu={settingMenu} setSettingMenu={setSettingMenu}/> 
             <div className='p-2 gap-3
             flex flex-col min-w-[42.5vw] max-w-[42.5vw] rounded border-2 border-slate-50 shadow-xl bg-white'>
                 <div className='flex flex-row justify-between gap-2'>
@@ -28,10 +29,10 @@ const Post = ( {post}) => {
                     <p>{post.message}</p>
                     <div className='flex justify-between gap-2'>
                     <div>
-                        # Likes
+                        {post.likes.length} Likes
                     </div>
                     <div>
-                        # Comments
+                        {post.comments.length} Comment{ post.comments.length === 1 ? null : 's'}
                     </div>
                     </div>
                 </div>
@@ -43,9 +44,9 @@ const Post = ( {post}) => {
                     <img src={CommentIcon} alt="Comment icon"/> Comment
                     </div>
                 </div>
-                <Comment postId={post.url} id={post._id} />
+                <Comment postId={post.url} id={post._id} comments={post.comments}/>
             </div>
-        </>
+        </div>
     )
 }
 

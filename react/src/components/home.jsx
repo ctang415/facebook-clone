@@ -72,9 +72,9 @@ const Home = () => {
         )
     } else {
         return (
-            <>
+            <div className="pb-10">
             <Navbar/>
-            <CreatePost />
+            <CreatePost/>
             <ChatModal/>
             <div className="flex flex-col items-center justify-center gap-[7.5vh]">
                 <CreateMessage/>
@@ -92,7 +92,7 @@ const Home = () => {
                 })}
             </div>
             </div>
-            </>
+            </div>
         )
     }
 }

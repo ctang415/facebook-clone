@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useContext } from 'react'
 import { LoginContext } from './logincontext'
 
-const Comment = ({id, postId}) => {
+const Comment = ({id, postId, comments}) => {
     const { userData } = useContext(LoginContext)
     const [ comment, setComment ] = useState('')
     
@@ -21,6 +21,7 @@ const Comment = ({id, postId}) => {
             await response.json()
             if (response.status === 200) {
                 alert('Successfully created comment')
+                setComment('')
             }
         } catch (err) {
             console.log(err)
@@ -30,13 +31,17 @@ const Comment = ({id, postId}) => {
     return (
         <div className='flex flex-col gap-2'>
             <div className='flex flex-col gap-3'>
-                <div className='flex flex-row gap-1'>
-                <img src={User} alt="User icon" className='min-w-[2vw] self-start mt-4'></img>
-                <div className='bg-slate-100 rounded-xl p-3'>
-                    <p className='font-bold'>My name</p>
-                    <p className='break-normal'>Here is my message but what if it gets longer and longer? then what happens</p>
+                {comments.map(comment => {
+                    return (
+                <div className='flex flex-row gap-1' key={comment._id}>
+                <img src={comment.author.avatar} alt="User icon" className='min-w-[2vw] self-start mt-4'></img>
+                <div className='bg-slate-100 rounded-xl p-3 min-w-[37vw]'>
+                    <p className='font-bold'>{comment.author.full_name}</p>
+                    <p className='break-normal'>{comment.message}</p>
                 </div>
                 </div>  
+                    )
+                })}
                 <form className='flex flex-row gap-2 min-w-fit' onSubmit={createComment}>
                     <img className='min-w-[2vw]' src={userData.avatar} alt="User icon"></img>
                     <input type="text" placeholder='Write a comment...' className='min-w-[82%] bg-slate-100 rounded-xl p-2' 

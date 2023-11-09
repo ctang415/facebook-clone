@@ -7,7 +7,7 @@ function App() {
   const [ userData, setUserData ] = useState([])
   const [ login, setLogin ] = useState(false)
   const [ userModal, setUserModal ] = useState(false)
-  const [ editPost, setEditPost ] = useState(false)
+  const [ editPost, setEditPost ] = useState('')
   const [ modal, setModal ] = useState(false)
   const [ messageModal, setMessageModal ] = useState(false)
   const [ settingMenu, setSettingMenu ] = useState(false)
