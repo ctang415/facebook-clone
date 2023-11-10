@@ -14,6 +14,9 @@ const CommentSchema = new Schema (
         toJSON: { virtuals: true }
     }
 )
+CommentSchema.virtual('url').get(function() {
+    return `/comments/${this._id}`
+})
 
 CommentSchema.virtual('timestamp_formatted').get(function () {
     return DateTime.fromJSDate(this.timestamp).toFormat('yyyy-MM-dd')

@@ -32,18 +32,25 @@ exports.comment_update = [
             res.status(401).json({errors: errors.array()})
             return
         }
-        const updatedComment = await Comment.findByIdAndUpdate(req.body.id, {message: req.body.message})
+        const updatedComment = await Comment.findByIdAndUpdate(req.params.commentid, {message: req.body.message})
         res.status(200).json({comment: updatedComment, success: true})
     })
 ]
 
 exports.comment_delete = asyncHandler (async (req, res, next) => {
-    const comment = await Comment.findById(req.body.id)
+    const split = req.baseUrl.split('/')
+   
+    const comment = await Comment.findById(req.params.commentid)
     if (comment === null) {
         res.status(404).json({error: "Comment does not exist."})
         return
     }
-    await Post.findByIdAndUpdate(req.body.postid, {$pull: {comments: comment._id}}, {new: true})
-    await Comment.findByIdAndRemove(req.body.id)
+    const [ updatedPost, removedComment ] = await Promise.all (
+        [
+            Post.findByIdAndUpdate(split[4], {$pull: {comments: comment._id}}, {new: true}),
+            Comment.findByIdAndRemove(req.params.commentid)
+        ]
+    )
     res.status(200).json({success:true})
+
 })
