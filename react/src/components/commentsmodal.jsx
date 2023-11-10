@@ -33,6 +33,7 @@ const CommentsModal = ({ postId,
             if (response.status === 200) {
                 alert('Post successfully deleted')
                 fetchUser()
+                setCommentModal(false)
             }
         } catch (err) {
             console.log(err)
@@ -45,7 +46,7 @@ const CommentsModal = ({ postId,
 
     if (commentModal) {
         return (
-            <ul className='absolute bg-white rounded-lg gap-2 flex flex-col shadow-xl z-4 border-2 right-1'
+            <ul className='absolute bg-white rounded-lg gap-2 flex flex-col shadow-xl z-4 border-2'
             ref={commentRef}>
                 <li onClick={() => editComment()} className="p-2 hover:bg-slate-100 cursor-pointer">Edit</li>
                 <li onClick={() => deleteComment() } className="p-2 hover:bg-slate-100 cursor-pointer">Delete</li>
