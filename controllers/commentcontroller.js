@@ -14,7 +14,8 @@ exports.comment_create_post = [
         const comment = new Comment (
             {
                 author: req.body.author,
-                message: req.body.message
+                message: req.body.message,
+                post: req.body.id
             }
         )
         const newComment = await comment.save()

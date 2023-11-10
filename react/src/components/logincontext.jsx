@@ -27,6 +27,9 @@ export const LoginContext = createContext(
         myGroups: null,
         setMyGroups: () => {},
         chatModal: null,
-        setChatModal: () => {}
+        setChatModal: () => {},
+        fetchUser: () => {},
+        setPosts: () => {},
+        posts: null
     }
 )

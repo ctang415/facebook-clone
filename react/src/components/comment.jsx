@@ -1,11 +1,11 @@
 import Send from '../assets/send.svg'
-import User from '../assets/account.svg'
 import { useState } from 'react'
 import { useContext } from 'react'
 import { LoginContext } from './logincontext'
+import { decode } from 'html-entities'
 
 const Comment = ({id, postId, comments}) => {
-    const { userData } = useContext(LoginContext)
+    const { userData, fetchUser } = useContext(LoginContext)
     const [ comment, setComment ] = useState('')
     
     const createComment = async (e) => {
@@ -22,6 +22,7 @@ const Comment = ({id, postId, comments}) => {
             if (response.status === 200) {
                 alert('Successfully created comment')
                 setComment('')
+                fetchUser()
             }
         } catch (err) {
             console.log(err)
@@ -37,7 +38,7 @@ const Comment = ({id, postId, comments}) => {
                 <img src={comment.author.avatar} alt="User icon" className='min-w-[2vw] self-start mt-4'></img>
                 <div className='bg-slate-100 rounded-xl p-3 min-w-[37vw]'>
                     <p className='font-bold'>{comment.author.full_name}</p>
-                    <p className='break-normal'>{comment.message}</p>
+                    <p className='break-normal'>{decode(comment.message)}</p>
                 </div>
                 </div>  
                     )
@@ -45,7 +46,7 @@ const Comment = ({id, postId, comments}) => {
                 <form className='flex flex-row gap-2 min-w-fit' onSubmit={createComment}>
                     <img className='min-w-[2vw]' src={userData.avatar} alt="User icon"></img>
                     <input type="text" placeholder='Write a comment...' className='min-w-[82%] bg-slate-100 rounded-xl p-2' 
-                    onChange={(e) => setComment(e.target.value)} required></input>
+                    onChange={(e) => setComment(e.target.value)} value={comment} required></input>
                     <button className='min-w-fit' type="submit" disabled={ comment === '' ? true : false}>
                     <img className='min-w-[2vw]' src={Send} alt="Send icon"/>
                     </button>

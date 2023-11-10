@@ -3,6 +3,7 @@ const asyncHandler = require('express-async-handler')
 const { body, validationResult } = require('express-validator')
 const { isValidObjectId } = require('mongoose')
 const User = require('../models/user')
+const Comment = require('../models/comment')
 
 exports.post_create_post = [
     body('message', 'Message must not be blank.').trim().isLength({min: 1}).escape(),
@@ -45,18 +46,22 @@ exports.post_update = [
 ]
 
 exports.post_delete = asyncHandler (async (req, res, next) => {
-    //const post = await Post.findById(req.params.postid)
-    const post = await Post.findById(req.body.postid)
-    
+    const commentsInPost = await Comment.find({ post: req.params.postid})
+    const split = req.baseUrl.split('/')
+    const post = await Post.findById(req.params.postid)
     if (post === null) {
         res.status(404).json({error: "Post does not exist."})
         return
     }
-    // await Post.findByIdAndRemove(req.params.postid)
-    
-    await Post.findByIdAndRemove(req.body.postid)
-    // const updatedUser = await User.findByIdAndUpdate(req.body.author, {$pull: {posts: req.params.postid}}, {new: true} )
-    const updatedUser = await User.findByIdAndUpdate(req.body.author, {$pull: {posts: req.body.postid}}, {new: true} )
-    
+    if ( commentsInPost.length > 0 ) {
+        const comments = commentsInPost.map(x => x.id)
+        await Comment.deleteMany({_id: { $in: comments}})
+    }
+    const [ deletePost, updatedUser ] = await Promise.all( [
+        Post.findByIdAndRemove(req.params.postid),
+        User.findByIdAndUpdate(split[2], {$pull: {posts: req.params.postid}}, {new: true})
+    ])
     res.status(200).json({success: true})
+
 })
+

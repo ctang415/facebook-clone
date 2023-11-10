@@ -7,6 +7,7 @@ const CommentSchema = new Schema (
         message: {type: String, min: 1, required: true},
         timestamp: {type: Date, default: Date.now()},
         author: {type: Schema.Types.ObjectId, ref: 'User'},
+        post: {type: Schema.Types.ObjectId, ref: 'Post'}
     },
     {
         toObject: { virtuals: true },

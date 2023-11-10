@@ -10,13 +10,12 @@ import ChatModal from "./chatmodal"
 import Register from './register'
 
 const Home = () => {
-    const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal,
-    setUserData } = useContext(LoginContext) 
+    const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal, userData,
+    setPosts, posts, setUserData } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
-    const [ posts, setPosts ] = useState([])
 
     const loginToAccount = async (e) => {
         e.preventDefault()
@@ -42,10 +41,6 @@ const Home = () => {
             setErrors(err.errors)
         }
     }
-
-    useEffect(() => {
-        console.log()
-    }, [])
 
     if (!login) {
         return (
@@ -79,7 +74,7 @@ const Home = () => {
             <div className="flex flex-col items-center justify-center gap-[7.5vh]">
                 <CreateMessage/>
             <div className="p-6 mt-[12.5vh] min-w-[42.5vw] bg-white flex flex-row justify-center rounded shadow-xl gap-2">
-                <img src={User} alt="User avatar"></img>
+                <img src={userData.avatar} alt="User avatar"></img>
                 <input onClick={() => setModal(true)}
                 className="p-2 bg-slate-100 rounded-full min-w-full" placeholder="What's on your mind?" type="text"></input>
             </div>

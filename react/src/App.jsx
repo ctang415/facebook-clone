@@ -17,13 +17,33 @@ function App() {
   const [ discover, setDiscover] = useState(false)
   const [ myGroups, setMyGroups] = useState(false)
   const [ chatModal, setChatModal ] = useState(false)
+  const [ posts, setPosts ] = useState([])
+
+  const fetchUser = async () => {
+    try {
+      const response = await fetch (`http://localhost:3000${userData.url}`, {
+        headers: {'Content-type': 'application/json'}
+      })
+      if (!response.ok) {
+        throw await response.json()
+      }
+      const data = await response.json()
+      if (response.status === 200) {
+        setUserData(data.user)
+        setPosts(data.user.posts)
+        console.log(data)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
     <div className='bg-slate-100 min-h-screen w-screen'>
       <LoginContext.Provider value={{ modal, setModal, messageModal, setMessageModal, settingMenu, setSettingMenu,
         userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
         friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal,
-        setChatModal }}>
+        setChatModal, fetchUser, setPosts, posts }}>
         <Outlet/>
       </LoginContext.Provider>
     </div>

@@ -1,4 +1,3 @@
-import User from '../assets/account.svg'
 import Like from '../assets/like.svg'
 import CommentIcon from '../assets/comment.svg'
 import Comment from './comment'
@@ -6,10 +5,46 @@ import Settings from '../assets/more.svg'
 import { useContext, useState, useEffect } from 'react'
 import { LoginContext } from './logincontext'
 import SettingsModal from './settingsmodal'
+import { decode } from 'html-entities'
+import Liked from '../assets/liked.svg'
 
 const Post = ( {post}) => {
-    const { editPost, setEditPost, setModal, modal }  = useContext(LoginContext)
+    const { editPost, setEditPost, setModal, modal, userData, fetchUser }  = useContext(LoginContext)
     const [settingMenu, setSettingMenu] = useState(false)
+
+    const likePost = async () => {
+        try {
+            const response = await fetch (`http://localhost:3000${userData.url}${post.url}/likes`, {
+                method: 'POST', headers: {'Content-type': 'application/json'}
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                fetchUser()
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const unlikePost = async () => {
+        try {
+            const response = await fetch (`http://localhost:3000${userData.url}${post.url}/likes`, {
+                method: 'DELETE', headers: {'Content-type': 'application/json'}
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                fetchUser()
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     return (
         <div className='relative'>
@@ -26,7 +61,7 @@ const Post = ( {post}) => {
                     </div>
                 </div>
                 <div>
-                    <p>{post.message}</p>
+                    <p>{decode(post.message)}</p>
                     <div className='flex justify-between gap-2'>
                     <div>
                         {post.likes.length} Likes
@@ -37,11 +72,11 @@ const Post = ( {post}) => {
                     </div>
                 </div>
                 <div className='flex flex-row justify-around border-y-2 p-2'>
-                    <div className='flex gap-2 hover:bg-slate-200 cursor-pointer p-1'>
-                        <img src={Like} alt="Like icon"/> Like
+                    <div onClick={ post.likes.includes(userData._id) ? () => unlikePost() : () => likePost()} className={ post.likes.includes(userData._id) ? 'flex gap-2 hover:bg-slate-200 cursor-pointer p-1 text-blue-500 font-bold' : 'flex gap-2 hover:bg-slate:200 cursor-pointer p-1' }>
+                        <img src={ post.likes.includes(userData._id) ? Liked : Like} alt="Like icon"/> Like
                     </div>
                     <div className='flex gap-2 hover:bg-slate-200 cursor-pointer p-1'>
-                    <img src={CommentIcon} alt="Comment icon"/> Comment
+                        <img src={CommentIcon} alt="Comment icon"/> Comment
                     </div>
                 </div>
                 <Comment postId={post.url} id={post._id} comments={post.comments}/>

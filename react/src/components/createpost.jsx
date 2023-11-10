@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useContext } from 'react'
 import { LoginContext } from './logincontext'
 
 const CreatePost = () => {
-    const { modal, setModal, editPost, setEditPost, userData } = useContext(LoginContext)
+    const { modal, setModal, editPost, setEditPost, userData, fetchUser } = useContext(LoginContext)
     const postRef = useRef(null)
     const [ post, setPost ] = useState('')
 
@@ -28,6 +28,7 @@ const CreatePost = () => {
                 alert('Post successfully created!')
                 setPost('')
                 setModal(false)
+                fetchUser()
             }
         } catch (err) {
             console.log(err)
@@ -50,6 +51,7 @@ const CreatePost = () => {
                 setPost('')
                 setModal(false)
                 setEditPost('')
+                fetchUser()
             }
         } catch (err) {
             console.log(err)

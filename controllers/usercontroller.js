@@ -58,6 +58,7 @@ exports.user_create_post = [
 
 exports.user_detail_get = asyncHandler (async (req, res, next) => {
     const user = await User.findById(req.params.userid)
+    console.log(req.params.userid)
     if (isValidObjectId(req.params.userid) === false) {
         res.status(400).json({error: "User does not exist"})
         return
@@ -66,7 +67,10 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
         res.status(404).json({error: 'User not found'})
         return
     } 
-     res.status(200).json({user_detail: user})
+    const limitedUser = await User.findById(req.params.userid).select('-password').populate(
+        [{path :'posts', populate: [{ path: 'author', select: 'first_name last_name avatar' }, { path: 'comments', populate: { path: 'author'} } ]  }, { path: 'chats', }, {path: 'friends'} ])
+    console.log(limitedUser)
+     res.status(200).json({user: limitedUser})
 })
 
 exports.user_update_put = [
