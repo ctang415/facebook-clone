@@ -11,11 +11,27 @@ import Register from './register'
 
 const Home = () => {
     const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal, userData,
-    setPosts, posts, setUserData } = useContext(LoginContext) 
+    setPosts, posts, setUserData, setUserList } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
+
+    const grabUsers = async () => {
+        try {
+            const response = await fetch ('http://localhost:3000/users')
+            if (!response.ok) {
+
+            }
+            const data = await response.json()
+            if (response.status === 200) {
+                setUserList(data.users)
+            console.log(data.users)
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     const loginToAccount = async (e) => {
         e.preventDefault()
@@ -34,6 +50,7 @@ const Home = () => {
                 setLogin(true)
                 setUserData(data.user)
                 setPosts(data.user.posts)
+                grabUsers()
                 console.log(data)
             }
         } catch (err) {

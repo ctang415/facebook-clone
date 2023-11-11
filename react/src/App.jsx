@@ -18,6 +18,7 @@ function App() {
   const [ myGroups, setMyGroups] = useState(false)
   const [ chatModal, setChatModal ] = useState(false)
   const [ posts, setPosts ] = useState([])
+  const [ userList, setUserList] = useState([])
 
   const fetchUser = async () => {
     try {
@@ -43,7 +44,7 @@ function App() {
       <LoginContext.Provider value={{ modal, setModal, messageModal, setMessageModal, settingMenu, setSettingMenu,
         userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
         friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal,
-        setChatModal, fetchUser, setPosts, posts }}>
+        setChatModal, fetchUser, setPosts, posts, userList, setUserList }}>
         <Outlet/>
       </LoginContext.Provider>
     </div>

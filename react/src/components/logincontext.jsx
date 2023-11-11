@@ -30,6 +30,8 @@ export const LoginContext = createContext(
         setChatModal: () => {},
         fetchUser: () => {},
         setPosts: () => {},
-        posts: null
+        posts: null,
+        userList: null,
+        setUserList: () => {}
     }
 )

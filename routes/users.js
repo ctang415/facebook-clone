@@ -7,6 +7,8 @@ const chats = require('./chats')
 
 router.get('/:userid', user_controller.user_detail_get)
 
+router.get('/', user_controller.user_list)
+
 router.post('/', user_controller.user_create_post)
 
 router.put('/:userid', user_controller.user_update_put)

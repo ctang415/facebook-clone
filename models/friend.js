@@ -3,6 +3,7 @@ const Schema = mongoose.Schema
 
 const FriendSchema = new Schema (
     {
+        sender: {type: Schema.Types.ObjectId, ref: 'User'},
         users: [{type: Schema.Types.ObjectId, ref: 'User'}],
         status: {type: String, enum:["Pending", "Friends"], default: "Pending"}
     },

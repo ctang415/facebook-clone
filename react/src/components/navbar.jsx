@@ -5,20 +5,23 @@ import Message from '../assets/message.svg'
 import Notification from '../assets/notification.svg'
 import Account from '../assets/account.svg'
 import UserModal from './usermodal'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { LoginContext } from './logincontext'
 import { Link } from 'react-router-dom'
+import Searchbar from './searchbar'
 
 const Navbar = () => {
-    const { userModal, setUserModal, setFriendsRequest, setAllFriends, setChatModal, chatModal } = useContext(LoginContext)
-    
+    const { userModal, setUserModal, setFriendsRequest, setAllFriends, setChatModal, chatModal, usersList } = useContext(LoginContext)
+    const [ search, setSearch ] = useState('')
     return (
         <nav className="fixed bg-white flex flex-row justify-between items-center p-2 w-full shadow-md z-50">
-            <div className='flex flex-row gap-4 items-center'>
+            <div className='flex flex-row gap-4 items-center relative'>
+              <Searchbar search={search} setSearch={setSearch}/>
                 <Link to="/">
                     <p className='cursor-pointer text-4xl text-white font-extrabold rounded-full py-1 px-3 bg-blue-600'>O</p>
                 </Link>
-                <input className='p-2 bg-slate-100 px-5 rounded-full' type="text" placeholder="Search Odinbook"></input>
+                <input className='p-2 bg-slate-100 px-5 rounded-full' type="text" placeholder="Search Odinbook"
+                onChange={(e) => setSearch(e.target.value)}></input>
             </div>
             <div className='flex flex-row gap-4'>
               <Link to={'/'}>

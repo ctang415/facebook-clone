@@ -69,7 +69,7 @@ const Comment = ({id, postId, comments}) => {
                     <p className='font-bold'>{comment.author.full_name}</p>
                     <div className='flex flex-row items-center'>
                     <p className={ commentEdit ? 'hidden' : 'break-normal'}>{decode(comment.message)}</p>
-                    <form className={commentEdit ? 'flex min-w-[82%]' : 'hidden' } onSubmit={updateComment}>
+                    <form className={commentEdit ? 'flex min-w-[82%] gap-1 items-center' : 'hidden' } onSubmit={updateComment}>
                         <input className={'p-1 min-w-[82%]'} type="text" defaultValue={ newComment === '' ? decode(comment.message) : newComment} onChange={(e) => setNewComment(e.target.value)}></input>
                         <p className={commentEdit ? 'flex text-blue-500 cursor-pointer' : 'hidden' } onClick={() => setCommentEdit(false)}>Cancel</p>
                         <button className='min-w-fit' type="submit">

@@ -68,9 +68,14 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
         return
     } 
     const limitedUser = await User.findById(req.params.userid).select('-password').populate(
-        [{path :'posts', populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, { path: 'chats', }, {path: 'friends'} ])
+        [{path :'posts', populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, { path: 'chats', }, {path: 'friends', populate: {path: 'users', select: '-password'}} ])
     console.log(limitedUser)
      res.status(200).json({user: limitedUser})
+})
+
+exports.user_list = asyncHandler( async (req, res, next) => {
+    const allUsers = await User.find({}).select('-password -birthdate')
+    res.status(200).json({success: true, users: allUsers})
 })
 
 exports.user_update_put = [
