@@ -14,7 +14,7 @@ import { useParams } from "react-router-dom"
 const Profile = () => {
     const [ profileEdit, setProfileEdit ] = useState(false)
     const profileTabs = [{ name: 'Posts'}, { name: 'About'}, { name: 'Friends'}, { name: 'Photos'}, { name: 'Videos'}]
-    const {setMessageModal, userData} = useContext(LoginContext)
+    const {setMessageModal, userData, fetchUser} = useContext(LoginContext)
     const [ userProfile, setUserProfile ] = useState([])
     const [ userPosts, setUserPosts] = useState([])
     const params = useParams()
@@ -37,10 +37,8 @@ const Profile = () => {
     }
 
     useEffect(() => {
-        if (userData.id !== params.profileid) {
-            fetchProfile()
-        }
-    }, [])
+        fetchProfile()
+    }, [params, fetchUser])
 
     return (
         <div className="pb-10">

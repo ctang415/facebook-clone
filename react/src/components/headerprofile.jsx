@@ -5,6 +5,7 @@ import { LoginContext } from "./logincontext"
 const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile }) => {
     const { userData, fetchUser } = useContext(LoginContext)
     const params = useParams()
+    const [ requestId, setRequestId ] = useState('')
     
     const addFriend = async () => {
         const friendRequest = { id: userData.id, friendid: params.profileid}
@@ -23,6 +24,39 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
             console.log(err)
         }
     }
+
+    const removeFriend = async () => {
+        const request = { user: userData.id, friend: params.profileid }
+        try {
+            const response = await fetch (`http://localhost:3000${userData.url}/friends/${requestId}`, {
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, body: JSON.stringify(request)
+            })
+            if (!response.ok) {
+                throw await response.json()
+            }
+            await response.json()
+            if (response.status === 200) {
+                alert('Friend request removed')
+                fetchUser()
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    useEffect(() => {
+        if (userProfile.friends) {
+            if ((userProfile.friends.find(friend => friend.sender === params.profileid))) {
+                const find = (userProfile.friends.find(friend => friend.sender === params.profileid))
+                setRequestId(find._id)
+            }
+            if ((userProfile.friends.find(friend => friend.sender === userData.id))) {
+                const find = (userProfile.friends.find(friend => friend.sender === userData.id))
+                setRequestId(find._id)
+            }
+        }
+    }, [userProfile])
+
 
     if (userData.id === params.profileid) {
     return (
@@ -45,7 +79,7 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
                     <ul className="flex flex-row gap-8 p-2">
                         {profileTabs.map(tab => {
                             return (
-                                <li className="cursor-pointer hover:bg-slate-200 p-2 rounded">{tab.name}</li>
+                                <li key={tab.name} className="cursor-pointer hover:bg-slate-200 p-2 rounded">{tab.name}</li>
                             )
                         })
                         }
@@ -68,8 +102,8 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
                         <h1 className="text-4xl mx-[12.5vw] font-semibold">{userProfile.full_name}</h1>
                         </div>
                         <div className="flex gap-4">
-                            <button onClick={() => addFriend()} className={ userProfile.friends && userProfile.friends.length !== 0 || userProfile.friends.map(friend => friend.users).includes(userProfile.id)
-                            ? "hidden" : "bg-blue-600 rounded-lg p-2 text-white"}>Add friend</button>
+                            <button onClick={() => addFriend()} className={ userProfile.friends && userProfile.friends.some(friend => friend.sender === userData.id) ? "hidden" : "bg-blue-600 rounded-lg p-2 text-white"}>Add friend</button>
+                            <button onClick={() => removeFriend()} className={ userProfile.friends && userProfile.friends.some(friend => friend.sender === userData.id) ? "bg-red-600 rounded-lg p-2 text-white" : "hidden" }>Remove friend</button>
                             <button className="bg-slate-300 p-2 rounded-lg">Message</button>
                         </div>
                     </div>

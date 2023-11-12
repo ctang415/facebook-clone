@@ -1,10 +1,10 @@
 import { useContext } from "react"
 import { LoginContext } from "./logincontext"
 import Back from '../assets/back.svg'
+import { Link } from 'react-router-dom'
 
 const FriendsNav = () => {
-    const { friendsRequest, setFriendsRequest, allFriends, setAllFriends } = useContext(LoginContext)
-    const friends = []
+    const { userData, friendsRequest, setFriendsRequest, allFriends, setAllFriends } = useContext(LoginContext)
 
     if (friendsRequest && !allFriends) {
         return (
@@ -31,16 +31,31 @@ const FriendsNav = () => {
                 </div>
                 <ul className="flex flex-col p-4">
                     <li className="p-4 text-md font-semibold">Friends</li>
-                    <ul className={friends.length === 0 ? "none" : "flex p-4" }>
-                        {friends.map(friends => {
+                    { userData.friends &&
+                    userData.friends.filter(friend => friend.status === "Friends").map(x => {
+                    return (
+                        <div key={x._id}>
+                        {x.users.filter( y => y.id !== userData.id).map(user => {
                             return (
-                                <li></li>
+                                <Link to={`/profiles/${user.id}`} key={user.id}>
+                                <li className="flex flex-row border-2 border-gray-100 bg-white p-4 rounded-md shadow-md justify-between min-w-[15vw] min-h-[10vh]"
+                                key={user.id}>
+                                    <div className="flex flex-row gap-2 p-2">
+                                        <img src={user.avatar} alt="Friend icon"/>
+                                        <p>{user.full_name}</p>
+                                    </div>
+                                </li>
+                                </Link>
                             )
-                        })}
-                        <li className={friends.length === 0 ? "flex p-4 text-sm" : "none"}>
+                            }
+                        )
+                        }
+                    </div>
+                    )
+                })}
+                        <li className={ userData.friends && userData.friends.length === 0 ? "flex p-4 text-sm" : "hidden"}>
                             No friends to show
                         </li>
-                    </ul>
                 </ul>
             </div>
         )

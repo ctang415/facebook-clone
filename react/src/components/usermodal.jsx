@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
-import User from '../assets/account.svg'
+import { Link, useNavigate } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const UserModal = ( {userModal, setUserModal}) => {
     const { setLogin, userData } = useContext(LoginContext)
     const userMenuRef = useRef(null)
+    const navigate = useNavigate()
 
     const logout = async () => {
         setUserModal(false)
@@ -20,6 +20,7 @@ const UserModal = ( {userModal, setUserModal}) => {
             if (response.status === 200) {
                 alert('Successfully logged out')
                 setLogin(false)
+                navigate('/')
             }
         } catch (err) {
             console.log(err)
