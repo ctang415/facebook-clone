@@ -3,7 +3,6 @@ import { LoginContext } from "./logincontext"
 import Navbar from "./navbar"
 import Post from './post'
 import NewMessage from '../assets/newmessage.svg'
-import User from '../assets/account.svg'
 import CreatePost from "./createpost"
 import CreateMessage from "./createmessage"
 import ChatModal from "./chatmodal"
@@ -16,17 +15,19 @@ const Home = () => {
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
-
+    const [ tests, setTests] = useState([])
+    let filteredPosts = [] 
+        
     const grabUsers = async () => {
         try {
             const response = await fetch ('http://localhost:3000/users')
             if (!response.ok) {
-
+                throw await response.json()
             }
             const data = await response.json()
             if (response.status === 200) {
                 setUserList(data.users)
-            console.log(data.users)
+                console.log(data.users)
             }
         } catch (err) {
             console.log(err)
@@ -50,6 +51,7 @@ const Home = () => {
                 setLogin(true)
                 setUserData(data.user)
                 setPosts(data.user.posts)
+                data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
                 grabUsers()
                 console.log(data)
             }

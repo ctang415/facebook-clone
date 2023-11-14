@@ -47,8 +47,8 @@ const Post = ( {post}) => {
             console.log(err)
         }
     }
-
-    if (userData.id === params.profileid) {
+    
+    if (userData.id === params.profileid || !params.profileid) {
     return (
         <div className='relative'>
             <SettingsModal post={post} settingMenu={settingMenu} setSettingMenu={setSettingMenu}/> 
