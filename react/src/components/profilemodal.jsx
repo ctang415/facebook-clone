@@ -80,7 +80,7 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
                             onChange={(e) => setEmail(e.currentTarget.value)} placeholder="Email" required/>
                             <input type="password" className="rounded-md p-2 border-2 bg-slate-100" onChange={(e) => setPassword(e.currentTarget.value)}
                             placeholder="Password" required/>
-                            <button onClick={() => deleteAccount()}>Delete account</button>
+                            <button className="p-2 rounded-md bg-red-500 text-white font-bold" onClick={() => deleteAccount()}>Delete account</button>
                             <div className="mt-4">
                                 <button type="submit" className="inline-flex min-w-full justify-center rounded-md border border-transparent text-white bg-green-600 px-4 py-2 text-sm font-medium hover:bg-green-700"
                                 >

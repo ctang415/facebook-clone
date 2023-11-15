@@ -6,7 +6,7 @@ import Post from "./post"
 const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }) => {
     const { posts, userData } = useContext(LoginContext)
     const params = useParams()
-    
+        
     const fakeInfo = {location: 'United States', birthday: 'April 15', school: 'CUNY Baruch'}
 
     if (userData.id === params.profileid) {
@@ -30,7 +30,7 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
                 <div className="bg-white p-4 rounded shadow-md">
                     <h2 className="text-xl font-medium">Posts</h2>
                 </div>
-                {posts.map(post => {
+                {userPosts.map(post => {
                     return (
                         <Post key={post._id} post={post}/>
                     )

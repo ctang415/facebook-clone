@@ -122,9 +122,9 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
                         <div className="flex gap-4">
                             <button onClick={() => addFriend()} className={ userData.friends && userData.friends.find( x => x.users.some( x => x.id === params.profileid)) !== undefined  ? "hidden" : "bg-blue-600 rounded-lg p-2 text-white"}>Add friend</button>
                             <button onClick={() => removeFriend()} className={ userData.friends && userData.friends.filter(friend => friend.status === "Friends").find( x => x.users.some( x => x.id === params.profileid)) ? "bg-red-600 rounded-lg p-2 text-white" : "hidden" }>Remove friend</button>
-                            <button onClick={() => removeFriend()} className={ userData.friends && userData.friends.filter(friend => friend.status === "Pending").find( x => x.sender === userData.id && x.users.some( x => x.id === params.profileid)) !== undefined ? "bg-orange-600 rounded-lg p-2 text-white" : "hidden" }>Remove Pending Request</button>
                             <button onClick={() => acceptRequest()} className={ 
-                            userData.friends && userData.friends.some(friend => friend.status === "Pending" && friend.sender === params.profileid)  ? "bg-orange-600 rounded-lg p-2 text-white" : "hidden" }>Approve Request</button>
+                            userData.friends && userData.friends.some(friend => friend.status === "Pending" && friend.sender === params.profileid)  ? "bg-green-600 rounded-lg p-2 text-white" : "hidden" }>Approve request</button>
+                            <button onClick={() => removeFriend()} className={ userData.friends && userData.friends.filter(friend => friend.status === "Pending").find( x => x.users.some( x => x.id === params.profileid)) !== undefined ? "bg-orange-600 rounded-lg p-2 text-white" : "hidden" }>Remove request</button>
                             <button className="bg-slate-300 p-2 rounded-lg">Message</button>
                         </div>
                     </div>

@@ -26,8 +26,9 @@ const Comment = ({id, postId, comments}) => {
             await response.json()
             if (response.status === 200) {
                 alert('Successfully created comment')
-                setNewComment('')
                 fetchUser()
+                setNewComment('')
+                
             }
         } catch (err) {
             console.log(err)
@@ -54,7 +55,6 @@ const Comment = ({id, postId, comments}) => {
             console.log(err)
         }
     }
-
 
     return (
         <div className='flex flex-col gap-2'>

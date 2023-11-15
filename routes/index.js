@@ -22,8 +22,8 @@ passport.use(
                 return done(null, false, { message: "Password does not match" });
             } else {
                 const limitedUser = await User.findOne( {email: username}).select('-password').populate(
-                    [{path :'posts', populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, { path: 'chats', }, {path: 'friends', populate: {path: 'users', select: '-password', populate: { path: 'posts', populate: [{ path: 'author', select: '-password'}, {path: 'comments'} ]}} } ])
-                console.log(limitedUser)
+                    [{path :'posts', populate: [{ path: 'author', select: '-password'}, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, { path: 'chats', }, {path: 'friends', populate: {path: 'users', select: '-password', populate: { path: 'posts', populate: [{ path: 'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'}} ]}} } ])
+                    console.log(limitedUser)
                 return done(null, limitedUser);
             }
         }
