@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Post from "./post"
 
@@ -53,6 +53,24 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
                     </div>
                     <div className="p-4 bg-white rounded max-w-[30vw] shadow-md flex flex-col gap-2">
                         <h2 className="text-xl font-medium">Friends</h2>
+                        <div className="flex max-h-[20vh] overflow-scroll">
+                            {userProfile.friends && userProfile.friends.map(friend => {
+                                return (
+                                    friend.users.filter(user => user.id !== userProfile.id).map(x => {
+                                        return (
+                                            <Link to={`/profiles/${x.id}`}>
+                                                <div className="flex flex-col px-8 p-2 border-2 border-grey items-center gap-2 rounded-md" key={friend.id}>
+                                                    <div>
+                                                        <img src={x.avatar} alt="User icon"/>
+                                                    </div>
+                                                    <div className="font-bold">{x.full_name}</div>
+                                                </div>
+                                            </Link>
+                                        )
+                                    })
+                                )
+                            })}
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-6 min-w-fit">

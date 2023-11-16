@@ -5,6 +5,7 @@ import { LoginContext } from './logincontext'
 import { decode } from 'html-entities'
 import MoreSettings from '../assets/more.svg'
 import CommentsModal from './commentsmodal'
+import { Link } from 'react-router-dom'
 
 const Comment = ({id, postId, comments}) => {
     const { userData, fetchUser } = useContext(LoginContext)
@@ -58,7 +59,7 @@ const Comment = ({id, postId, comments}) => {
 
     return (
         <div className='flex flex-col gap-2'>
-            <div className='flex flex-col gap-3'>
+            <div className='flex flex-col gap-2 max-h-[25vh] overflow-scroll'>
                 {comments.map(comment => {
                     return (
                 <div className='flex flex-row gap-1' key={comment._id}>
@@ -66,7 +67,9 @@ const Comment = ({id, postId, comments}) => {
                 commentEdit={commentEdit} setCommentEdit={setCommentEdit} commentid={comment._id} setCommentId={setCommentId} commentId={commentId}/>
                 <img src={comment.author.avatar} alt="User icon" className='min-w-[2vw] self-start mt-4'></img>
                 <div className='bg-slate-100 rounded-xl p-3 min-w-[37vw] flex flex-col'>
-                    <p className='font-bold'>{comment.author.full_name}</p>
+                    <Link to={`/profiles/${comment.author.id}`}>
+                        <p className='font-bold'>{comment.author.full_name}</p>
+                    </Link>
                     <div className='flex flex-row items-center'>
                     <p className={ commentEdit ? 'hidden' : 'break-normal'}>{decode(comment.message)}</p>
                     <form className={commentEdit ? 'flex min-w-[82%] gap-1 items-center' : 'hidden' } onSubmit={updateComment}>
@@ -83,7 +86,8 @@ const Comment = ({id, postId, comments}) => {
                 </div>  
                     )
                 })}
-                <form className='flex flex-row gap-2 min-w-fit' onSubmit={createComment}>
+            </div>
+            <form className='flex flex-row gap-2 min-w-fit' onSubmit={createComment}>
                     <img className='min-w-[2vw]' src={userData.avatar} alt="User icon"></img>
                     <input type="text" placeholder='Write a comment...' className='min-w-[82%] bg-slate-100 rounded-xl p-2' 
                     onChange={(e) => setNewComment(e.target.value)} required></input>
@@ -91,7 +95,6 @@ const Comment = ({id, postId, comments}) => {
                     <img className='min-w-[2vw]' src={Send} alt="Send icon"/>
                     </button>
                 </form>
-            </div>
         </div>
     )
 

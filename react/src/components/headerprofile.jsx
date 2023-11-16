@@ -2,7 +2,7 @@ import { useEffect, useContext, useState } from "react"
 import { useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
-const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile }) => {
+const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile, setAvatarEdit }) => {
     const { userData, fetchUser } = useContext(LoginContext)
     const params = useParams()
     const [ requestId, setRequestId ] = useState('')
@@ -85,7 +85,8 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
                 </div>
                 <div className="flex flex-row justify-between p-6 border-b-2 z-1 relative">
                     <div className="flex flex-row items-center">
-                    <img className="rounded-full border-white min-h-[20vh] bg-white absolute z-1 mb-20" src={userData.avatar} alt="User icon"></img>
+                    <img onClick={() => setAvatarEdit(true)}
+                    className="rounded-full border-white min-h-[20vh] max-h-[20vh] bg-white absolute z-1 mb-20" src={userData.avatar} alt="User icon"></img>
                     <h1 className="text-4xl mx-[12.5vw] font-semibold">{userData.full_name}</h1>
                     </div>
                     <div className="flex gap-4">

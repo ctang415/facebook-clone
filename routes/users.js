@@ -4,6 +4,20 @@ const user_controller = require('../controllers/usercontroller')
 const posts = require('./posts')
 const friends = require('./friends')
 const chats = require('./chats')
+const multer  = require('multer')
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './react/src/assets')
+    },
+    filename: function( req, file, cb) {
+        cb(null, file.originalname)
+    }
+})
+
+const upload = multer({storage: storage, limits: {
+    fileSize: 1024 * 1024 * 5 }})
+
 
 router.get('/:userid', user_controller.user_detail_get)
 
@@ -12,6 +26,8 @@ router.get('/', user_controller.user_list)
 router.post('/', user_controller.user_create_post)
 
 router.put('/:userid', user_controller.user_update_put)
+
+router.put('/:userid/avatar', upload.single('avatar'), user_controller.user_update_put_avatar)
 
 router.delete('/:userid', user_controller.user_delete)
 

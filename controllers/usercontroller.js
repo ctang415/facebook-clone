@@ -67,10 +67,10 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
         res.status(404).json({error: 'User not found'})
         return
     } 
-    const limitedUser = await User.findById(req.params.userid).select('-password').populate(
+        const limitedUser = await User.findById(req.params.userid).select('-password').populate(
         [{path :'posts', populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, { path: 'chats', }, {path: 'friends', populate: {path: 'users', select: '-password', populate: {path: 'posts', populate: [{path:'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'} }] }}} ])
-    console.log(limitedUser)
-     res.status(200).json({user: limitedUser})
+        console.log(limitedUser)
+        res.status(200).json({user: limitedUser})
 })
 
 exports.user_list = asyncHandler( async (req, res, next) => {
@@ -78,29 +78,83 @@ exports.user_list = asyncHandler( async (req, res, next) => {
     res.status(200).json({success: true, users: allUsers})
 })
 
+exports.user_update_put_avatar = asyncHandler ( async (req, res, next) => {
+    const split = req.url.split('/')
+    const updatedUser = await User.findByIdAndUpdate(split[1], 
+        {'$set': 
+            {
+            'avatar': `/src/assets/${req.file.filename}`
+            } 
+        })
+    res.status(200).json({user: updatedUser, success: true})
+})
+
 exports.user_update_put = [
     body('password', 'Password does not match').custom( async (value, {req}) => {
         const user = await User.findById(req.params.userid)
         try {
             const match = await bcrypt.compare(value, user.password)
-          if (!match) {
-            throw new Error('Password is incorrect')
-          }
+            if (!match) {
+                throw new Error('Password is incorrect')
+            }
         } catch(err) {
           throw new Error(err)
     }
     }),
+    body('email', "Email already exists").custom( async (value, {req} ) => {
+        const user = await User.findById(req.params.userid)
+        if (user.email !== value) {
+            const existingUser = await User.findOne( {email: value})
+            if (existingUser) {
+                throw new Error('Email already exists')
+            }
+        }
+    }),
+    body('email', 'Email must be between 5-25 characters.').trim().isLength({min: 5, max: 25}).escape(),
     body('new_password', 'Password must be at least 3 characters.').trim().isLength({min: 3}).escape(),
     body('first_name', 'First name must be at least 2 characters').trim().isLength({min: 2}).escape(),
     body('last_name', 'Last name must be at least 2 characters.').trim().isLength({min: 2}).escape(),
     asyncHandler ( async (req, res, next) => {
+        try {
+            bcrypt.hash(req.body.new_password, 10, async (err, hash) => {
+            if (err) {
+                return err
+            }   
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             res.status(401).json({errors: errors.array()})
             return            
         }
-     const updatedUser = await User.findByIdAndUpdate(req.params.userid, {'$set': {'first_name': req.body.first_name, 'last_name': req.body.last_name, 'password': req.body.new_password, 'avatar': req.body.avatar} })
+        if (req.body.password === req.body.new_password) {
+            const user = await User.findById(req.params.userid)
+            const updatedUser = await User.findByIdAndUpdate(req.params.userid, 
+                {'$set': 
+                    {
+                    'email': req.body.email,
+                    'first_name': req.body.first_name, 
+                    'last_name': req.body.last_name, 
+                    'password': user.password,
+                    } 
+                })
+
         res.status(200).json({user: updatedUser, success: true})
+        } else {
+            const updatedUser = await User.findByIdAndUpdate(req.params.userid, 
+                {'$set': 
+                    {
+                    'email': req.body.email,
+                    'first_name': req.body.first_name, 
+                    'last_name': req.body.last_name, 
+                    'password': hash,
+                    } 
+                })
+
+        res.status(200).json({user: updatedUser, success: true})
+        }
+    } )
+        } catch (err) {
+            return next(err)
+        }
     })
 ]
 
