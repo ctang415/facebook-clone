@@ -2,7 +2,7 @@ import { useEffect, useContext, useState } from "react"
 import { useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
-const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile, setAvatarEdit }) => {
+const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile, setAvatarEdit, setCoverEdit }) => {
     const { userData, fetchUser } = useContext(LoginContext)
     const params = useParams()
     const [ requestId, setRequestId ] = useState('')
@@ -75,18 +75,23 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
         }
     }, [userProfile])
 
+    useEffect(() => {
+        console.log(userData.cover === '')
+    }, [])
+
 
     if (userData.id === params.profileid) {
     return (
         <div className="bg-white shadow-md">
         <div className="w-[80vw] mx-[10vw] pt-[9vh]">
-            <div className="min-h-[75vh]">
-                <div className="bg-slate-200 min-h-[55vh]">
+            <div className="min-h-[75vh">
+                <div className="cursor-pointer flex bg-slate-200 min-h-[55vh] justify-center max-h-[55vh]" onClick={() => setCoverEdit(true)}>
+                    <img className={ userData.cover === '' ? 'hidden' : "w-full object-fill cursor-pointer"} src={userData.cover} alt="Header cover image"/>
                 </div>
                 <div className="flex flex-row justify-between p-6 border-b-2 z-1 relative">
                     <div className="flex flex-row items-center">
                     <img onClick={() => setAvatarEdit(true)}
-                    className="rounded-full border-white min-h-[20vh] max-h-[20vh] bg-white absolute z-1 mb-20" src={userData.avatar} alt="User icon"></img>
+                    className="cursor-pointer rounded-full border-white min-h-[20vh] max-h-[20vh] bg-white absolute z-1 mb-20" src={userData.avatar} alt="User icon"></img>
                     <h1 className="text-4xl mx-[12.5vw] font-semibold">{userData.full_name}</h1>
                     </div>
                     <div className="flex gap-4">

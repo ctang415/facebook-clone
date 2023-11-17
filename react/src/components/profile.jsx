@@ -11,6 +11,7 @@ import ProfileModal from './profilemodal'
 import { useEffect } from "react"
 import { useParams } from "react-router-dom"
 import AvatarModal from './avatarmodal'
+import CoverModal from './covermodal'
 
 const Profile = () => {
     const [ profileEdit, setProfileEdit ] = useState(false)
@@ -19,6 +20,7 @@ const Profile = () => {
     const [ userProfile, setUserProfile ] = useState([])
     const [ userPosts, setUserPosts] = useState([])
     const [ avatarEdit, setAvatarEdit ] = useState(false)
+    const [ coverEdit, setCoverEdit] = useState(false)
     const params = useParams()
     
     const fetchProfile = async () => {
@@ -49,8 +51,9 @@ const Profile = () => {
         <ChatModal/>
         <ProfileModal profileEdit={profileEdit} setProfileEdit={setProfileEdit} />
         <AvatarModal avatarEdit={avatarEdit} setAvatarEdit={setAvatarEdit}/>
+        <CoverModal coverEdit={coverEdit} setCoverEdit={setCoverEdit}/>
         <img onClick={() => setMessageModal(true)} className="fixed right-1 bottom-1 min-h-[5vh] cursor-pointer" src={NewMessage} alt="Chat icon"></img>    
-        <HeaderProfile setAvatarEdit={setAvatarEdit}
+        <HeaderProfile setAvatarEdit={setAvatarEdit} setCoverEdit={setCoverEdit}
         setProfileEdit={setProfileEdit} profileTabs={profileTabs} fetchProfile={fetchProfile} userProfile={userProfile} setUserProfile={setUserProfile}/>
         <ProfileContent fetchProfile={fetchProfile} userProfile={userProfile} setUserProfile={setUserProfile} userPosts={userPosts} setUserPosts={setUserPosts} />
         <CreatePost/>

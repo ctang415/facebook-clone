@@ -29,6 +29,10 @@ router.put('/:userid', user_controller.user_update_put)
 
 router.put('/:userid/avatar', upload.single('avatar'), user_controller.user_update_put_avatar)
 
+router.put('/:userid/cover', upload.single('cover'), user_controller.user_update_put_cover)
+
+router.put('/:userid/information', user_controller.user_update_put_information)
+
 router.delete('/:userid', user_controller.user_delete)
 
 router.use('/:userid/posts', posts)

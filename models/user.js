@@ -13,7 +13,10 @@ const UserSchema = new Schema (
         avatar: { type: String },
         posts: [ { type: Schema.Types.ObjectId, ref: 'Post'} ],
         chats: [ {type: Schema.Types.ObjectId, ref: 'Chat'}],
-        privacy: {type: String, enum:["Public", "Friends", "Private"], default: "Public"}
+        privacy: {type: String, enum:["Public", "Friends", "Private"], default: "Public"},
+        cover: { type: String},
+        location: { type: String},
+        school: { type: String}
     }, 
     {
         minimize: false,

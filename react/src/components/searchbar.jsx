@@ -28,8 +28,8 @@ const Searchbar = ( {search, setSearch} ) => {
                 {result.map(res => {
                     return (
                         <Link to={`/profiles/${res.id}`} key={res.id} onClick={() => setSearch('')}>
-                        <li className="flex flex-row gap-1 hover:bg-slate-100 rounded-md p-2">
-                            <img src={res.avatar} alt="User icon"/>
+                        <li className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2">
+                            <img className="max-h-[3vh]" src={res.avatar} alt="User icon"/>
                             {res.full_name}
                         </li>            
                         </Link>

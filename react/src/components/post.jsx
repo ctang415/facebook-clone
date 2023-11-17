@@ -65,7 +65,7 @@ const Post = ( {post}) => {
                     </div>
                     </Link>
                     <div>
-                        <img className='cursor-pointer hover:bg-slate-100 rounded-md' onClick={() => setSettingMenu(true)} src={Settings} alt="Settings icon"/>
+                        <img className={ userData.id === params.profileid ? 'cursor-pointer hover:bg-slate-100 rounded-md' : 'hidden'} onClick={() => setSettingMenu(true)} src={Settings} alt="Settings icon"/>
                     </div>
                 </div>
                 <div>

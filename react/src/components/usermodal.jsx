@@ -41,9 +41,9 @@ const UserModal = ( {userModal, setUserModal}) => {
         return (
             <ul className="flex flex-col gap-4 bg-white absolute top-1 right-1 rounded-xl shadow-2xl my-16 p-4" ref={userMenuRef}>
                 <Link to={`/profiles/${userData.id}`} onClick={() => setUserModal(false)}>
-                <li className="p-4 cursor-pointer hover:bg-slate-100 rounded-md shadow-lg border-[1px]
+                <li className="p-4 cursor-pointer items-center hover:bg-slate-100 rounded-md shadow-lg border-[1px]
                 font-medium flex flex-row gap-2">
-                    <img src={userData.avatar} alt="User icon"></img>
+                    <img className="max-h-[3vh]" src={userData.avatar} alt="User icon"></img>
                     {userData.full_name}
                 </li>
                 </Link>

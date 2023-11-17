@@ -39,7 +39,10 @@ exports.user_create_post = [
                 first_name: req.body.first_name,
                 last_name: req.body.last_name,
                 birthdate: req.body.birthdate,
-                avatar: req.body.avatar
+                avatar: req.body.avatar,
+                cover: "",
+                location: '',
+                school: ''
             }
         )
         if (!errors.isEmpty()) {
@@ -87,6 +90,41 @@ exports.user_update_put_avatar = asyncHandler ( async (req, res, next) => {
             } 
         })
     res.status(200).json({user: updatedUser, success: true})
+})
+
+exports.user_update_put_information = asyncHandler( async (req, res, next) => {
+    const split = req.url.split('/')
+    const updatedUser = await User.findByIdAndUpdate(split[1], 
+        {'$set': 
+            {
+            'location': req.body.location,
+            'school': req.body.school
+            } 
+        })
+    res.status(200).json({user: updatedUser, success: true})
+})
+
+exports.user_update_put_cover = asyncHandler( async (req, res, next) => {
+    if ( req.file === undefined) {
+        const split = req.url.split('/')
+        const updatedUser = await User.findByIdAndUpdate(split[1], 
+            {'$set': 
+                {
+                'cover': ''
+                } 
+            })
+        res.status(200).json({user: updatedUser, success: true})
+    
+    } else {
+    const split = req.url.split('/')
+    const updatedUser = await User.findByIdAndUpdate(split[1], 
+        {'$set': 
+            {
+            'cover': `/src/assets/${req.file.filename}`
+            } 
+        })
+    res.status(200).json({user: updatedUser, success: true})
+    }
 })
 
 exports.user_update_put = [

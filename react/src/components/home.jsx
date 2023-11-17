@@ -92,8 +92,8 @@ const Home = () => {
             <ChatModal/>
             <div className="flex flex-col items-center justify-center gap-[7.5vh]">
                 <CreateMessage/>
-            <div className="p-6 mt-[12.5vh] min-w-[42.5vw] bg-white flex flex-row justify-center rounded shadow-xl gap-2">
-                <img src={userData.avatar} alt="User avatar"></img>
+            <div className="p-6 mt-[12.5vh] min-w-[42.5vw] items-center bg-white flex flex-row justify-center rounded shadow-xl gap-2">
+                <img className="max-h-[3vh]" src={userData.avatar} alt="User avatar"></img>
                 <input onClick={() => setModal(true)}
                 className="p-2 bg-slate-100 rounded-full min-w-full" placeholder="What's on your mind?" type="text"></input>
             </div>
