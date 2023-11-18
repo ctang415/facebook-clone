@@ -14,22 +14,25 @@ exports.chat_detail_get = asyncHandler( async (req, res, next) => {
 })
 
 exports.chat_create_post = asyncHandler ( async (req, res, next) => {
-    const findChat = await Chat.findOne( {users: {$all: [req.body.userid, req.body.friendid ] }} )
+    const split = req.baseUrl.split('/')
+
+    const findChat = await Chat.findOne( {users: {$all: [split[2], req.body.friendid ] }} )
     if (findChat) {
         res.status(401).json({error: "Chat already exists."})
         return
     }
     const chat = new Chat (
         {
-            users: [ req.body.userid, req.body.friendid]
+            users: [ split[2], req.body.friendid]
         }
     )
     const newChat = await chat.save()
     const [ user, friendUser ] = await Promise.all (
         [
-            User.findByIdAndUpdate(req.body.userid, {$push: { chats: newChat._id }}),
+            User.findByIdAndUpdate(split[2], {$push: { chats: newChat._id }}),
             User.findByIdAndUpdate(req.body.friendid, {$push: { chats: newChat._id }})
         ]
     ) 
-    res.status(200).json({chat: newChat})
+    res.status(200).json({chat: newChat, success: true})
+
 })

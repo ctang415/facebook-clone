@@ -11,14 +11,15 @@ exports.message_create_post = [
             res.status(401).json({errors: errors.array()})
             return
         }
+        const split = req.baseUrl.split('/')
         const message = new Message (
             {
                 message: req.body.message,
-                author: req.body.author
+                author: split[2]
             }
         )
         const newMessage = await message.save()
-        const updatedChat = await Chat.findByIdAndUpdate(req.body.chatid, {$push: {messages: newMessage._id }})
+        const updatedChat = await Chat.findByIdAndUpdate(split[4], {$push: {messages: newMessage._id }})
         res.status(200).json( {chat: updatedChat, success: true})
     })
 ]

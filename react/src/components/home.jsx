@@ -15,7 +15,6 @@ const Home = () => {
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
-    const [ tests, setTests] = useState([])
     let filteredPosts = [] 
         
     const grabUsers = async () => {
