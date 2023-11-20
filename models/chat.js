@@ -13,7 +13,6 @@ const ChatSchema = new Schema (
     }
 )
 
-
 ChatSchema.virtual('url').get(function() {
     return `/chats/${this._id}`
 })

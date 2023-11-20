@@ -15,7 +15,8 @@ exports.message_create_post = [
         const message = new Message (
             {
                 message: req.body.message,
-                author: split[2]
+                author: split[2],
+                chat: split[4]
             }
         )
         const newMessage = await message.save()

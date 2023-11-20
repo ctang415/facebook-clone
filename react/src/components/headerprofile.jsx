@@ -75,10 +75,6 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
         }
     }, [userProfile])
 
-    useEffect(() => {
-        console.log(userData.cover === '')
-    }, [])
-
 
     if (userData.id === params.profileid) {
     return (

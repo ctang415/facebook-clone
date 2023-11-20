@@ -72,7 +72,7 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
     } 
         const limitedUser = await User.findById(req.params.userid).select('-password').populate(
         [{path :'posts', populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, 
-        { path: 'chats', populate: { path: 'messages', populate: {path: 'author', select: '-password'}}}, 
+        { path: 'chats', populate: [{ path: 'messages', populate: {path: 'author', select: '-password'}}, {path: 'users', select: '-password'} ]}, 
         {path: 'friends', populate: {path: 'users', select: '-password', populate: {path: 'posts', populate: [{path:'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'} }] }}} ])
         console.log(limitedUser)
         res.status(200).json({user: limitedUser})

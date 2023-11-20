@@ -8,7 +8,7 @@ const FriendsNav = () => {
 
     if (friendsRequest && !allFriends) {
         return (
-            <div className="bg-white min-h-screen w-[25vw] shadow-xl">
+            <div className="bg-white min-h-[91vh] max-h-[91vh] w-[25vw] overflow-scroll shadow-xl">
                 <h1 className="px-8 py-4 text-xl font-bold flex flex-row gap-2 items-center">
                     <img className="cursor-pointer hover:bg-slate-100 rounded-full p-2" onClick={() => setFriendsRequest(false)} src={Back} alt="Back arrow icon"/>
                     Friend Requests
@@ -21,7 +21,7 @@ const FriendsNav = () => {
         )
     } else if (allFriends && !friendsRequest) {
         return (
-            <div className="bg-white min-h-screen w-[25vw] shadow-xl">
+            <div className="bg-white min-h-[91vh] max-h-[91vh] w-[25vw] overflow-scroll shadow-xl">
                 <div className="flex flex-col p-2">
                 <h1 className="px-8 py-4 text-2xl font-bold flex flex-row gap-2 items-center">
                     <img className="cursor-pointer hover:bg-slate-100 rounded-full p-2" onClick={() => setAllFriends(false)} src={Back} alt="Back arrow icon"/>
@@ -61,7 +61,7 @@ const FriendsNav = () => {
         )
     } else {
     return (
-        <div className="bg-white min-h-screen w-[25vw] shadow-xl">
+        <div className="bg-white min-h-[91vh] max-h-[91vh] w-[25vw] shadow-xl overflow-scroll">
             <h1 className="px-8 py-4 text-2xl font-bold">Friends</h1>
             <ul className="flex flex-col gap-4 p-4">
                 <li onClick={() => { setFriendsRequest(false); setAllFriends(false)}} className="p-4 hover:bg-slate-100 cursor-pointer text-lg rounded-md">Home</li>

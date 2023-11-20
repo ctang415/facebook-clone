@@ -6,7 +6,8 @@ const MessageSchema = new Schema (
     {
         message: {type: String, min: 1},
         timestamp: {type: Date, default: Date.now()},
-        author: {type: Schema.Types.ObjectId, ref: 'User'}
+        author: {type: Schema.Types.ObjectId, ref: 'User'},
+        chat: { type: Schema.Types.ObjectId, ref: 'Chat'}
     }, 
     {
         toObject: { virtuals: true },

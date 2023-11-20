@@ -38,6 +38,10 @@ const Router = () => {
                     {
                         path: '/messenger',
                         element: <Messenger/>
+                    },
+                    {
+                        path: '/messenger/:messengerid',
+                        element: <Messenger/>
                     }
                 ]
             }
