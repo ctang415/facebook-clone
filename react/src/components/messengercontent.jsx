@@ -54,7 +54,7 @@ const MessengerContent = () => {
 
     if (params.messengerid !== undefined && chat.messages) {
         return (
-            <div className="min-h-screen min-w-[80vw] max-w-[80vw] flex flex-col pt-16 justify-between items-center bg-white border-2 border-grey">
+            <div className="min-h-screen min-w-[75vw] max-w-[75vw] flex flex-col pt-16 justify-between items-center bg-white border-2 border-grey">
                 <div className="border-b-2 p-2 min-w-full">
                     { chat.users ? chat.users.map(user => {
                         return (
