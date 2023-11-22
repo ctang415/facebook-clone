@@ -59,7 +59,7 @@ const MessengerContent = () => {
                     { chat.users ? chat.users.map(user => {
                         return (
                             <div className={ user.id !== userData.id ? "flex gap-2 items-center text-xl" : 'hidden'}>
-                            <img className="min-h-[6vh]" src={user.avatar} alt="User icon"/>
+                            <img className="min-h-[4vh] max-h-[4vh]" src={user.avatar} alt="User icon"/>
                             {user.full_name}
                             </div>
                         )
@@ -69,7 +69,7 @@ const MessengerContent = () => {
                 { chat.users ? chat.users.map(user => {
                     return (
                         <div className={ user.id !== userData.id ? "flex flex-col text-lg items-center" : 'hidden'}>
-                            <img className="min-h-[10vh]" src={user.avatar} alt="User icon"/>
+                            <img className="min-h-[8vh] max-h-[8vh]" src={user.avatar} alt="User icon"/>
                             {user.full_name}
                         </div>
                     )

@@ -15,7 +15,7 @@ const Friends = () => {
             <CreateMessage/>
             <ChatModal/>
             <img onClick={() => setMessageModal(true)} className="fixed right-1 bottom-1 min-h-[5vh] cursor-pointer" src={NewMessage} alt="Chat icon"></img>
-            <div className="flex flex-row pt-16">
+            <div className="flex flex-row">
             <FriendsNav/>
             <FriendsContent/>
             </div>

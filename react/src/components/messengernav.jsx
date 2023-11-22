@@ -25,8 +25,8 @@ const MessengerNav = () => {
                             {result.users.map( user => {
                                 return (
                                     <Link to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
-                                        <li key={user.id} className={ user.id !== userData.id ? "flex gap-2 min-w-full hover:bg-slate-100 rounded-md p-2" : 'hidden'}>
-                                        <img src={user.avatar} alt="User icon"/>
+                                        <li key={user.id} className={ user.id !== userData.id ? "flex gap-2 min-w-full hover:bg-slate-100 rounded-md p-2 items-center" : 'hidden'}>
+                                        <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
                                         {user.full_name}
                                     </li>        
                                 </Link>
@@ -45,14 +45,14 @@ const MessengerNav = () => {
                                 return (
                                 <Link
                                 to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
-                                    <li key={user.id} className={ user.full_name !== userData.full_name ? "min-w-[19vw] flex p-4 rounded-md gap-1 cursor-pointer hover:bg-slate-100 items-center flex-nowrap" : 'hidden'}>
-                                            <img src={user.avatar} alt="User icon"/>
+                                    <li key={user.id} className={ user.full_name !== userData.full_name ? "min-w-[23vw] flex p-4 rounded-md gap-1 cursor-pointer hover:bg-slate-100 items-center flex-nowrap" : 'hidden'}>
+                                            <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
                                             <p>{user.full_name}</p>
-                                        <div className="flex flex-nowrap">
+                                        <div className="flex flex-nowrap overflow-hidden">
                                         {chat.messages.map( (message, index) => {
                                             return (
                                                 <li key={message.id} 
-                                                className={ chat.messages.length - 1 !== index  ? "hidden" : "break-normal text-slate-400"}>
+                                                className={ chat.messages.length - 1 !== index  ? "hidden" : "break-normal text-slate-400 max-w-[14vw] max-h-[4vh]"}>
                                                 {decode(message.message)}
                                             </li>
                                             )

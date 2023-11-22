@@ -57,6 +57,24 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
                 </div>
                 <div className="p-4 bg-white rounded max-w-[30vw] shadow-md flex flex-col gap-2">
                     <h2 className="text-xl font-medium">Friends</h2>
+                    <div className="flex max-w-[30vw] flex-wrap gap-4 max-h-[20vh] overflow-scroll justify-center">
+                            {userData.friends && userData.friends.map(friend => {
+                                return (
+                                    friend.users.filter(user => user.id !== userData.id).map(x => {
+                                        return (
+                                            <Link to={`/profiles/${x.id}`}>
+                                                <div className="flex flex-col px-8 p-2 border-2 border-grey items-center gap-2 rounded-md" key={friend.id}>
+                                                    <div>
+                                                        <img src={x.avatar} className='max-h-[3vh]' alt="User icon"/>
+                                                    </div>
+                                                    <div className="font-bold">{x.full_name}</div>
+                                                </div>
+                                            </Link>
+                                        )
+                                    })
+                                )
+                            })}
+                        </div>
                 </div>
             </div>
             <div className="flex flex-col gap-6 min-w-fit">
@@ -86,7 +104,7 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
                     </div>
                     <div className="p-4 bg-white rounded max-w-[30vw] shadow-md flex flex-col gap-2">
                         <h2 className="text-xl font-medium">Friends</h2>
-                        <div className="flex max-h-[20vh] overflow-scroll">
+                        <div className="flex flex-wrap max-h-[20vh] overflow-scroll max-w-[30vw] gap-4 justify-center">
                             {userProfile.friends && userProfile.friends.map(friend => {
                                 return (
                                     friend.users.filter(user => user.id !== userProfile.id).map(x => {
@@ -94,7 +112,7 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
                                             <Link to={`/profiles/${x.id}`}>
                                                 <div className="flex flex-col px-8 p-2 border-2 border-grey items-center gap-2 rounded-md" key={friend.id}>
                                                     <div>
-                                                        <img src={x.avatar} alt="User icon"/>
+                                                        <img className="max-h-[3vh]" src={x.avatar} alt="User icon"/>
                                                     </div>
                                                     <div className="font-bold">{x.full_name}</div>
                                                 </div>

@@ -59,8 +59,8 @@ const Post = ( {post}) => {
             flex flex-col min-w-[42.5vw] max-w-[42.5vw] rounded border-2 border-slate-50 shadow-xl bg-white'>
                 <div className='flex flex-row justify-between gap-2'>
                     <Link to={`/profiles/${post.author.id}`}> 
-                    <div className='flex gap-2'>
-                    <img src={post.author.avatar} alt="User icon"/>
+                    <div className='flex gap-2 items-center'>
+                    <img className='max-h-[3vh]' src={post.author.avatar} alt="User icon"/>
                     <p className='font-bold'>{post.author.full_name}</p>
                     </div>
                     </Link>
@@ -80,10 +80,11 @@ const Post = ( {post}) => {
                     </div>
                 </div>
                 <div className='flex flex-row justify-around border-y-2 p-2'>
-                    <div onClick={ post.likes.includes(userData._id) ? () => unlikePost() : () => likePost()} className={ post.likes.includes(userData._id) ? 'flex gap-2 hover:bg-slate-200 cursor-pointer p-1 text-blue-500 font-bold' : 'flex gap-2 hover:bg-slate:200 cursor-pointer p-1' }>
-                        <img src={ post.likes.includes(userData._id) ? Liked : Like} alt="Like icon"/> Like
+                    <div onClick={ post.likes.includes(userData._id) ? () => unlikePost() : () => likePost()} className={ post.likes.includes(userData._id) ? 'flex gap-2 hover:bg-slate-100 cursor-pointer p-1 text-blue-500 font-bold rounded-md' : 'flex gap-2 hover:bg-slate-100 rounded-md cursor-pointer p-1' }>
+                        <img
+                        src={ post.likes.includes(userData._id) ? Liked : Like} alt="Like icon"/> Like
                     </div>
-                    <div className='flex gap-2 hover:bg-slate-200 cursor-pointer p-1'>
+                    <div className='flex gap-2 hover:bg-slate-100 rounded-md cursor-pointer p-1'>
                         <img src={CommentIcon} alt="Comment icon"/> Comment
                     </div>
                 </div>

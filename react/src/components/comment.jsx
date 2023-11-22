@@ -88,7 +88,7 @@ const Comment = ({id, postId, comments}) => {
                 })}
             </div>
             <form className='flex flex-row gap-2 min-w-fit' onSubmit={createComment}>
-                    <img className='min-w-[2vw]' src={userData.avatar} alt="User icon"></img>
+                    <img className='max-w-[3vh]' src={userData.avatar} alt="User icon"></img>
                     <input type="text" placeholder='Write a comment...' className='min-w-[82%] bg-slate-100 rounded-xl p-2' 
                     onChange={(e) => setNewComment(e.target.value)} value={newComment} required></input>
                     <button className='min-w-fit' type="submit" disabled={ newComment === '' ? true : false}>

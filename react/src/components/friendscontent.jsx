@@ -45,18 +45,18 @@ const FriendsContent = () => {
 
     if (allFriends && !friendsRequest) {
         return (
-            <div className="min-h-screen w-screen flex p-4 justify-center">
-            <div className={ userData.friends.filter(friend => friend.status === "Friends").length === 0 ? "hidden" : "items-center"}>
+            <div className="min-h-full w-screen pt-20">
+            <div className={ userData.friends.filter(friend => friend.status === "Friends").length === 0 ? "hidden" : "flex flex-row justify-center flex-wrap gap-8"}>
                 { userData.friends.filter(friend => friend.status === "Friends").map(x => {
                     return (
-                        <div key={x._id}>
+                        <div class key={x._id}>
                         {x.users.filter( y => y.id !== userData.id).map(user => {
                             return (
                                 <Link to={`/profiles/${user.id}`} key={user.id}>
-                                <li className="flex flex-row border-1 bg-white p-6 rounded-md shadow-md justify-between min-w-[25vw] min-h-[10vh]"
+                                <li className="flex flex-row border-1 bg-white p-6 rounded-md shadow-md justify-between min-w-[20vw] min-h-[10vh] items-center"
                                 key={user.id}>
                                     <div className="flex flex-row gap-2 p-2">
-                                        <img src={user.avatar} alt="Friend icon"/>
+                                        <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
                                         <p>{user.full_name}</p>
                                     </div>
                                 </li>
@@ -70,7 +70,7 @@ const FriendsContent = () => {
                 })}
             </div>
             <div className={ userData.friends &&
-                userData.friends.filter(friend => friend.status === "Friends").length === 0 ? "flex flex-col min-h-screen w-screen justify-center items-center" : "hidden"}>
+                userData.friends.filter(friend => friend.status === "Friends").length === 0 ? "flex flex-col min-h-full min-w-full justify-center items-center" : "hidden"}>
                 <h2 className="text-xl font-bold">
                     No friends to show
                 </h2>
@@ -80,12 +80,12 @@ const FriendsContent = () => {
         )
     } else if (friendsRequest && !allFriends) {
         return (
-            <div className="min-h-screen w-screen flex p-4">
+            <div className="min-h-full w-screen flex pt-20">
             <div className="items-center justify-center">
                 <h3 className={ userData.friends.filter(friend => friend.status === "Pending") ? "hidden" :"text-xl"}>
                 When you have friend requests or suggestions, you'll see them here.
                 </h3>
-                <ul>
+                <ul className="flex flex-row gap-6 justify-center flex-wrap">
                 { userData.friends &&
                 userData.friends.filter(friend => friend.status === "Pending").map(x => {
                     return (
@@ -93,9 +93,9 @@ const FriendsContent = () => {
                             {x.users.filter( y => y.id !== userData.id).map(user => {
                             return (
                                 <Link to={`/profiles/${user.id}`} key={user.id}>
-                                <li className="flex flex-row border-1 bg-white p-6 rounded-md shadow-md justify-between min-w-[25vw] min-h-[10vh]">
+                                <li className="flex flex-row border-1 bg-white p-6 rounded-md shadow-md justify-between min-w-[25vw] min-h-[12vh]">
                                     <div className="flex flex-row gap-2 p-2">
-                                        <img src={user.avatar} alt="Friend icon"/>
+                                        <img className="max-h-[3vh]" src={user.avatar} alt="Friend icon"/>
                                         <p>{user.full_name}</p>
                                     </div>
                                     <div className="flex flex-row gap-2">
@@ -116,7 +116,7 @@ const FriendsContent = () => {
         )
     } else {
         return (
-            <div className="min-h-screen flex items-center w-screen justify-center">
+            <div className="min-h-full flex flex-row items-center justify-center w-screen">
                 <h3 className="text-xl">
                 When you have friend requests or suggestions, you'll see them here.
                 </h3>

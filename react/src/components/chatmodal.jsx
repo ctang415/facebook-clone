@@ -39,10 +39,10 @@ const ChatModal = () => {
                             <div key={result.id} className="min-w-full">
                             {result.users.map( user => {
                                 return (
-                                    <Link
+                                    <Link onClick={() => setChatModal(false)}
                                 to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
-                                    <li key={user.id} className={ user.id !== userData.id ? "cursor-pointer flex min-w-full p-3 rounded-md hover:bg-slate-100 gap-2" : 'hidden'}>
-                                        <img src={user.avatar} alt="User icon"/>
+                                    <li key={user.id} className={ user.id !== userData.id ? "cursor-pointer flex min-w-full p-3 rounded-md hover:bg-slate-100 gap-2 items-center" : 'hidden'}>
+                                        <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
                                         {user.full_name}
                                     </li>
                                     </Link>        
@@ -52,21 +52,22 @@ const ChatModal = () => {
                         )
                     })}
                 </ul>
-                <ul className={ search !== '' ? 'hidden' : "flex flex-col items-center max-h-[10vh] overflow-x-hidden gap-2 overflow-y-scroll"}>
+                <ul className={ search !== '' ? 'hidden' : "min-w-full flex flex-col items-center max-h-[10vh] gap-2 overflow-scroll"}>
                     {userData.chats.map( chat => {
                         return (
-                            <div key={chat.id} className="min-w-full flex flex-row items-center">
+                            <div key={chat.id} className="min-w-full flex flex-row items-center ">
                             {chat.users.map(user => {
                                 return (
-                                <Link to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
-                                    <li key={user.id} className={ user.full_name !== userData.full_name ? "flex p-1 rounded-md gap-1 cursor-pointer hover:bg-slate-200 min-w-full items-center flex-nowrap" : 'hidden'}>
-                                            <img src={user.avatar} alt="User icon"/>
+                                <Link onClick={() => setChatModal(false)}
+                                to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
+                                    <li key={user.id} className={ user.full_name !== userData.full_name ? "flex p-1 rounded-md gap-1 cursor-pointer hover:bg-slate-100 min-w-[21vw] items-center flex-nowrap" : 'hidden'}>
+                                            <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
                                             <p>{user.full_name}</p>
-                                        <div className="flex flex-nowrap">
+                                        <div className="flex flex-nowrap overflow-hidden">
                                         {chat.messages.map( (message, index) => {
                                             return (
                                                 <li key={message.id} 
-                                                className={ chat.messages.length - 1 !== index  ? "hidden" : "break-normal text-slate-400"}>
+                                                className={ chat.messages.length - 1 !== index  ? "hidden" : "break-normal text-slate-400 max-w-[12vw] max-h-[5vh] p-2"}>
                                                 {decode(message.message)}
                                             </li>
                                             )
