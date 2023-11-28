@@ -3,15 +3,18 @@ import { useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Message from "./message"
 import Send from '../assets/send.svg'
+import { useRef } from "react"
+import {io} from 'socket.io-client'
 
 const MessengerContent = () => {
     const { userData, fetchUser } = useContext(LoginContext)
     const params = useParams()
     const [ chat, setChat ] = useState([])
     const [ message, setMessage ] = useState('')
+    const socket = useRef()
 
     const createMessage = async () => {
-        const newMessage = { message: message }
+        const newMessage = { message: message, timestamp: Date.now() }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${chat.url}/messages`, {
                 method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newMessage)
@@ -21,9 +24,16 @@ const MessengerContent = () => {
             }
             await response.json()
             if (response.status === 200) {
+                socket.current = io('http://localhost:3000', 
+                { transports: ['websocket', 'polling', 'flashsocket'],
+                credentials: 'include'
+                })
+                socket.current.emit('new-message-add', newMessage)
+                socket.current.on('get-message', (message) => {
+                    const messagesArray = chat.messages.concat(message)
+                    setChat({...chat, messages: messagesArray})
+                })
                 setMessage('')
-                fetchUser()
-                fetchChat()
             }
         } catch (err) {
             console.log(err)
@@ -39,7 +49,6 @@ const MessengerContent = () => {
             const data = await response.json()
             if (response.status === 200) {     
                 setChat(data.chat)
-                console.log(data)
             }
         } catch (err) {
             console.log(err)

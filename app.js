@@ -1,11 +1,10 @@
 require('dotenv').config()
 const mongoose = require('mongoose');
 const express = require('express')
-const { createServer } = require('node:http');  
+const http = require('http');
+const { createServer } = require('node:http')
 const bodyParser = require('body-parser')
-const { Server } = require('socket.io');
 const cors = require('cors')
-const index = require('./routes/index')
 const passport = require('passport')
 const session = require('express-session')
 
@@ -14,12 +13,14 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "mongo connection error"));
 
 const app = express();
-const server = createServer(app);
+// const server = require('http').Server(app)
+// const io = require('socket.io')(server)
+// const server = createServer(app);
 app.use(express.json());
 app.use(cors(
     { 
       origin: true, 
-      credentials:true,    
+      credentials: true,    
     }
     ));
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -28,12 +29,16 @@ app.use(session({  secret: `${process.env.JWT_SECRET}`, resave: false, saveUnini
 app.use(passport.initialize()); 
 app.use(passport.session())
 
-const io = new Server(server);
+
+const server = app.listen('3000', () => {
+    console.log('Now listening on port 3000')
+})
+
+let io = require('./socket').init(server)
+
+const index = require('./routes/index')
 
 app.use('/', index)
 
-app.listen('3000', () => {
-    console.log('Now listening on port 3000')
-})
 
 module.exports = app

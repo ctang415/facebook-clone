@@ -33,7 +33,6 @@ function App() {
         setUserData(data.user)
         setPosts(data.user.posts)
         data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
-        console.log(data)
       }
     } catch (err) {
       console.log(err)

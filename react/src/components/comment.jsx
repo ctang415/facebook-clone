@@ -6,6 +6,7 @@ import { decode } from 'html-entities'
 import MoreSettings from '../assets/more.svg'
 import CommentsModal from './commentsmodal'
 import { Link } from 'react-router-dom'
+import AlwaysScrollToBottom from './scrolltobottom'
 
 const Comment = ({id, postId, comments}) => {
     const { userData, fetchUser } = useContext(LoginContext)
@@ -65,18 +66,19 @@ const Comment = ({id, postId, comments}) => {
                 <div className='flex flex-row gap-1' key={comment._id}>
                 <CommentsModal postId={postId} comment={comment} commentModal={commentModal} setCommentModal={setCommentModal} 
                 commentEdit={commentEdit} setCommentEdit={setCommentEdit} commentid={comment._id} setCommentId={setCommentId} commentId={commentId}/>
-                <img src={comment.author.avatar} alt="User icon" className='min-w-[2vw] self-start mt-4'></img>
+                <img src={comment.author.avatar} alt="User icon" className='min-w-[2vw] max-h-[3vh] self-start mt-4'></img>
                 <div className='bg-slate-100 rounded-xl p-3 min-w-[37vw] flex flex-col'>
                     <Link to={`/profiles/${comment.author.id}`}>
                         <p className='font-bold'>{comment.author.full_name}</p>
                     </Link>
                     <div className='flex flex-row items-center'>
-                    <p className={ commentEdit ? 'hidden' : 'break-normal'}>{decode(comment.message)}</p>
+                        <p className={ commentEdit ? 'hidden' : 'break-normal'}>{decode(comment.message)}</p>
+                    <AlwaysScrollToBottom/>
                     <form className={commentEdit ? 'flex min-w-[82%] gap-1 items-center' : 'hidden' } onSubmit={updateComment}>
                         <input className={'p-1 min-w-[82%]'} type="text" defaultValue={ newComment === '' ? decode(comment.message) : newComment} onChange={(e) => setNewComment(e.target.value)}></input>
                         <p className={commentEdit ? 'flex text-blue-500 cursor-pointer' : 'hidden' } onClick={() => setCommentEdit(false)}>Cancel</p>
                         <button className='min-w-fit' type="submit">
-                            <img className={ newComment !== '' && newComment !== decode(comment.message) ? 'flex min-w-[2vw]' : 'hidden'} src={Send} alt="Send icon"/>
+                            <img className={ newComment !== '' && newComment !== decode(comment.message) ? 'flex min-w-[2vw] max-h-[3vh]' : 'hidden'} src={Send} alt="Send icon"/>
                         </button>
                     </form>
                      <img onClick={() => setCommentModal(true)}

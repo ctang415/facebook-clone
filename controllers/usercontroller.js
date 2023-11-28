@@ -61,7 +61,6 @@ exports.user_create_post = [
 
 exports.user_detail_get = asyncHandler (async (req, res, next) => {
     const user = await User.findById(req.params.userid)
-    console.log(req.params.userid)
     if (isValidObjectId(req.params.userid) === false) {
         res.status(400).json({error: "User does not exist"})
         return
@@ -71,10 +70,12 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
         return
     } 
         const limitedUser = await User.findById(req.params.userid).select('-password').populate(
-        [{path :'posts', populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, 
+        [{path :'posts', options: { sort: { 'timestamp' : 1}},
+        populate: [{ path: 'author', select: '-password' }, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, 
         { path: 'chats', populate: [{ path: 'messages', populate: {path: 'author', select: '-password'}}, {path: 'users', select: '-password'} ]}, 
-        {path: 'friends', populate: {path: 'users', select: '-password', populate: {path: 'posts', populate: [{path:'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'} }] }}} ])
-        console.log(limitedUser)
+        {path: 'friends', populate: {path: 'users', select: '-password', populate: {path: 'posts', options: { sort: { 'timestamp' : 1}},
+        populate: [{path:'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'} }] }}} ])
+        //console.log(limitedUser)
         res.status(200).json({user: limitedUser})
 })
 

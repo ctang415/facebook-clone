@@ -4,12 +4,25 @@ import { useState, useEffect } from "react"
 import { useContext } from "react"
 import { Link } from "react-router-dom"
 import { LoginContext } from "./logincontext"
+import {io} from 'socket.io-client'
 
 const ChatModal = () => {
     const { userData, chatModal, setChatModal} = useContext(LoginContext)
     const [ search, setSearch ] = useState('')
     const [ results, setResults ] = useState([])
     const chatRef = useRef(null)
+    const socket = useRef()
+
+    useEffect(() => {
+        socket.current = io('http://localhost:3000', 
+            { transports: ['websocket', 'polling', 'flashsocket'],
+            credentials: 'include'
+        })
+        socket.current.emit('new-user-add', userData._id)
+        socket.current.on('get-users', (users) => {
+            console.log(users)
+        })
+    }, [userData])
 
     const closeChatMenu = (e) => {
         if (chatRef.current && chatModal && !chatRef.current.contains(e.target)){
@@ -27,7 +40,7 @@ const ChatModal = () => {
 
     if (chatModal) {
         return (
-            <div className="min-w-[22vw] max-w-[22vw] bg-white shadow-xl absolute mt-16 p-2 right-4 flex flex-col gap-4" ref={chatRef}>
+            <div className="min-w-[22vw] max-w-[22vw] bg-white shadow-xl fixed mt-16 p-2 right-4 flex flex-col gap-4" ref={chatRef}>
                 <div>
                     <h1 className="text-2xl font-bold">Chats</h1>
                 </div>

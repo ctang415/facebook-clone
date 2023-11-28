@@ -2,6 +2,7 @@ import { decode } from "html-entities"
 import { useContext } from "react"
 import { useState } from "react"
 import { LoginContext } from "./logincontext"
+import AlwaysScrollToBottom from "./scrolltobottom"
 
 const Message = ({messages}) => {
     const {userData} = useContext(LoginContext)
@@ -16,6 +17,7 @@ const Message = ({messages}) => {
                 className={message.author.id !== userData.id ? "text-md rounded-full bg-slate-200 p-3 break-normal self-start" : " self-end text-md rounded-full bg-blue-500 text-white p-3 break-normal" }>
                     {decode(message.message)}
                 </div>
+                <AlwaysScrollToBottom/>                
                 </li>
             )
         })}

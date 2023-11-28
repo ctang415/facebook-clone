@@ -26,7 +26,6 @@ const Home = () => {
             const data = await response.json()
             if (response.status === 200) {
                 setUserList(data.users)
-                console.log(data.users)
             }
         } catch (err) {
             console.log(err)

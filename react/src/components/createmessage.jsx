@@ -5,6 +5,7 @@ import { LoginContext } from './logincontext'
 import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { useRef } from 'react'
+import {io} from 'socket.io-client'
 
 const CreateMessage = () => {
     const { userList, fetchUser, userData, messageModal, setMessageModal} = useContext(LoginContext)
@@ -16,7 +17,9 @@ const CreateMessage = () => {
     const [ message, setMessage ] = useState('')
     const [ chatModal, setChatModal ] = useState(false)
     const chatRef = useRef(null)
-    
+    const [ userChat, setUserChat] = useState([])
+    const socket = useRef()
+
     const createChat = async (id) => {
         const newChat = { friendid: id}
         try {
@@ -36,7 +39,7 @@ const CreateMessage = () => {
     }
 
     const createMessage = async () => {
-        const newMessage = { message: message }
+        const newMessage = { message: message, timestamp: Date.now()}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${chat.url}/messages`, {
                 method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newMessage)
@@ -46,8 +49,17 @@ const CreateMessage = () => {
             }
             await response.json()
             if (response.status === 200) {
+                socket.current = io('http://localhost:3000', 
+                { transports: ['websocket', 'polling', 'flashsocket'],
+                credentials: 'include'
+                })
+                socket.current.emit('new-messenger-add', newMessage)
+                socket.current.off('get-message-messenger')
+                socket.current.on('get-message-messenger', (message) => {
+                const messageArray = userChat.find( x => x.users.some( y => y.id === sender)).messages.concat(message)
+                setUserChat(userChat.map( x => (x.users.some( y => y.id === sender)) ? {...x, messages: messageArray }  : x ))
+            })
                 setMessage('')
-                fetchUser()
             }
         } catch (err) {
             console.log(err)
@@ -56,7 +68,7 @@ const CreateMessage = () => {
 
     const deleteChat = async () => {
         try {
-            const response = await fetch (`http://localhost:3000${userData.url}${userData.chats.find(x=> x.users.includes(sender)).url}`, {
+            const response = await fetch (`http://localhost:3000${userData.url}${userData.chats.find(x=> x.users.some(y => y.id === sender)).url}`, {
                 method: 'DELETE', headers: {'Content-type': 'application/json'}, body: JSON.stringify({ friendid: sender})
             })
             if (!response.ok) {
@@ -68,6 +80,7 @@ const CreateMessage = () => {
                 setSender('')
                 setMessageSender('')
                 setResult([])
+                setMessageModal(false)
                 fetchUser()
             }
         } catch (err) {
@@ -86,6 +99,7 @@ const CreateMessage = () => {
             createChat(id)
         } else {
             setChat(userData.chats.find(x=> x.users.some( y => y.id === id)))
+            setUserChat(userData.chats)
         }
     }
 
@@ -103,7 +117,7 @@ const CreateMessage = () => {
             <div className="p-4 fixed right-20 bottom-1 bg-white min-h-[65vh] max-h-[65vh] min-w-[20vw] max-w-[20vw] shadow-2xl rounded z-20">
                 <div className="flex flex-row items-center">
                     <p className={ sender !== '' ? 'hidden' : 'flex' }>New message</p>
-                    <button onClick={() => { setMessageModal(false); setSender(''); setMessageSender(''); setResult('') }} 
+                    <button onClick={() => { setMessageModal(false); setSender(''); setMessageSender(''); setResult(''); fetchUser() }} 
                         type="button" className="text-blue-600 bg-transparent hover:bg-gray-200 rounded-full text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
                         <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -122,43 +136,44 @@ const CreateMessage = () => {
             ref={chatRef}>
                 <li onClick={() => deleteChat() } className="p-2 hover:bg-slate-100 cursor-pointer">Delete chat</li>
             </ul>
-            {result.map(res => {
+            { result.length !== 0 ? result.map(res => {
                         return (
-                        <li className="flex flex-row gap-1 items-center p-2" onClick={() => setChatModal(true)}>
+                        <li key={res._id} className="flex flex-row gap-1 items-center p-2" onClick={() => setChatModal(true)}>
                             <img className="max-h-[3vh]" src={res.avatar} alt="User icon"/>
                             {res.full_name}
                         </li>            
                     )
-                })}
+            }) : null }
                     </div>
                 <div className={messageSender !== '' && search === true ? "absolute top-6 z-30 bg-white p-4 w-[18vw] min-h-[55vh] max-h-[55vh] overflow-scroll rounded-md shadow-md overflow-scroll" : 'hidden'}>
-                    {result.map(res => {
+                    { result.length !== 0 ? result.map(res => {
                     return (
-                        <li className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2" onClick={() => {setMessageSender(res.full_name); setSender(res.id); setSearch(false); checkChat(res.id) }}>
+                        <li key={res.id} 
+                        className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2" onClick={() => {setMessageSender(res.full_name); setSender(res.id); setSearch(false); checkChat(res.id) }}>
                             <img className="max-h-[3vh]" src={res.avatar} alt="User icon"/>
                             {res.full_name}
                         </li>            
                     )
-                })}
+                }) : null }
             </div>
                     <div className={ messageSender !== '' ? 'flex flex-col items-center min-h-[47vh] max-h-[47vh] overflow-scroll p-2' : 'hidden'}>
-                        { userData.chats.find(x => x.users.some( y => y.id === sender)) !== undefined ? 
-                            <div key={userData.chats.find(x => x.users.some( y => y.id === sender)).id}>
-                                {result.map( res => {
+                        { userChat.find(x => x.users.some( y => y.id === sender)) !== undefined ? 
+                            <div key={userChat.find(x => x.users.some( y => y.id === sender)).id}>
+                                { result.length !== 0 ? result.map( res => {
                                     return (
                                         <div key={res.id} className='flex flex-col items-center gap-1'>
                                         <img src={res.avatar} alt="User icon"></img>
                                         <h3 className='font-bold'>{res.full_name}</h3>
                                         </div>
                                     )
-                                })}
-                                <div key={userData.chats.find(x => x.users.some( y => y.id === sender)).id}>
+                                }) : null }
+                                <div key={userChat.find(x => x.users.some( y => y.id === sender)).id}>
                                     <ul className='flex flex-col gap-3'>
-                                        <Message messages={userData.chats.find(x => x.users.some( y => y.id === sender)).messages}/>
+                                        <Message messages={userChat.find(x => x.users.some( y => y.id === sender)).messages}/>
                                     </ul>        
                                 </div>
                             </div>
-                     : null }                      
+                     : null }
                     </div>
                     <div className={ messageSender !== '' ? 'flex flex-row gap-2 items-center': 'hidden'}>
                         <input className='p-1 min-w-[15vw] rounded-full bg-slate-100' type="text"
