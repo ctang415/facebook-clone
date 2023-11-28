@@ -19,7 +19,8 @@ function App() {
   const [ chatModal, setChatModal ] = useState(false)
   const [ posts, setPosts ] = useState([])
   const [ userList, setUserList] = useState([])
-
+  const [ userChat, setUserChat] = useState([])
+    
   const fetchUser = async () => {
     try {
       const response = await fetch (`http://localhost:3000${userData.url}`, {
@@ -32,6 +33,7 @@ function App() {
       if (response.status === 200) {
         setUserData(data.user)
         setPosts(data.user.posts)
+        setUserChat(data.user.chats)
         data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
       }
     } catch (err) {
@@ -44,7 +46,7 @@ function App() {
       <LoginContext.Provider value={{ modal, setModal, messageModal, setMessageModal, settingMenu, setSettingMenu,
         userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
         friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal,
-        setChatModal, fetchUser, setPosts, posts, userList, setUserList }}>
+        setChatModal, fetchUser, setPosts, posts, userList, setUserList, userChat, setUserChat }}>
         <Outlet/>
       </LoginContext.Provider>
     </div>

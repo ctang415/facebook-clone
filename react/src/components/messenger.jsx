@@ -22,7 +22,6 @@ const Messenger = () => {
             const data = await response.json()
             if (response.status === 200) {     
                 setChat(data)
-                console.log(data)
             }
         } catch (err) {
             console.log(err)

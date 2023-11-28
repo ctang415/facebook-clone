@@ -32,6 +32,8 @@ export const LoginContext = createContext(
         setPosts: () => {},
         posts: null,
         userList: null,
-        setUserList: () => {}
+        setUserList: () => {},
+        userChat: null,
+        setUserChat: () => {}
     }
 )

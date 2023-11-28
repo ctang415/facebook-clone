@@ -13,17 +13,6 @@ const ChatModal = () => {
     const chatRef = useRef(null)
     const socket = useRef()
 
-    useEffect(() => {
-        socket.current = io('http://localhost:3000', 
-            { transports: ['websocket', 'polling', 'flashsocket'],
-            credentials: 'include'
-        })
-        socket.current.emit('new-user-add', userData._id)
-        socket.current.on('get-users', (users) => {
-            console.log(users)
-        })
-    }, [userData])
-
     const closeChatMenu = (e) => {
         if (chatRef.current && chatModal && !chatRef.current.contains(e.target)){
           setChatModal(false)

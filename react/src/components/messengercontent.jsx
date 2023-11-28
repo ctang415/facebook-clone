@@ -44,6 +44,7 @@ const MessengerContent = () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/chats/${userData.chats.find(x => x.users.find(y => y.id === params.messengerid)).id}`)
             if (!response.ok) {
+                setChat([])
                 throw await response.json()
             }
             const data = await response.json()
@@ -56,10 +57,8 @@ const MessengerContent = () => {
     }
 
     useEffect(() => {
-        if (params.messengerid !== undefined) {
-            fetchChat()
-        }
-    }, [params])
+        fetchChat()
+    }, [params, fetchUser])
 
     if (params.messengerid !== undefined && chat.messages) {
         return (

@@ -8,7 +8,7 @@ import { useRef } from 'react'
 import {io} from 'socket.io-client'
 
 const CreateMessage = () => {
-    const { userList, fetchUser, userData, messageModal, setMessageModal} = useContext(LoginContext)
+    const { userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal} = useContext(LoginContext)
     const [ messageSender, setMessageSender ] = useState('')
     const [ sender, setSender ] = useState('')
     const [ result, setResult ] = useState([])
@@ -17,7 +17,6 @@ const CreateMessage = () => {
     const [ message, setMessage ] = useState('')
     const [ chatModal, setChatModal ] = useState(false)
     const chatRef = useRef(null)
-    const [ userChat, setUserChat] = useState([])
     const socket = useRef()
 
     const createChat = async (id) => {
@@ -29,9 +28,10 @@ const CreateMessage = () => {
             if (!response.ok) {
                 throw await response.json()
             }
-            await response.json()
+            const data = await response.json()
             if (response.status === 200) {
                 fetchUser()
+                setChat(data.chat)
             }
         } catch (err) {
             console.log(err)
@@ -82,7 +82,8 @@ const CreateMessage = () => {
                 setResult([])
                 setMessageModal(false)
                 fetchUser()
-            }
+                setChat([])
+           }
         } catch (err) {
             console.log(err)
         }
@@ -99,14 +100,12 @@ const CreateMessage = () => {
             createChat(id)
         } else {
             setChat(userData.chats.find(x=> x.users.some( y => y.id === id)))
-            setUserChat(userData.chats)
         }
     }
 
     useEffect(() => {
         document.addEventListener("mousedown", closeChatMenu);
          }, [closeChatMenu]);
-
 
     useEffect(() => {
         setResult(userList.filter(user => user.full_name.includes(messageSender)))
