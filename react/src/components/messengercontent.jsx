@@ -57,7 +57,9 @@ const MessengerContent = () => {
     }
 
     useEffect(() => {
-        fetchChat()
+        if (params.messengerid !== undefined) {
+            fetchChat()
+        }
     }, [params, fetchUser])
 
     if (params.messengerid !== undefined && chat.messages) {
