@@ -3,7 +3,7 @@ import { useState } from "react"
 import { LoginContext } from "./logincontext"
 
 const AvatarModal = ( {avatarEdit, setAvatarEdit} ) => {
-    const { userData, fetchUser } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
     const [ avatar, setAvatar ] = useState(null)
     const [ errors, setErrors ] = useState([])
 
@@ -17,7 +17,11 @@ const AvatarModal = ( {avatarEdit, setAvatarEdit} ) => {
                 method: 'PUT', credentials: "include", body: data
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

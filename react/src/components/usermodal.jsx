@@ -9,9 +9,11 @@ const UserModal = ( {userModal, setUserModal}) => {
 
     const logout = async () => {
         setUserModal(false)
+        const deleteToken = { token: userData.token, user: userData.id }
         try {
-            const response = await fetch ('http://localhost:3000/logout', {
-                method: 'POST', headers: {'Content-type': 'application/json'}
+            const response = await fetch ('http://localhost:4000/', {
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, 
+                credentials: 'include', body: JSON.stringify(deleteToken)
             })
             if (!response.ok) {
                 throw await response.json()

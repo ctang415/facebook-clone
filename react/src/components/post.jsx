@@ -10,21 +10,21 @@ import Liked from '../assets/liked.svg'
 import { Link, useParams } from 'react-router-dom'
 
 const Post = ( {post}) => {
-    const { editPost, setEditPost, setModal, modal, userData, fetchUser }  = useContext(LoginContext)
+    const { refreshToken, editPost, setEditPost, setModal, modal, userData, fetchUser }  = useContext(LoginContext)
     const [settingMenu, setSettingMenu] = useState(false)
     const params = useParams()
-
-    useEffect (() => {
-        console.log(post)
-    }, [])
     
     const likePost = async () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${post.url}/likes`, {
-                method: 'POST', headers: {'Content-type': 'application/json'}
+                method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -38,10 +38,14 @@ const Post = ( {post}) => {
     const unlikePost = async () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${post.url}/likes`, {
-                method: 'DELETE', headers: {'Content-type': 'application/json'}
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

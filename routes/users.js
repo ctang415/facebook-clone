@@ -5,6 +5,7 @@ const posts = require('./posts')
 const friends = require('./friends')
 const chats = require('./chats')
 const multer  = require('multer')
+const authenticateToken = require('./authenticate') 
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -17,7 +18,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage, limits: {
     fileSize: 1024 * 1024 * 5 }})
-
+    
+router.use(authenticateToken)
 
 router.get('/:userid', user_controller.user_detail_get)
 
@@ -41,4 +43,4 @@ router.use('/:userid/friends', friends)
 
 router.use('/:userid/chats', chats)
 
-module.exports = router
+module.exports =  router

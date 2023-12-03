@@ -16,7 +16,7 @@ import CoverModal from './covermodal'
 const Profile = () => {
     const [ profileEdit, setProfileEdit ] = useState(false)
     const profileTabs = [{ name: 'Posts'}, { name: 'About'}, { name: 'Friends'}, { name: 'Photos'}, { name: 'Videos'}]
-    const {setMessageModal, userData, fetchUser} = useContext(LoginContext)
+    const { refreshToken, setMessageModal, userData, fetchUser} = useContext(LoginContext)
     const [ userProfile, setUserProfile ] = useState([])
     const [ userPosts, setUserPosts] = useState([])
     const [ avatarEdit, setAvatarEdit ] = useState(false)
@@ -25,9 +25,15 @@ const Profile = () => {
     
     const fetchProfile = async () => {
         try {
-            const response = await fetch (`http://localhost:3000/users/${params.profileid}`)
+            const response = await fetch (`http://localhost:3000/users/${params.profileid}`, {
+                credentials: 'include'
+            })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             const data = await response.json()
             if (response.status === 200) {

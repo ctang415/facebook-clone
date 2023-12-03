@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const ProfileModal = ({setProfileEdit, profileEdit}) => {
-    const { userData, fetchUser, setLogin } = useContext(LoginContext)
+    const { userData, fetchUser, setLogin, refreshToken } = useContext(LoginContext)
     const navigate = useNavigate()
     const [ errors, setErrors ] = useState([])
     const [ firstName, setFirstName ] = useState(userData.first_name)
@@ -29,10 +29,15 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
     }
         try {
             const response = await fetch(`http://localhost:3000${userData.url}`, {
-                method: 'PUT', headers: {'Content-type': 'application/json'}, body: JSON.stringify(updatedInformation)
+                method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(updatedInformation)
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -64,10 +69,14 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
     const deleteAccount = async () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}`, {
-                method :'DELETE', headers: {'Content-type': 'application/json'}
+                method :'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useContext } from 'react'
 import { LoginContext } from './logincontext'
 
 const CreatePost = () => {
-    const { modal, setModal, editPost, setEditPost, userData, fetchUser } = useContext(LoginContext)
+    const { modal, setModal, editPost, setEditPost, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const postRef = useRef(null)
     const [ post, setPost ] = useState('')
 
@@ -18,10 +18,15 @@ const CreatePost = () => {
         const newPost = { message: post, author: userData._id }
         try {
             const response = await fetch(`http://localhost:3000/users/${userData._id}/posts`, {
-                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newPost)
+                method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(newPost)
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status == 403) {
+                    refreshToken()
+                } else {                
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -40,10 +45,15 @@ const CreatePost = () => {
         const updatedPost = { message: post}
         try {
             const response = await fetch (`http://localhost:3000/users/${userData._id}${editPost.url}`, {
-                method: 'PUT', headers: {'Content-type': 'application/json'}, body: JSON.stringify(updatedPost)
+                method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(updatedPost)
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile, setAvatarEdit, setCoverEdit }) => {
-    const { userData, fetchUser } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
     const params = useParams()
     const [ requestId, setRequestId ] = useState('')
     
@@ -11,10 +11,15 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
         const friendRequest = { id: userData.id, friendid: params.profileid}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends`, {
-                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(friendRequest) 
+                method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(friendRequest) 
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status == 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -28,10 +33,14 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
     const acceptRequest = async () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${requestId}`, {
-                method: 'PUT', headers: {'Content-type': 'application/json'}
+                method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -47,10 +56,15 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
         const request = { user: userData.id, friend: params.profileid }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${requestId}`, {
-                method: 'DELETE', headers: {'Content-type': 'application/json'}, body: JSON.stringify(request)
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                 body: JSON.stringify(request)
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

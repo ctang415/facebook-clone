@@ -8,7 +8,8 @@ import { useRef } from 'react'
 import {io} from 'socket.io-client'
 
 const CreateMessage = () => {
-    const { userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal} = useContext(LoginContext)
+    const { userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal,
+    refreshToken} = useContext(LoginContext)
     const [ messageSender, setMessageSender ] = useState('')
     const [ sender, setSender ] = useState('')
     const [ result, setResult ] = useState([])
@@ -23,10 +24,15 @@ const CreateMessage = () => {
         const newChat = { friendid: id}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/chats`, {
-                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newChat) 
+                method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(newChat) 
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status == 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             const data = await response.json()
             if (response.status === 200) {
@@ -42,10 +48,15 @@ const CreateMessage = () => {
         const newMessage = { message: message, timestamp: Date.now()}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${chat.url}/messages`, {
-                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newMessage)
+                method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include', 
+                body: JSON.stringify(newMessage)
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status == 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -69,10 +80,15 @@ const CreateMessage = () => {
     const deleteChat = async () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${userData.chats.find(x=> x.users.some(y => y.id === sender)).url}`, {
-                method: 'DELETE', headers: {'Content-type': 'application/json'}, body: JSON.stringify({ friendid: sender})
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify({ friendid: sender})
             })
             if (!response.ok) {
+                if (response.status == 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

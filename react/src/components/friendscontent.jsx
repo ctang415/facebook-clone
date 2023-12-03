@@ -3,17 +3,22 @@ import { LoginContext } from "./logincontext"
 import { Link } from 'react-router-dom'
 
 const FriendsContent = () => {
-    const { allFriends, friendsRequest, userData, fetchUser } = useContext(LoginContext)
+    const { allFriends, friendsRequest, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const friends = []
 
     const removeRequest = async (id, friendid) => {
         const request = { user: userData.id, friend: friendid }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${id}`, {
-                method: 'DELETE', headers: {'Content-type': 'application/json'}, body: JSON.stringify(request)
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(request)
             })
             if (!response.ok) {
+                if (response.status == 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -28,10 +33,14 @@ const FriendsContent = () => {
     const acceptRequest = async (id) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${id}`, {
-                method: 'PUT', headers: {'Content-type': 'application/json'}
+                method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.statuus == 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

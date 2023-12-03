@@ -16,7 +16,8 @@ const UserSchema = new Schema (
         privacy: {type: String, enum:["Public", "Friends", "Private"], default: "Public"},
         cover: { type: String},
         location: { type: String},
-        school: { type: String}
+        school: { type: String},
+        token: {type: Schema.Types.ObjectId, default: null, ref: 'Token'}
     }, 
     {
         minimize: false,

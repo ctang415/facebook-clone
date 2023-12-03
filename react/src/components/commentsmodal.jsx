@@ -5,7 +5,7 @@ import { LoginContext } from "./logincontext"
 
 const CommentsModal = ({ postId,
     commentModal, setCommentModal, comment, commentEdit, setCommentEdit, commentid, setCommentId}) => {
-    const { userData, fetchUser} = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken} = useContext(LoginContext)
     const commentRef = useRef(null)
 
     const closeCommentMenu = (e) => {
@@ -21,13 +21,16 @@ const CommentsModal = ({ postId,
     }
 
     const deleteComment = async () => {
-        console.log(comment)
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${postId}${comment.url}`, {
-                method: 'DELETE', headers: {'Content-type': 'application/json'}
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

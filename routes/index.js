@@ -7,7 +7,7 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs')
 const LocalStrategy = require('passport-local').Strategy;
 const jwt = require('jsonwebtoken')
-
+/*
 passport.use(
     new LocalStrategy({
         usernameField: 'email',
@@ -37,7 +37,7 @@ passport.use(
     })
   );
 
-  router.post('/', function (req, res, next) { 
+ router.post('/', function (req, res, next) { 
     passport.authenticate('local', {session: false}, (err, user, info) => {
         if (err || !user) {
         return res.status(400).json({
@@ -48,10 +48,11 @@ passport.use(
             if (err) {
                 return res.status(401).json(err);
             }
-            const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {expiresIn: '1hr' });
-            return res.status(200).json({user, token})
+            const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN_SECRET, {expiresIn: '20m' });
+            return res.status(200).json({user, accessToken})
         });
-    })(req, res);
+    })
+    (req, res);
 } )
 
 router.post('/logout', function(req, res, next){
@@ -61,17 +62,7 @@ router.post('/logout', function(req, res, next){
       res.status(200).json({success: true})
     })
 })
-
-function authenticateToken (req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) return res.status(401).json({error: 'Token does not exist'})
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-       if (err) return res.status(403).json({error: err})
-       req.user = user 
-       next()
-    } )
-}
+*/
 
 router.use('/users', users)
 

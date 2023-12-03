@@ -4,7 +4,7 @@ import { useContext } from "react"
 import { LoginContext } from "./logincontext"
 
 const SettingsModal = ({settingMenu, setSettingMenu, post}) => {
-    const { setEditPost, setModal, userData, fetchUser} = useContext(LoginContext)
+    const { setEditPost, setModal, userData, fetchUser, refreshToken} = useContext(LoginContext)
     const settingRef = useRef(null)
 
     const closeSettingMenu = (e) => {
@@ -22,10 +22,14 @@ const SettingsModal = ({settingMenu, setSettingMenu, post}) => {
     const deletePost = async () => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${post.url}`, {
-                method: 'DELETE', headers: {'Content-type': 'application/json'}
+                method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

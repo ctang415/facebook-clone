@@ -4,7 +4,7 @@ import { LoginContext } from "./logincontext"
 import Post from "./post"
 
 const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }) => {
-    const { userData, fetchUser } = useContext(LoginContext)
+    const { refreshToken, userData, fetchUser } = useContext(LoginContext)
     const [ editInformation, setEditInformation ] = useState(false)
     const [ school, setSchool] = useState('')
     const [ location, setLocation ] = useState('')
@@ -15,10 +15,15 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
         const newInformation = {school: school, location: location}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/information`, {
-                method: 'PUT', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newInformation)
+                method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(newInformation)
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

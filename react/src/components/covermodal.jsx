@@ -3,7 +3,7 @@ import { useState } from "react"
 import { LoginContext } from "./logincontext"
 
 const CoverModal = ( {coverEdit, setCoverEdit} ) => {
-    const { userData, fetchUser } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
     const [ cover, setCover ] = useState(null)
     const [ errors, setErrors ] = useState([])
 
@@ -17,7 +17,11 @@ const CoverModal = ( {coverEdit, setCoverEdit} ) => {
                 method: 'PUT', credentials: "include", body: data
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status == 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

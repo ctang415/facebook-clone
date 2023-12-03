@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 import AlwaysScrollToBottom from './scrolltobottom'
 
 const Comment = ({id, postId, comments}) => {
-    const { userData, fetchUser } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
     const [ newComment, setNewComment ] = useState('')
     const [ commentModal, setCommentModal] = useState(false)
     const [ commentEdit, setCommentEdit] = useState(false)
@@ -20,17 +20,21 @@ const Comment = ({id, postId, comments}) => {
         const myComment = { message: newComment, author: userData._id, id: id}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${postId}/comments`, {
-                method:'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(myComment)
+                method:'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(myComment)
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
                 alert('Successfully created comment')
                 fetchUser()
                 setNewComment('')
-                
             }
         } catch (err) {
             console.log(err)
@@ -42,10 +46,15 @@ const Comment = ({id, postId, comments}) => {
         const updatedComment = { message: newComment }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${postId}/comments/${commentId}`, {
-                method: 'PUT', headers: {'Content-type': 'application/json'}, body: JSON.stringify(updatedComment)
+                method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(updatedComment)
             })
             if (!response.ok) {
-                throw await response.json()
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
+                    throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {

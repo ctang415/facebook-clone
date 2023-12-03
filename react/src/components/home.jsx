@@ -10,18 +10,23 @@ import Register from './register'
 
 const Home = () => {
     const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal, userData,
-    setPosts, posts, setUserData, setUserList } = useContext(LoginContext) 
+    setPosts, posts, setUserData, setUserList, refreshToken } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
-    let filteredPosts = [] 
         
     const grabUsers = async () => {
         try {
-            const response = await fetch ('http://localhost:3000/users')
+            const response = await fetch ('http://localhost:3000/users', {
+                credentials: 'include', 
+            })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             const data = await response.json()
             if (response.status === 200) {
@@ -37,8 +42,9 @@ const Home = () => {
         setErrors([])
         const account = { email: email, password: password}
         try {
-            const response = await fetch ('http://localhost:3000', {
-                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(account)
+            const response = await fetch ('http://localhost:4000', {
+                method: 'POST', headers: {'Content-type': 'application/json'}, 
+                credentials: 'include', body: JSON.stringify(account)
             })
             if (!response.ok) {
                 throw await response.json()
@@ -51,7 +57,6 @@ const Home = () => {
                 setPosts(data.user.posts)
                 data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
                 grabUsers()
-                console.log(data)
             }
         } catch (err) {
             console.log(err)

@@ -7,7 +7,7 @@ import { useRef } from "react"
 import {io} from 'socket.io-client'
 
 const MessengerContent = () => {
-    const { userData, fetchUser } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
     const params = useParams()
     const [ chat, setChat ] = useState([])
     const [ message, setMessage ] = useState('')
@@ -17,10 +17,15 @@ const MessengerContent = () => {
         const newMessage = { message: message, timestamp: Date.now() }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${chat.url}/messages`, {
-                method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(newMessage)
+                method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                body: JSON.stringify(newMessage)
             })
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 throw await response.json()
+                }
             }
             await response.json()
             if (response.status === 200) {
@@ -42,10 +47,15 @@ const MessengerContent = () => {
 
     const fetchChat = async () => {
         try {
-            const response = await fetch (`http://localhost:3000${userData.url}/chats/${userData.chats.find(x => x.users.find(y => y.id === params.messengerid)).id}`)
+            const response = await fetch (`http://localhost:3000${userData.url}/chats/${userData.chats.find(x => x.users.find(y => y.id === params.messengerid)).id}`,
+            { credentials: 'include'} )
             if (!response.ok) {
+                if (response.status === 403) {
+                    refreshToken()
+                } else {
                 setChat([])
                 throw await response.json()
+                }
             }
             const data = await response.json()
             if (response.status === 200) {     

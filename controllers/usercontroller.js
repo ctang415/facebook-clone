@@ -80,6 +80,7 @@ exports.user_detail_get = asyncHandler (async (req, res, next) => {
 })
 
 exports.user_list = asyncHandler( async (req, res, next) => {
+    console.log('hello')
     const allUsers = await User.find({}).select('-password -birthdate')
     res.status(200).json({success: true, users: allUsers})
 })

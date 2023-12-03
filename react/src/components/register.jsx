@@ -22,7 +22,6 @@ const Register = ({register, setRegister}) => {
         e.preventDefault()
         setErrors([])
         const registerData = { first_name: firstName, last_name: lastName, email: email, password: password, birthdate: moment(birthday).format('YYYY-MM-DD'), avatar: User}
-        console.log(registerData)
         try {
         const response = await fetch ('http://localhost:3000/users', {
             method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(registerData)})

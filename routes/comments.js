@@ -1,11 +1,12 @@
 const express = require('express')
 const router = express.Router()
 const comment_controller = require('../controllers/commentcontroller')
+const authenticateToken = require('./authenticate')
 
-router.post('/', comment_controller.comment_create_post )
+router.post('/', authenticateToken, comment_controller.comment_create_post )
 
-router.put('/:commentid', comment_controller.comment_update )
+router.put('/:commentid', authenticateToken, comment_controller.comment_update )
 
-router.delete('/:commentid', comment_controller.comment_delete )
+router.delete('/:commentid', authenticateToken, comment_controller.comment_delete )
 
 module.exports = router

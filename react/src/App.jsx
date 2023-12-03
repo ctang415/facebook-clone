@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Outlet } from 'react-router'
 import { LoginContext } from './components/logincontext'
 import './index.css'
@@ -24,7 +24,7 @@ function App() {
   const fetchUser = async () => {
     try {
       const response = await fetch (`http://localhost:3000${userData.url}`, {
-        headers: {'Content-type': 'application/json'}
+        headers: {'Content-type': 'application/json'}, credentials: 'include'
       })
       if (!response.ok) {
         throw await response.json()
@@ -41,12 +41,32 @@ function App() {
     }
   }
 
+  const refreshToken = async () => {
+    const token = { token: userData.token }
+    try {
+      const response = await fetch ('http://localhost:4000/token', {
+        method:'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+        body: JSON.stringify(token)
+      })
+      if (!response.ok) {
+        throw await response.json()
+      }
+      let data = await response.json()
+      if (response.status === 200) {
+        console.log('token refreshed')
+        console.log(data)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   return (
     <div className='bg-slate-100 min-h-screen w-screen'>
       <LoginContext.Provider value={{ modal, setModal, messageModal, setMessageModal, settingMenu, setSettingMenu,
         userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
         friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal,
-        setChatModal, fetchUser, setPosts, posts, userList, setUserList, userChat, setUserChat }}>
+        setChatModal, fetchUser, setPosts, posts, userList, setUserList, userChat, setUserChat, refreshToken }}>
         <Outlet/>
       </LoginContext.Provider>
     </div>
