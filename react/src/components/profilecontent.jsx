@@ -1,14 +1,15 @@
 import { useState, useContext, useEffect } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Post from "./post"
 
 const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }) => {
-    const { refreshToken, userData, fetchUser } = useContext(LoginContext)
+    const { refreshToken, userData, fetchUser, setLogin } = useContext(LoginContext)
     const [ editInformation, setEditInformation ] = useState(false)
     const [ school, setSchool] = useState('')
     const [ location, setLocation ] = useState('')
     const params = useParams()
+    const navigate = useNavigate()
     
     const updatedInformation = async (e) => {
         e.preventDefault()
@@ -20,7 +21,13 @@ const ProfileContent = ( {userProfile, setUserProfile, userPosts, setUserPosts }
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, updatedInformation)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
+                    setSchool('')
+                    setLocation('')
+                    setEditInformation(false)
                 } else {
                 throw await response.json()
                 }

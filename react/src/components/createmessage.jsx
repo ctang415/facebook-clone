@@ -3,12 +3,12 @@ import Message from './message'
 import { useState, useEffect } from 'react'
 import { LoginContext } from './logincontext'
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
 import {io} from 'socket.io-client'
 
 const CreateMessage = () => {
-    const { userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal,
+    const { setLogin, userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal,
     refreshToken} = useContext(LoginContext)
     const [ messageSender, setMessageSender ] = useState('')
     const [ sender, setSender ] = useState('')
@@ -19,6 +19,28 @@ const CreateMessage = () => {
     const [ chatModal, setChatModal ] = useState(false)
     const chatRef = useRef(null)
     const socket = useRef()
+    const navigate = useNavigate()
+
+    const refreshTokenChat = async (id, fn) => {
+        const token = { token: userData.token }
+        try {
+          const response = await fetch ('http://localhost:4000/token', {
+            method:'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+            body: JSON.stringify(token)
+          })
+          if (!response.ok) {
+            throw await response.json()
+          }
+          let data = await response.json()
+          if (response.status === 200) {
+            console.log('token refreshed')
+            console.log(data)
+            fn(id)
+          }
+        } catch (err) {
+          console.log(err)
+        }
+      }
 
     const createChat = async (id) => {
         const newChat = { friendid: id}
@@ -28,8 +50,12 @@ const CreateMessage = () => {
                 body: JSON.stringify(newChat) 
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshTokenChat(id, createChat)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setChat([])
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }
@@ -44,7 +70,7 @@ const CreateMessage = () => {
         }
     }
 
-    const createMessage = async () => {
+    const createMessage = async (e) => {
         const newMessage = { message: message, timestamp: Date.now()}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${chat.url}/messages`, {
@@ -52,8 +78,13 @@ const CreateMessage = () => {
                 body: JSON.stringify(newMessage)
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(e, createMessage)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setMessage('')
+                    setUserChat([])
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }
@@ -77,15 +108,22 @@ const CreateMessage = () => {
         }
     }
 
-    const deleteChat = async () => {
+    const deleteChat = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${userData.chats.find(x=> x.users.some(y => y.id === sender)).url}`, {
                 method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include',
                 body: JSON.stringify({ friendid: sender})
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(e, deleteChat)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setSender('')
+                    setResult([])
+                    setMessageModal(false)
+                    setChat([])
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }

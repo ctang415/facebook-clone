@@ -9,28 +9,34 @@ import CreateMessage from "./createmessage"
 import ChatModal from "./chatmodal"
 import ProfileModal from './profilemodal'
 import { useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import AvatarModal from './avatarmodal'
 import CoverModal from './covermodal'
 
 const Profile = () => {
     const [ profileEdit, setProfileEdit ] = useState(false)
     const profileTabs = [{ name: 'Posts'}, { name: 'About'}, { name: 'Friends'}, { name: 'Photos'}, { name: 'Videos'}]
-    const { refreshToken, setMessageModal, userData, fetchUser} = useContext(LoginContext)
+    const { setLogin, refreshToken, setMessageModal, userData, fetchUser} = useContext(LoginContext)
     const [ userProfile, setUserProfile ] = useState([])
     const [ userPosts, setUserPosts] = useState([])
     const [ avatarEdit, setAvatarEdit ] = useState(false)
     const [ coverEdit, setCoverEdit] = useState(false)
     const params = useParams()
+    const navigate = useNavigate()
     
-    const fetchProfile = async () => {
+    const fetchProfile = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000/users/${params.profileid}`, {
                 credentials: 'include'
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, fetchProfile)
+                } else if(response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
+                    setUserProfile([])
+                    setUserPosts([])
                 } else {
                 throw await response.json()
                 }
@@ -39,7 +45,6 @@ const Profile = () => {
             if (response.status === 200) {
                 setUserProfile(data.user)
                 setUserPosts(data.user.posts)
-                console.log(data)
             }
         } catch (err) {
             console.log(err)

@@ -5,15 +5,16 @@ import { LoginContext } from './logincontext'
 import { decode } from 'html-entities'
 import MoreSettings from '../assets/more.svg'
 import CommentsModal from './commentsmodal'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AlwaysScrollToBottom from './scrolltobottom'
 
 const Comment = ({id, postId, comments}) => {
-    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken, setLogin } = useContext(LoginContext)
     const [ newComment, setNewComment ] = useState('')
     const [ commentModal, setCommentModal] = useState(false)
     const [ commentEdit, setCommentEdit] = useState(false)
     const [ commentId, setCommentId] = useState('')
+    const navigate = useNavigate()
 
     const createComment = async (e) => {
         e.preventDefault()
@@ -25,7 +26,11 @@ const Comment = ({id, postId, comments}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, createComment)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setNewComment('')
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }
@@ -41,7 +46,7 @@ const Comment = ({id, postId, comments}) => {
         }
     }
 
-    const updateComment = async (e, id) => {
+    const updateComment = async (e) => {
         e.preventDefault()
         const updatedComment = { message: newComment }
         try {
@@ -51,7 +56,12 @@ const Comment = ({id, postId, comments}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, updateComment)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setCommentEdit(false)
+                    setNewComment('')
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }

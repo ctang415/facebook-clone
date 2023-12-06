@@ -91,7 +91,7 @@ app.post('/', function (req, res, next) {
                 return res.status(401).json(err);
             }
             const accessToken = generateAccessToken(user)
-            const refreshToken = jwt.sign({user: user.id}, `${process.env.REFRESH_TOKEN_SECRET}`, {expiresIn: '1hr'})
+            const refreshToken = jwt.sign({user: user.id}, `${process.env.REFRESH_TOKEN_SECRET}`, {expiresIn: '30m'})
             const newToken = new Token( {
                 token: refreshToken
             })
@@ -104,6 +104,7 @@ app.post('/', function (req, res, next) {
                 populate: [{ path: 'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'}} ]}} } ])  
                 req.token = refreshToken
             return res.cookie('token', accessToken, {
+                expires: new Date(new Date().getTime() + 15 * 60 * 1000),
                 secure: true,
                 httpOnly: true,
                 sameSite: "strict"
@@ -113,21 +114,20 @@ app.post('/', function (req, res, next) {
 } )
 
 app.post('/token', async (req, res) => {
+    console.log(req.body.token)
     const findToken = await Token.findById(req.body.token)
-    if (findToken === null) {
-        return res.status(403)
+    console.log(findToken)
+    if (findToken == null) {
+        console.log('is null')
+        await User.findOneAndUpdate({token: req.body.token}, {token: null})
+        res.status(404).json({error: 'refresh token is null'})
+        return
     }
     jwt.verify(findToken.token, `${process.env.REFRESH_TOKEN_SECRET}`, async (err, user) => {
-        if (err) return res.status(403).json({err})
+        if (err) return res.status(404).json({err})
         const accessToken = generateAccessToken(user)
-        const newToken = new Token (
-            {
-                token: accessToken
-            }
-        )
-        let newAccessToken = newToken.save()
-        const findUser = await User.findByIdAndUpdate(user.user, {'token' : newAccessToken.id})
         res.cookie('token', accessToken, {
+            expires: new Date(new Date().getTime() + 15 * 60 * 1000),
             secure: true,
             httpOnly: true,
             sameSite: "strict"
@@ -140,7 +140,7 @@ app.delete('/', function(req, res, next){
       if (err) { return next(err); }
       const token = await Token.findById(req.body.token)
       if (token == null) {
-        return res.status(401).json({errors: 'token not found'})
+        return res.status(404).json({errors: 'token not found'})
         }
         const [ updateUser, removeToken] = await Promise.all( [
         User.findByIdAndUpdate(req.body.user, {'token': null }),

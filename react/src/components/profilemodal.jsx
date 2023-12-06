@@ -34,7 +34,11 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, updatedProfile)
+                } else if(response.status === 404) {
+                    setLogin(false)
+                    setProfileEdit(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -66,14 +70,17 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
         setErrors([])
     }
     
-    const deleteAccount = async () => {
+    const deleteAccount = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}`, {
                 method :'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, deleteAccount)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }

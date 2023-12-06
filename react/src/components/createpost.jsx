@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { LoginContext } from './logincontext'
 
 const CreatePost = () => {
-    const { modal, setModal, editPost, setEditPost, userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { setLogin, modal, setModal, editPost, setEditPost, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const postRef = useRef(null)
     const [ post, setPost ] = useState('')
+    const navigate = useNavigate()
 
     const closePostMenu = (e) => {
         if (postRef.current && modal && !postRef.current.contains(e.target)){
@@ -22,8 +24,13 @@ const CreatePost = () => {
                 body: JSON.stringify(newPost)
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(e, createPost)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setPost('')
+                    setModal(false)
+                    navigate('/')
                 } else {                
                     throw await response.json()
                 }
@@ -50,7 +57,13 @@ const CreatePost = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, updatePost)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setPost('')
+                    setModal(false)
+                    setEditPost('')
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }

@@ -6,20 +6,25 @@ import Navbar from "./navbar"
 import NewMessage from '../assets/newmessage.svg'
 import MessengerNav from "./messengernav"
 import MessengerContent from "./messengercontent"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 const Messenger = () => {
-    const { userData, setMessageModal, refreshToken} = useContext(LoginContext)
+    const { setLogin, userData, setMessageModal, refreshToken} = useContext(LoginContext)
     const params = useParams()
     const [ chat, setChat ] = useState([])
+    const navigate = useNavigate()
 
-    const fetchChat = async () => {
+    const fetchChat = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/chats/${userData.chats.find(x => x.users.find(y => y.id === params.messengerid)).id}`,
             { credentials: 'include'})
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, fetchChat)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setChat([])
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }

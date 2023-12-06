@@ -1,10 +1,31 @@
 import { useEffect, useContext, useState } from "react"
 import { LoginContext } from "./logincontext"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const FriendsContent = () => {
-    const { allFriends, friendsRequest, userData, fetchUser, refreshToken } = useContext(LoginContext)
-    const friends = []
+    const { setLogin, allFriends, friendsRequest, userData, fetchUser } = useContext(LoginContext)
+    const navigate = useNavigate()
+
+    const refreshToken = async (id, friendid, fn) => {
+        const token = { token: userData.token }
+        try {
+          const response = await fetch ('http://localhost:4000/token', {
+            method:'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
+            body: JSON.stringify(token)
+          })
+          if (!response.ok) {
+            throw await response.json()
+          }
+          let data = await response.json()
+          if (response.status === 200) {
+            console.log('token refreshed')
+            console.log(data)
+            fn(id, friendid)
+          }
+        } catch (err) {
+          console.log(err)
+        }
+      }
 
     const removeRequest = async (id, friendid) => {
         const request = { user: userData.id, friend: friendid }
@@ -14,8 +35,11 @@ const FriendsContent = () => {
                 body: JSON.stringify(request)
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(id, friendid, removeRequest)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -30,14 +54,17 @@ const FriendsContent = () => {
         }
     }
 
-    const acceptRequest = async (id) => {
+    const acceptRequest = async (id, friendid) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${id}`, {
                 method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
-                if (response.statuus == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(id, friendid, acceptRequest)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }

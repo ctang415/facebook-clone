@@ -1,11 +1,13 @@
 import { useContext } from "react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const AvatarModal = ( {avatarEdit, setAvatarEdit} ) => {
-    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken, setLogin } = useContext(LoginContext)
     const [ avatar, setAvatar ] = useState(null)
     const [ errors, setErrors ] = useState([])
+    const navigate = useNavigate()
 
     const updatedAvatar = async (e) => {
         setErrors([])
@@ -18,7 +20,12 @@ const AvatarModal = ( {avatarEdit, setAvatarEdit} ) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, updatedAvatar)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setAvatar(null)
+                    setAvatarEdit(false)
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }

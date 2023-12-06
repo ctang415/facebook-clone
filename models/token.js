@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const TokenSchema = new Schema (
     {
         token: { type: String },
-        expiresAt: { type: Date, default: Date.now, expires: 3600 }
+        createdAt: { type: Date, default: Date.now, expires: 1800 }
     }
 )
 

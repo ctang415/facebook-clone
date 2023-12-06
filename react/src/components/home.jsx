@@ -7,6 +7,7 @@ import CreatePost from "./createpost"
 import CreateMessage from "./createmessage"
 import ChatModal from "./chatmodal"
 import Register from './register'
+import { useNavigate } from "react-router-dom"
 
 const Home = () => {
     const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal, userData,
@@ -15,15 +16,17 @@ const Home = () => {
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
-        
-    const grabUsers = async () => {
+ 
+    const grabUsers = async (e) => {
         try {
             const response = await fetch ('http://localhost:3000/users', {
                 credentials: 'include', 
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, grabUsers)
+                } else if (response.status === 404) {
+                    setLogin(false)
                 } else {
                 throw await response.json()
                 }

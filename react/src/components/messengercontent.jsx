@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Message from "./message"
 import Send from '../assets/send.svg'
@@ -7,13 +7,14 @@ import { useRef } from "react"
 import {io} from 'socket.io-client'
 
 const MessengerContent = () => {
-    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const params = useParams()
     const [ chat, setChat ] = useState([])
     const [ message, setMessage ] = useState('')
     const socket = useRef()
+    const navigate = useNavigate()
 
-    const createMessage = async () => {
+    const createMessage = async (e) => {
         const newMessage = { message: message, timestamp: Date.now() }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${chat.url}/messages`, {
@@ -22,7 +23,12 @@ const MessengerContent = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, createMessage)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setChat([])
+                    setMessage('')
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -45,13 +51,17 @@ const MessengerContent = () => {
         }
     }
 
-    const fetchChat = async () => {
+    const fetchChat = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/chats/${userData.chats.find(x => x.users.find(y => y.id === params.messengerid)).id}`,
             { credentials: 'include'} )
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, fetchChat)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setChat([])
+                    navigate('/')
                 } else {
                 setChat([])
                 throw await response.json()

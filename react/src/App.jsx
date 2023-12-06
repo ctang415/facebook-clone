@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Outlet } from 'react-router'
+import { useNavigate, Outlet } from 'react-router'
 import { LoginContext } from './components/logincontext'
 import './index.css'
 
@@ -20,14 +20,25 @@ function App() {
   const [ posts, setPosts ] = useState([])
   const [ userList, setUserList] = useState([])
   const [ userChat, setUserChat] = useState([])
-    
-  const fetchUser = async () => {
+  const navigate = useNavigate()
+
+  const fetchUser = async (e) => {
     try {
       const response = await fetch (`http://localhost:3000${userData.url}`, {
         headers: {'Content-type': 'application/json'}, credentials: 'include'
       })
       if (!response.ok) {
+        if (response.status === 403) {
+          refreshToken(e, fetchUser)
+        } else if (response.status === 404) {
+          setLogin(false)
+          setUserData([])
+          setPosts([])
+          setUserChat([])
+          navigate('/')
+        } else {
         throw await response.json()
+        }
       }
       const data = await response.json()
       if (response.status === 200) {
@@ -41,20 +52,28 @@ function App() {
     }
   }
 
-  const refreshToken = async () => {
-    const token = { token: userData.token }
+  const refreshToken = async (e, fn) => {
+    const myToken = { token: userData.token }
     try {
       const response = await fetch ('http://localhost:4000/token', {
         method:'POST', headers: {'Content-type': 'application/json'}, credentials: 'include',
-        body: JSON.stringify(token)
+        body: JSON.stringify(myToken)
       })
       if (!response.ok) {
-        throw await response.json()
+        console.log(response.status)
+          if (response.status === 404) {
+          console.log('refresh error, token expired')
+          setLogin(false)
+          navigate('/')
+          } else {
+            throw await response.json()
+          }
       }
       let data = await response.json()
       if (response.status === 200) {
         console.log('token refreshed')
         console.log(data)
+        fn(e)
       }
     } catch (err) {
       console.log(err)

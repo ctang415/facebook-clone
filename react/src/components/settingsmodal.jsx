@@ -1,11 +1,13 @@
 import { useRef } from "react"
 import { useEffect } from "react"
 import { useContext } from "react"
+import { useNavigate } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const SettingsModal = ({settingMenu, setSettingMenu, post}) => {
-    const { setEditPost, setModal, userData, fetchUser, refreshToken} = useContext(LoginContext)
+    const { setLogin, setEditPost, setModal, userData, fetchUser, refreshToken} = useContext(LoginContext)
     const settingRef = useRef(null)
+    const navigate = useNavigate()
 
     const closeSettingMenu = (e) => {
         if (settingRef.current && settingMenu && !settingRef.current.contains(e.target)) {
@@ -19,14 +21,17 @@ const SettingsModal = ({settingMenu, setSettingMenu, post}) => {
         setModal(true)
     }
 
-    const deletePost = async () => {
+    const deletePost = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${post.url}`, {
                 method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, deletePost)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }

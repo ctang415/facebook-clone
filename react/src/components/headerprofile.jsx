@@ -1,13 +1,14 @@
 import { useEffect, useContext, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, setUserProfile, setAvatarEdit, setCoverEdit }) => {
-    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { userData, fetchUser, refreshToken, setLogin } = useContext(LoginContext)
     const params = useParams()
     const [ requestId, setRequestId ] = useState('')
-    
-    const addFriend = async () => {
+    const navigate = useNavigate() 
+
+    const addFriend = async (e) => {
         const friendRequest = { id: userData.id, friendid: params.profileid}
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends`, {
@@ -15,8 +16,11 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
                 body: JSON.stringify(friendRequest) 
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(e, addFriend)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                     throw await response.json()
                 }
@@ -30,14 +34,17 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
         }
     }
 
-    const acceptRequest = async () => {
+    const acceptRequest = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${requestId}`, {
                 method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, acceptRequest)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -52,7 +59,7 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
         }
     }
 
-    const removeFriend = async () => {
+    const removeFriend = async (e) => {
         const request = { user: userData.id, friend: params.profileid }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}/friends/${requestId}`, {
@@ -61,7 +68,10 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, removeFriend)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -88,7 +98,6 @@ const HeaderProfile = ({profileTabs, setProfileEdit, fetchProfile, userProfile, 
             }
         }
     }, [userProfile])
-
 
     if (userData.id === params.profileid) {
     return (

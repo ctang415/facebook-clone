@@ -1,11 +1,13 @@
 import { useContext } from "react"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const CoverModal = ( {coverEdit, setCoverEdit} ) => {
-    const { userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const [ cover, setCover ] = useState(null)
     const [ errors, setErrors ] = useState([])
+    const navigate = useNavigate()
 
     const updatedCover = async (e) => {
         setErrors([])
@@ -17,8 +19,12 @@ const CoverModal = ( {coverEdit, setCoverEdit} ) => {
                 method: 'PUT', credentials: "include", body: data
             })
             if (!response.ok) {
-                if (response.status == 403) {
-                    refreshToken()
+                if (response.status === 403) {
+                    refreshToken(e, updatedCover)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    setCover(null)
+                    setCoverEdit(false)
                 } else {
                     throw await response.json()
                 }

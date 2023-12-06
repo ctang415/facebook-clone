@@ -7,21 +7,25 @@ import { LoginContext } from './logincontext'
 import SettingsModal from './settingsmodal'
 import { decode } from 'html-entities'
 import Liked from '../assets/liked.svg'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 
 const Post = ( {post}) => {
-    const { refreshToken, editPost, setEditPost, setModal, modal, userData, fetchUser }  = useContext(LoginContext)
+    const { refreshToken, setLogin, userData, fetchUser }  = useContext(LoginContext)
     const [settingMenu, setSettingMenu] = useState(false)
     const params = useParams()
+    const navigate = useNavigate()
     
-    const likePost = async () => {
+    const likePost = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${post.url}/likes`, {
                 method: 'POST', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, likePost)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -35,14 +39,17 @@ const Post = ( {post}) => {
         }
     }
 
-    const unlikePost = async () => {
+    const unlikePost = async (e) => {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${post.url}/likes`, {
                 method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken()
+                    refreshToken(e, unlikePost)
+                } else if (response.status === 404) {
+                    setLogin(false)
+                    navigate('/')
                 } else {
                 throw await response.json()
                 }
@@ -69,7 +76,7 @@ const Post = ( {post}) => {
                     </div>
                     </Link>
                     <div>
-                        <img className={ userData.id === params.profileid ? 'cursor-pointer hover:bg-slate-100 rounded-md' : 'hidden'} onClick={() => setSettingMenu(true)} src={Settings} alt="Settings icon"/>
+                        <img className={ userData.id === params.profileid || params.profileid === undefined ? 'cursor-pointer hover:bg-slate-100 rounded-md' : 'hidden'} onClick={() => setSettingMenu(true)} src={Settings} alt="Settings icon"/>
                     </div>
                 </div>
                 <div>
