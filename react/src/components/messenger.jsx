@@ -9,7 +9,7 @@ import MessengerContent from "./messengercontent"
 import { useNavigate, useParams } from "react-router-dom"
 
 const Messenger = () => {
-    const { setLogin, userData, setMessageModal, refreshToken} = useContext(LoginContext)
+    const { setLogin, userData, setMessageModal, refreshToken, login} = useContext(LoginContext)
     const params = useParams()
     const [ chat, setChat ] = useState([])
     const navigate = useNavigate()
@@ -44,6 +44,7 @@ const Messenger = () => {
         }
     }, [params])
 
+    if (login) {
     if ( params.messengerid !== undefined) {
         return (
             <>
@@ -71,6 +72,7 @@ const Messenger = () => {
         </>
     )
     }
+}
 }
 
 export default Messenger

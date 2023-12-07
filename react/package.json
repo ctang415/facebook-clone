@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "autoprefixer": "^9.8.8",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "postcss": "^8.4.31",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

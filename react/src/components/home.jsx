@@ -10,35 +10,12 @@ import Register from './register'
 import { useNavigate } from "react-router-dom"
 
 const Home = () => {
-    const { setLogin, login, modal, setModal, editModal, setEditModal, messageModal, setMessageModal, userData,
-    setPosts, posts, setUserData, setUserList, refreshToken } = useContext(LoginContext) 
+    const { setLogin, login, setModal, setMessageModal, userData, setPosts, posts, 
+    setUserData, setUserList, grabUsers } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
     const [ password, setPassword ] = useState('')
     const [ errors, setErrors] = useState([])
- 
-    const grabUsers = async (e) => {
-        try {
-            const response = await fetch ('http://localhost:3000/users', {
-                credentials: 'include', 
-            })
-            if (!response.ok) {
-                if (response.status === 403) {
-                    refreshToken(e, grabUsers)
-                } else if (response.status === 404) {
-                    setLogin(false)
-                } else {
-                throw await response.json()
-                }
-            }
-            const data = await response.json()
-            if (response.status === 200) {
-                setUserList(data.users)
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     const loginToAccount = async (e) => {
         e.preventDefault()
@@ -58,6 +35,7 @@ const Home = () => {
                 setLogin(true)
                 setUserData(data.user)
                 setPosts(data.user.posts)
+                localStorage.setItem('token', data.accessToken)
                 data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
                 grabUsers()
             }

@@ -22,6 +22,7 @@ const UserModal = ( {userModal, setUserModal}) => {
             if (response.status === 200) {
                 alert('Successfully logged out')
                 setLogin(false)
+                localStorage.clear()
                 navigate('/')
             }
         } catch (err) {

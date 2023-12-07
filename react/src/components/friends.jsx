@@ -8,8 +8,10 @@ import { LoginContext } from "./logincontext"
 import ChatModal from "./chatmodal"
 
 const Friends = () => {
-     const {setMessageModal} = useContext(LoginContext)
-    return (
+     const {setMessageModal, login} = useContext(LoginContext)
+    
+     if (login) {
+     return (
         <>
             <Navbar/>
             <CreateMessage/>
@@ -21,6 +23,7 @@ const Friends = () => {
             </div>
         </>
     )
+     }
 }
 
 export default Friends

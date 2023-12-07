@@ -16,7 +16,7 @@ import CoverModal from './covermodal'
 const Profile = () => {
     const [ profileEdit, setProfileEdit ] = useState(false)
     const profileTabs = [{ name: 'Posts'}, { name: 'About'}, { name: 'Friends'}, { name: 'Photos'}, { name: 'Videos'}]
-    const { setLogin, refreshToken, setMessageModal, userData, fetchUser} = useContext(LoginContext)
+    const { login, setLogin, refreshToken, setMessageModal, userData, fetchUser} = useContext(LoginContext)
     const [ userProfile, setUserProfile ] = useState([])
     const [ userPosts, setUserPosts] = useState([])
     const [ avatarEdit, setAvatarEdit ] = useState(false)
@@ -55,6 +55,7 @@ const Profile = () => {
         fetchProfile()
     }, [params, fetchUser])
 
+    if (login) {
     return (
         <div className="pb-10">
         <Navbar/>
@@ -70,6 +71,7 @@ const Profile = () => {
         <CreatePost/>
         </div>
     )
+    }
 }
 
 export default Profile

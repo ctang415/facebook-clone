@@ -76,9 +76,6 @@ passport.use(
     })
   );
 
-
-//let io = require('./socket').init(server)
-
 app.post('/', function (req, res, next) { 
     passport.authenticate('local', {session: false}, (err, user, info) => {
         if (err || !user) {
@@ -113,12 +110,19 @@ app.post('/', function (req, res, next) {
     })(req, res);
 } )
 
+app.get('/cookie', async (req, res) => {
+    console.log(req.cookies.token)
+    if (req.cookies.token === undefined) {
+        res.status(404)
+        return
+    }
+    const id = jwt.decode(req.cookies.token)
+    res.status(200).json(id)
+})
+
 app.post('/token', async (req, res) => {
-    console.log(req.body.token)
     const findToken = await Token.findById(req.body.token)
-    console.log(findToken)
     if (findToken == null) {
-        console.log('is null')
         await User.findOneAndUpdate({token: req.body.token}, {token: null})
         res.status(404).json({error: 'refresh token is null'})
         return
