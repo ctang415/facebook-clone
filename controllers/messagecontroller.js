@@ -46,18 +46,19 @@ exports.message_update = [
             res.status(401).json({errors: errors.array()})
             return
         }
-        const updatedMessage = await Message.findByIdAndUpdate(req.body.id, {message: req.body.message})
+        const updatedMessage = await Message.findByIdAndUpdate(req.params.messageid, {message: req.body.message})
         res.status(200).json({ message: updatedMessage, success: true})
     })
 ]
 
 exports.message_delete = asyncHandler( async (req, res, next) => {
-    const message = await Message.findById(req.body.id)
+    const split = req.baseUrl.split('/')
+    const message = await Message.findById(req.params.messageid)
     if (message === null) {
         res.status(404).json({error: "Message does not exist."})
         return
     }
-    await Chat.findByIdAndUpdate(req.body.chatid, {$pull: {messages: message._id}})
-    const removedMessage = await Message.findByIdAndRemove(req.body.id)
+    await Chat.findByIdAndUpdate(split[4], {$pull: {messages: message._id}})
+    const removedMessage = await Message.findByIdAndRemove(req.params.messageid)
     res.status(200).json({success: true})
 })

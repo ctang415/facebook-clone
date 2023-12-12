@@ -1,23 +1,16 @@
-import { decode } from "html-entities"
-import { useContext } from "react"
-import { useState } from "react"
-import { LoginContext } from "./logincontext"
 import AlwaysScrollToBottom from "./scrolltobottom"
+import MessageDetail from './messagedetail'
 
-const Message = ({messages}) => {
-    const {userData} = useContext(LoginContext)
+const Message = ({messages, editMessage, setEditMessage, setMessage}) => {
     
     return (
         <>
-        {messages.map(message => {
+        {messages.map( (message, index) => {
             return (
-                <li className={ message.author.id !== userData.id ? 'flex flex-col' : 'flex flex-col' } key={message.id}>
-                    <p className="self-center text-xs text-slate-400">{message.creation_time}</p>
-                <div
-                className={message.author.id !== userData.id ? "text-md rounded-full bg-slate-200 p-3 break-normal self-start" : " self-end text-md rounded-full bg-blue-500 text-white p-3 break-normal" }>
-                    {decode(message.message)}
-                </div>
-                <AlwaysScrollToBottom/>                
+                <li className='flex flex-col relative' key={message.id}>
+                    <MessageDetail messages={messages} message={message} index={index} setEditMessage={setEditMessage}
+                    editMessage={editMessage} setMessage={setMessage} />
+                    <AlwaysScrollToBottom/>                
                 </li>
             )
         })}

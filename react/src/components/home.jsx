@@ -10,7 +10,7 @@ import Register from './register'
 import { useNavigate } from "react-router-dom"
 
 const Home = () => {
-    const { setLogin, login, setModal, setMessageModal, userData, setPosts, posts, 
+    const { setLogin, login, setModal, setMessageModal, userData, setPosts, posts, setUserChat,
     setUserData, setUserList, grabUsers } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
@@ -35,9 +35,10 @@ const Home = () => {
                 setLogin(true)
                 setUserData(data.user)
                 setPosts(data.user.posts)
-                localStorage.setItem('token', data.accessToken)
+                setUserChat(data.user.chats)
                 data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
                 grabUsers()
+                console.log(data)
             }
         } catch (err) {
             console.log(err)

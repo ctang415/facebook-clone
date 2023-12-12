@@ -83,7 +83,6 @@ const CreateMessage = () => {
                 } else if (response.status === 404) {
                     setLogin(false)
                     setMessage('')
-                    setUserChat([])
                     navigate('/')
                 } else {
                     throw await response.json()
@@ -96,7 +95,6 @@ const CreateMessage = () => {
                 credentials: 'include'
                 })
                 socket.current.emit('new-messenger-add', newMessage)
-                socket.current.off('get-message-messenger')
                 socket.current.on('get-message-messenger', (message) => {
                 const messageArray = userChat.find( x => x.users.some( y => y.id === sender)).messages.concat(message)
                 setUserChat(userChat.map( x => (x.users.some( y => y.id === sender)) ? {...x, messages: messageArray }  : x ))
@@ -165,12 +163,13 @@ const CreateMessage = () => {
         setResult(userList.filter(user => user.full_name.includes(messageSender)))
     }, [messageSender])
 
+
     if (messageModal) {
         return (
             <div className="p-4 fixed right-20 bottom-1 bg-white min-h-[65vh] max-h-[65vh] min-w-[20vw] max-w-[20vw] shadow-2xl rounded z-20">
                 <div className="flex flex-row items-center">
                     <p className={ sender !== '' ? 'hidden' : 'flex' }>New message</p>
-                    <button onClick={() => { setMessageModal(false); setSender(''); setMessageSender(''); setResult(''); fetchUser() }} 
+                    <button onClick={() => { setMessageModal(false); setSender(''); setMessageSender(''); setResult(''); }} 
                         type="button" className="text-blue-600 bg-transparent hover:bg-gray-200 rounded-full text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
                         <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -202,7 +201,7 @@ const CreateMessage = () => {
                     { result.length !== 0 ? result.map(res => {
                     return (
                         <li key={res.id} 
-                        className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2" onClick={() => {setMessageSender(res.full_name); setSender(res.id); setSearch(false); checkChat(res.id) }}>
+                        className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2" onClick={() => {setMessageSender(res.full_name); setSender(res.id); setSearch(false); checkChat(res.id); }}>
                             <img className="max-h-[3vh]" src={res.avatar} alt="User icon"/>
                             {res.full_name}
                         </li>            
@@ -222,7 +221,8 @@ const CreateMessage = () => {
                                 }) : null }
                                 <div key={userChat.find(x => x.users.some( y => y.id === sender)).id}>
                                     <ul className='flex flex-col gap-3'>
-                                        <Message messages={userChat.find(x => x.users.some( y => y.id === sender)).messages}/>
+                                        <Message
+                                         messages={userChat.find(x => x.users.some( y => y.id === sender)).messages}/>
                                     </ul>        
                                 </div>
                             </div>

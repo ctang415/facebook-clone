@@ -9,38 +9,12 @@ import MessengerContent from "./messengercontent"
 import { useNavigate, useParams } from "react-router-dom"
 
 const Messenger = () => {
-    const { setLogin, userData, setMessageModal, refreshToken, login} = useContext(LoginContext)
+    const { fetchUser, setMessageModal, login} = useContext(LoginContext)
     const params = useParams()
-    const [ chat, setChat ] = useState([])
-    const navigate = useNavigate()
-
-    const fetchChat = async (e) => {
-        try {
-            const response = await fetch (`http://localhost:3000${userData.url}/chats/${userData.chats.find(x => x.users.find(y => y.id === params.messengerid)).id}`,
-            { credentials: 'include'})
-            if (!response.ok) {
-                if (response.status === 403) {
-                    refreshToken(e, fetchChat)
-                } else if (response.status === 404) {
-                    setLogin(false)
-                    setChat([])
-                    navigate('/')
-                } else {
-                throw await response.json()
-                }
-            }
-            const data = await response.json()
-            if (response.status === 200) {     
-                setChat(data)
-            }
-        } catch (err) {
-            console.log(err)
-        }
-    }
-
+    
     useEffect(() => {
         if (params.messengerid !== undefined) {
-            fetchChat()
+            fetchUser()
         }
     }, [params])
 

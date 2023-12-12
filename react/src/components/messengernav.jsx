@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const MessengerNav = () => {
-    const {userData} = useContext(LoginContext)
+    const { userChat, userData } = useContext(LoginContext)
     const [ results, setResults ] = useState([])
     const [ search, setSearch] = useState('')
 
@@ -38,7 +38,7 @@ const MessengerNav = () => {
                 </ul>
                 
             <ul className={ search !== '' ? 'hidden' : "flex flex-col gap-3"}>
-                {userData.chats ? userData.chats.map( chat => {
+                {userChat ? userChat.map( chat => {
                         return (
                             <div key={chat.id} className="flex flex-row items-center min-w-full">
                             {chat.users.map(user => {

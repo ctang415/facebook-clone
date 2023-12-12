@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Outlet } from 'react-router'
 import { LoginContext } from './components/logincontext'
 import './index.css'
-import {jwtDecode} from 'jwt-decode'
 
 function App() {
   const [ userData, setUserData ] = useState([])
@@ -127,7 +126,6 @@ function App() {
         console.log(response.status)
           if (response.status === 404) {
           console.log('refresh error, token expired')
-          localStorage.clear()
           setLogin(false)
           navigate('/')
           } else {

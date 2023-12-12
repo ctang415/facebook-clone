@@ -93,7 +93,7 @@ app.post('/', function (req, res, next) {
                 token: refreshToken
             })
             newToken.save()
-            const updatedUser = await User.findByIdAndUpdate(user.id, {'token' : newToken.id }).select('-password').populate(
+            const updatedUser = await User.findByIdAndUpdate(user.id, {token : newToken.id }, {new: true}).select('-password').populate(
                 [{path :'posts', options: { sort: { 'timestamp' : 1}},
                 populate: [{ path: 'author', select: '-password'}, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, 
                 { path: 'chats', populate: [{ path: 'messages', populate: {path: 'author', select: '-password'}}, {path: 'users', select: '-password'}]},

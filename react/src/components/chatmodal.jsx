@@ -4,14 +4,12 @@ import { useState, useEffect } from "react"
 import { useContext } from "react"
 import { Link } from "react-router-dom"
 import { LoginContext } from "./logincontext"
-import {io} from 'socket.io-client'
 
 const ChatModal = () => {
-    const { userData, chatModal, setChatModal} = useContext(LoginContext)
+    const { userChat, fetchUser, userData, chatModal, setChatModal} = useContext(LoginContext)
     const [ search, setSearch ] = useState('')
     const [ results, setResults ] = useState([])
     const chatRef = useRef(null)
-    const socket = useRef()
 
     const closeChatMenu = (e) => {
         if (chatRef.current && chatModal && !chatRef.current.contains(e.target)){
@@ -55,7 +53,7 @@ const ChatModal = () => {
                     })}
                 </ul>
                 <ul className={ search !== '' ? 'hidden' : "min-w-full flex flex-col items-center max-h-[10vh] gap-2 overflow-scroll"}>
-                    {userData.chats.map( chat => {
+                    {userChat.map( chat => {
                         return (
                             <div key={chat.id} className="min-w-full flex flex-row items-center ">
                             {chat.users.map(user => {
