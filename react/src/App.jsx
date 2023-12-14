@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
-import { useNavigate, Outlet } from 'react-router'
+import { useState, useEffect, useRef } from 'react'
+import { useParams, useNavigate, Outlet } from 'react-router'
 import { LoginContext } from './components/logincontext'
 import './index.css'
+import { io } from 'socket.io-client'
 
 function App() {
   const [ userData, setUserData ] = useState([])
@@ -17,11 +18,14 @@ function App() {
   const [ discover, setDiscover] = useState(false)
   const [ myGroups, setMyGroups] = useState(false)
   const [ chatModal, setChatModal ] = useState(false)
+  const [ sender, setSender ] = useState('')
   const [ posts, setPosts ] = useState([])
   const [ userList, setUserList] = useState([])
   const [ userChat, setUserChat] = useState([])
   const navigate = useNavigate()
-
+  const socket = useRef(null)
+  const params = useParams()
+  
   const checkCookie = async() => {
     try {
       const response = await fetch (`http://localhost:4000/cookie`, {
@@ -143,15 +147,41 @@ function App() {
   }
 
   useEffect(() => {
+    socket.current = io('http://localhost:3000', 
+      { 
+        transports: ['websocket', 'polling', 'flashsocket'],
+        credentials: 'include' 
+      })
+
+        socket.current.on('get-message', (message) => {
+        console.log(message)
+        const messageArray = userChat.find( x => x.users.some( y => y.id === params.messengerid)).messages.concat(message)
+        setUserChat(userChat.map( x => (x.users.some( y => y.id === params.messengerid)) ? {...x, messages: messageArray }  : x ))
+        })
+
+        if (sender !== '') {
+        socket.current.on('get-message-messenger', (message) => {
+          const messageArray = userChat.find( x => x.users.some( y => y.id === sender)).messages.concat(message)
+          setUserChat(userChat.map( x => (x.users.some( y => y.id === sender)) ? {...x, messages: messageArray }  : x ))
+      })
+        }
+
+        return () => {
+            socket.current.off();
+        }
+  }, [userChat, sender])
+
+  useEffect(() => {
     checkCookie()
   }, [])
-
+  
   return (
     <div className='bg-slate-100 min-h-screen w-screen'>
       <LoginContext.Provider value={{ modal, setModal, messageModal, setMessageModal, settingMenu, setSettingMenu,
         userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
-        friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal,
-        setChatModal, fetchUser, setPosts, posts, userList, setUserList, userChat, setUserChat, refreshToken, grabUsers }}>
+        friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal, socket,
+        setChatModal, fetchUser, setPosts, posts, userList, setUserList, userChat, setUserChat, refreshToken, grabUsers,
+        sender, setSender }}>
         <Outlet/>
       </LoginContext.Provider>
     </div>

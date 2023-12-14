@@ -25,16 +25,18 @@ exports.message_create_post = [
         const updatedChat = await Chat.findByIdAndUpdate(split[4], {$push: {messages: newMessage._id }})
         io.on('connection', (socket) => {
             socket.removeAllListeners()
-            socket.on('new-message-add', () => {
+            socket.on('new-message-add', (msg) => {
                 console.log('message sent')
-                io.emit('get-message', newMessage)
+                io.emit('get-message', msg)
+                console.log(msg)
             })
-            socket.on('new-messenger-add', () => {
+            socket.on('new-messenger-add', (msg) => {
                 console.log('messenger sent')
-                io.emit('get-message-messenger', newMessage)
+                io.emit('get-message-messenger', msg)
+                console.log(msg)
             })
           });
-        res.status(200).json( {chat: updatedChat, success: true})
+        res.status(200).json( {chat: updatedChat, message: newMessage, success: true})
     })
 ]
 

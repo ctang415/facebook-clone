@@ -16,13 +16,14 @@ const UserModal = ( {userModal, setUserModal}) => {
                 credentials: 'include', body: JSON.stringify(deleteToken)
             })
             if (!response.ok) {
+                setLogin(false)
+                navigate('/')
                 throw await response.json()
             }
             await response.json()
             if (response.status === 200) {
                 alert('Successfully logged out')
                 setLogin(false)
-                localStorage.clear()
                 navigate('/')
             }
         } catch (err) {

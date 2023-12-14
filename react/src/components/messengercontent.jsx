@@ -3,15 +3,12 @@ import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Message from "./message"
 import Send from '../assets/send.svg'
-import { useRef } from "react"
-import {io} from 'socket.io-client'
 
 const MessengerContent = () => {
-    const { userChat, setUserChat, setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const params = useParams()
     const [ message, setMessage ] = useState('')
     const [ editMessage, setEditMessage ] = useState('')
-    const socket = useRef()
     const navigate = useNavigate()
 
     const createMessage = async (e) => {
@@ -32,17 +29,9 @@ const MessengerContent = () => {
                 throw await response.json()
                 }
             }
-            await response.json()
+            const data = await response.json()
             if (response.status === 200) {
-                socket.current = io('http://localhost:3000', 
-                { transports: ['websocket', 'polling', 'flashsocket'],
-                credentials: 'include'
-                })
-                socket.current.emit('new-message-add', newMessage)
-                socket.current.on('get-message', (message) => {
-                const messageArray = userChat.find( x => x.users.some( y => y.id === params.messengerid)).messages.concat(message)
-                setUserChat(userChat.map( x => (x.users.some( y => y.id === params.messengerid)) ? {...x, messages: messageArray }  : x ))
-                })
+                socket.current.emit('new-message-add', data.message )
                 setMessage('')
             }
         } catch (err) {
@@ -51,8 +40,6 @@ const MessengerContent = () => {
     }
 
     const editChatMessage = async (e) => {
-        console.log(editMessage.id)
-        
         const editedMessage = { message: message }
             try {
                 const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === params.messengerid)).url}/messages/${editMessage.id}`, {
@@ -91,15 +78,6 @@ const MessengerContent = () => {
         }
     }, [params])
 
-
-    /*useEffect(() => {
-        socket.connect();
-
-        return () => {
-          socket.disconnect();
-        };
-    }, [])
-*/
     if (params.messengerid !== undefined && userChat.find( x => x.users.some( y => y.id === params.messengerid))) {
         return (
             <div className="min-h-screen min-w-[75vw] max-w-[75vw] flex flex-col pt-16 justify-between items-center bg-white border-2 border-grey">

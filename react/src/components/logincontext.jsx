@@ -36,6 +36,9 @@ export const LoginContext = createContext(
         userChat: null,
         setUserChat: () => {},
         grabUsers: () => {},
-        refreshToken: () => {}
+        refreshToken: () => {},
+        socket: null,
+        setSender: () => {},
+        sender: null
     }
 )

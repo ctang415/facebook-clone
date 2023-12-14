@@ -5,20 +5,17 @@ import { LoginContext } from './logincontext'
 import { useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useRef } from 'react'
-import {io} from 'socket.io-client'
 
 const CreateMessage = () => {
     const { setLogin, userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal,
-    refreshToken} = useContext(LoginContext)
+    socket, refreshToken, sender, setSender} = useContext(LoginContext)
     const [ messageSender, setMessageSender ] = useState('')
-    const [ sender, setSender ] = useState('')
     const [ result, setResult ] = useState([])
     const [ search, setSearch ] = useState(false)
     const [ chat, setChat ] = useState([])
     const [ message, setMessage ] = useState('')
     const [ chatModal, setChatModal ] = useState(false)
     const chatRef = useRef(null)
-    const socket = useRef()
     const navigate = useNavigate()
 
     const refreshTokenChat = async (id, fn) => {
@@ -88,17 +85,10 @@ const CreateMessage = () => {
                     throw await response.json()
                 }
             }
-            await response.json()
+            const data = await response.json()
             if (response.status === 200) {
-                socket.current = io('http://localhost:3000', 
-                { transports: ['websocket', 'polling', 'flashsocket'],
-                credentials: 'include'
-                })
-                socket.current.emit('new-messenger-add', newMessage)
-                socket.current.on('get-message-messenger', (message) => {
-                const messageArray = userChat.find( x => x.users.some( y => y.id === sender)).messages.concat(message)
-                setUserChat(userChat.map( x => (x.users.some( y => y.id === sender)) ? {...x, messages: messageArray }  : x ))
-            })
+                socket.current.emit('new-messenger-add', data.message)
+                console.log(data.message)
                 setMessage('')
             }
         } catch (err) {
@@ -163,7 +153,7 @@ const CreateMessage = () => {
         setResult(userList.filter(user => user.full_name.includes(messageSender)))
     }, [messageSender])
 
-
+    
     if (messageModal) {
         return (
             <div className="p-4 fixed right-20 bottom-1 bg-white min-h-[65vh] max-h-[65vh] min-w-[20vw] max-w-[20vw] shadow-2xl rounded z-20">
