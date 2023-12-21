@@ -8,6 +8,23 @@ const bcrypt = require('bcryptjs')
 const LocalStrategy = require('passport-local').Strategy;
 const jwt = require('jsonwebtoken')
 /*
+const io = require('../socket').get();
+
+io.on('connection', (socket) => {
+    socket.on('new-message-add', (msg) => {
+        console.log('message sent')
+        io.emit('get-message', msg)
+        console.log(msg)
+    })
+    socket.on('new-messenger-add', (msg) => {
+        console.log('messenger sent')
+        io.emit('get-message-messenger', msg)
+        console.log(msg)
+    })
+  });
+*/
+
+/*
 passport.use(
     new LocalStrategy({
         usernameField: 'email',

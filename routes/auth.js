@@ -111,7 +111,6 @@ app.post('/', function (req, res, next) {
 } )
 
 app.get('/cookie', async (req, res) => {
-    console.log(req.cookies.token)
     if (req.cookies.token === undefined) {
         res.status(404)
         return
@@ -150,6 +149,7 @@ app.delete('/', function(req, res, next){
         User.findByIdAndUpdate(req.body.user, {'token': null }),
         Token.findByIdAndRemove(req.body.token)
         ])
+        res.clearCookie('token')
       res.status(200).json({success: true})    
     })
 })

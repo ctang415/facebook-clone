@@ -15,6 +15,7 @@ const CreateMessage = () => {
     const [ chat, setChat ] = useState([])
     const [ message, setMessage ] = useState('')
     const [ chatModal, setChatModal ] = useState(false)
+    const [ editMessage, setEditMessage ] = useState('')
     const chatRef = useRef(null)
     const navigate = useNavigate()
 
@@ -87,14 +88,46 @@ const CreateMessage = () => {
             }
             const data = await response.json()
             if (response.status === 200) {
-                socket.current.emit('new-messenger-add', data.message)
-                console.log(data.message)
+                socket.current.emit('new-messenger-add', data.chat)
                 setMessage('')
             }
         } catch (err) {
             console.log(err)
         }
     }
+
+    const editChatMessage = async (e) => {
+        const editedMessage = { message: message }
+            try {
+                const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === sender)).url}/messages/${editMessage.id}`, {
+                    method: 'PUT', headers: {'Content-type': 'application/json'}, credentials: 'include',
+                    body: JSON.stringify(editedMessage)
+                })
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        setLogin(false)
+                        setEditMessage('')
+                        setMessage('')
+                        navigate('/')
+                    }
+                    if (response.status === 403) {
+                        refreshToken(e, editChatMessage)
+                    } else {
+                        throw await response.json()
+                    }
+                }
+                const data = await response.json()
+                if (response.status === 200) {
+                    alert('Message successfully updated!')
+                    socket.current.emit('update-messenger', data.chat)
+                    setEditMessage('')
+                    setMessage('')
+                }
+            } catch (err) {
+                console.log(err)
+            }
+            
+        }
 
     const deleteChat = async (e) => {
         try {
@@ -116,14 +149,15 @@ const CreateMessage = () => {
                 throw await response.json()
                 }
             }
-            await response.json()
+            const data = await response.json()
             if (response.status === 200) {
                 alert('Successfully deleted chat')
+                socket.current.emit('delete-messenger', data.chat)
                 setSender('')
                 setMessageSender('')
                 setResult([])
                 setMessageModal(false)
-                fetchUser()
+                //fetchUser()
                 setChat([])
            }
         } catch (err) {
@@ -153,6 +187,23 @@ const CreateMessage = () => {
         setResult(userList.filter(user => user.full_name.includes(messageSender)))
     }, [messageSender])
 
+
+  useEffect(() => {
+
+      const setNewMessage = (message) => {
+        setUserChat(userChat.map(x => x.id === message.id ? message : x ))
+        console.log('new messenger message')
+      }
+          socket.current.off('get-message-messenger').on('get-message-messenger', setNewMessage)
+
+          const setUpdatedMessage = (message) => {
+          setUserChat(userChat.map( x => x.id === message.id ? message : x)) 
+            console.log('update messenger message')
+          }
+
+        socket.current.off('get-update-messenger').on('get-update-messenger', setUpdatedMessage)
+
+  }, [])
     
     if (messageModal) {
         return (
@@ -191,7 +242,7 @@ const CreateMessage = () => {
                     { result.length !== 0 ? result.map(res => {
                     return (
                         <li key={res.id} 
-                        className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2" onClick={() => {setMessageSender(res.full_name); setSender(res.id); setSearch(false); checkChat(res.id); }}>
+                        className="flex flex-row gap-1 hover:bg-slate-100 rounded-md items-center p-2" onClick={() => { setMessageSender(res.full_name); setSender(res.id); setSearch(false); checkChat(res.id); }}>
                             <img className="max-h-[3vh]" src={res.avatar} alt="User icon"/>
                             {res.full_name}
                         </li>            
@@ -211,7 +262,7 @@ const CreateMessage = () => {
                                 }) : null }
                                 <div key={userChat.find(x => x.users.some( y => y.id === sender)).id}>
                                     <ul className='flex flex-col gap-3'>
-                                        <Message
+                                        <Message setEditMessage={setEditMessage} editMessage={editMessage} setMessage={setMessage}
                                          messages={userChat.find(x => x.users.some( y => y.id === sender)).messages}/>
                                     </ul>        
                                 </div>
@@ -219,9 +270,15 @@ const CreateMessage = () => {
                      : null }
                     </div>
                     <div className={ messageSender !== '' ? 'flex flex-row gap-2 items-center': 'hidden'}>
+                    <button onClick={() => { setEditMessage(''); setMessage('') }} 
+                        type="button" className={ editMessage !== '' ? "text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" : "hidden"} data-modal-hide="default-modal">
+                        <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                    </button>
                         <input className='p-1 min-w-[15vw] rounded-full bg-slate-100' type="text"
                         value={message} onChange={(e) => setMessage(e.target.value)}></input>
-                        <img onClick={() => createMessage()}
+                        <img onClick={ editMessage !== '' ? () => editChatMessage() : () => createMessage()}
                         className='cursor-pointer hover:bg-slate-200 p-1 rounded-full' src={Send} alt="Send icon"/>
                     </div>
                 </form>

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 
 const UserModal = ( {userModal, setUserModal}) => {
-    const { setLogin, userData } = useContext(LoginContext)
+    const { setLogin, userData, socket } = useContext(LoginContext)
     const userMenuRef = useRef(null)
     const navigate = useNavigate()
 
@@ -22,6 +22,9 @@ const UserModal = ( {userModal, setUserModal}) => {
             }
             await response.json()
             if (response.status === 200) {
+                socket.current.on("disconnect", () => {
+                    console.log(socket.id); // undefined
+                  });
                 alert('Successfully logged out')
                 setLogin(false)
                 navigate('/')

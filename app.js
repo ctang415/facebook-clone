@@ -34,6 +34,50 @@ const server = app.listen('3000', () => {
 
 let io = require('./socket').init(server)
 
+io.on('connection', (socket) => {
+  console.log('connected')
+  
+  socket.on('join', function(room) {
+      socket.join(room);
+      console.log(room)
+      console.log('joined')
+  });
+  
+  socket.on('new-message-add', (message) => {
+    console.log('added new message to ' + message.id)
+    io.to(message.id).emit('get-message', message)
+  })
+
+  socket.on('update-message', (msg) => {
+    console.log('message updated to ' + msg.id)
+    io.to(msg.id).emit('get-update-message', msg)
+  })
+
+  socket.on('delete-message', (msg) => {
+    console.log('message deleted at ' + msg.id)
+    io.to(msg.id).emit('get-delete-message', msg)
+  })
+
+  socket.on('new-messenger-add', (msg) => {
+    console.log('messenger message added to ' + msg.id)
+    io.to(msg.id).emit('get-message-messenger', msg)
+  })
+
+  socket.on('update-messenger', (msg) => {
+    console.log('messenger message updated to ' + msg.id)
+    io.to(msg.id).emit('get-update-messenger', msg)
+  })
+
+  socket.on('delete-messenger', (msg) => {
+    console.log('messenger message deleted at ' + msg.id)
+    io.to(msg.id).emit('get-delete-messenger', msg)
+  })
+
+})
+
+app.set('socketio', io);
+
+
 const index = require('./routes/index')
 
 app.use('/', index)

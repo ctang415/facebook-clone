@@ -9,12 +9,18 @@ import MessengerContent from "./messengercontent"
 import { useNavigate, useParams } from "react-router-dom"
 
 const Messenger = () => {
-    const { fetchUser, setMessageModal, login} = useContext(LoginContext)
+    const { socket, fetchUser, setMessageModal, login, setUserChat, userChat} = useContext(LoginContext)
     const params = useParams()
     
     useEffect(() => {
-        if (params.messengerid !== undefined) {
-            fetchUser()
+        let ignore = false;
+        if (!ignore) {
+           if (params.messengerid !== undefined) {
+                fetchUser()
+            }
+        }
+        return () => {
+            ignore = true
         }
     }, [params])
 

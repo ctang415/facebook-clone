@@ -1,15 +1,17 @@
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect, useContext, useRef } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Message from "./message"
 import Send from '../assets/send.svg'
+import {io} from 'socket.io-client'
 
 const MessengerContent = () => {
     const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
     const params = useParams()
     const [ message, setMessage ] = useState('')
-    const [ editMessage, setEditMessage ] = useState('')
     const navigate = useNavigate()
+    const [ editMessage, setEditMessage ] = useState('')
+    //const socket = useRef()
 
     const createMessage = async (e) => {
         const newMessage = { message: message, timestamp: Date.now() }
@@ -31,7 +33,7 @@ const MessengerContent = () => {
             }
             const data = await response.json()
             if (response.status === 200) {
-                socket.current.emit('new-message-add', data.message )
+                socket.current.emit('new-message-add', data.chat )
                 setMessage('')
             }
         } catch (err) {
@@ -59,12 +61,13 @@ const MessengerContent = () => {
                         throw await response.json()
                     }
                 }
-                await response.json()
+                const data = await response.json()
                 if (response.status === 200) {
                     alert('Message successfully updated!')
+                    socket.current.emit('update-message', data.chat)
                     setEditMessage('')
                     setMessage('')
-                    fetchUser()
+                    console.log('edit')
                 }
             } catch (err) {
                 console.log(err)
@@ -72,11 +75,25 @@ const MessengerContent = () => {
             
         }
 
-    useEffect(() => {
-        if (params.messengerid !== undefined) {
-            fetchUser()
-        }
-    }, [params])
+        useEffect(() => {
+            const getNewMessage = (message) => {
+                setUserChat(userChat.map( x => x.id === message.id ? message : x))
+                console.log('get new message')
+            }
+           socket.current.off('get-message', getNewMessage).on('get-message', getNewMessage)
+
+            const getUpdatedMessage = (message) => {
+                setUserChat(userChat.map( x => x.id === message.id ? message : x))
+                console.log('get-update-message')
+               }
+                socket.current.off('get-update-message', getUpdatedMessage).on('get-update-message', getUpdatedMessage)
+                
+        }, [])
+
+        useEffect(() => {
+            socket.current.emit('join', userChat.find( x => x.users.some( y => y.id === params.messengerid)).id)
+        }, [params])
+
 
     if (params.messengerid !== undefined && userChat.find( x => x.users.some( y => y.id === params.messengerid))) {
         return (
@@ -104,7 +121,7 @@ const MessengerContent = () => {
                     <ul className='flex flex-col gap-3'>
                         <Message editMessage={editMessage} setEditMessage={setEditMessage} setMessage={setMessage}
                         messages={userChat.find( x => x.users.some( y => y.id === params.messengerid)).messages}/>
-                    </ul>        
+                    </ul>
                 </div>
             </div>
             <form className='flex flex-row gap-2 items-center pb-6 min-w-full justify-center'>

@@ -3,14 +3,16 @@ import { useState, useEffect } from "react"
 import { useContext } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
+import { io } from 'socket.io-client'
 
 const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMessage, editMessage, setMessage}) => {
-    const { userChat, setLogin, userData, fetchUser, refreshToken} = useContext(LoginContext)
+    const { socket, setUserChat, userChat, setLogin, userData, fetchUser, refreshToken, setSender, sender} = useContext(LoginContext)
     const params = useParams()
     const settingRef = useRef(null)
     const navigate = useNavigate()
     const [ left, setLeft ] = useState('')
     const [ top, setTop ] = useState('')
+   // const socket = useRef()
 
     const closeSettingMenu = (e) => {
         if (settingRef.current && settingMenu && !settingRef.current.contains(e.target)) {
@@ -25,6 +27,32 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
     }
 
     const deleteMessage = async (e) => {
+        if (params.messengerid === undefined) {
+            try {
+                const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === sender)).url}/messages/${message.id}`, {
+                    method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
+                })
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        refreshToken(e, deleteMessage)
+                    } else if (response.status === 404) {
+                        setLogin(false)
+                        navigate('/')
+                    } else {
+                    throw await response.json()
+                    }
+                }
+                const data = await response.json()
+                if (response.status === 200) {
+                    alert('Message successfully deleted')
+                    socket.current.emit('delete-messenger', data.chat)          
+                    setSender('')
+                    setSettingMenu(false)
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        } else {
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === params.messengerid)).url}/messages/${message.id}`, {
                 method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
@@ -39,16 +67,39 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
                 throw await response.json()
                 }
             }
-            await response.json()
+            const data = await response.json()
             if (response.status === 200) {
-                alert('Post successfully deleted')
-                fetchUser()
-                setSettingMenu(false)
+                alert('Message successfully deleted')
+                socket.current.emit('delete-message', data.chat)                
+               setSettingMenu(false)
             }
         } catch (err) {
             console.log(err)
         }
     }
+    }
+
+    const deleteMyMessage = (chatId) => {
+       console.log('delete message')
+        setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+       }
+
+       const deleteMessageFromMessenger = (chatId) => {
+        console.log('delete message messenger')
+        setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+        
+       }
+    useEffect(() => {
+
+        socket.current.on('get-delete-message', deleteMyMessage)
+
+          socket.current.off('get-delete-message', deleteMessageFromMessenger).on('get-delete-messenger', deleteMessageFromMessenger)
+
+        return () => {
+            socket.current.off('get-delete-message', deleteMyMessage)
+        }
+
+    }, [])
 
     useEffect(() => {
      document.addEventListener("mousedown", closeSettingMenu);

@@ -2,7 +2,6 @@ const Message = require('../models/message')
 const Chat = require('../models/chat')
 const { body, validationResult } = require('express-validator')
 const asyncHandler = require('express-async-handler')
-const io = require('../socket').get();
 
 exports.message_create_post = [
     body('message', "Message must not be blank.").trim().isLength({min: 1}).escape(),
@@ -22,20 +21,8 @@ exports.message_create_post = [
             }
         )
         const newMessage = await message.save().then( x => x.populate( {path: 'author', select: '-password'}))
-        const updatedChat = await Chat.findByIdAndUpdate(split[4], {$push: {messages: newMessage._id }})
-        io.on('connection', (socket) => {
-            socket.removeAllListeners()
-            socket.on('new-message-add', (msg) => {
-                console.log('message sent')
-                io.emit('get-message', msg)
-                console.log(msg)
-            })
-            socket.on('new-messenger-add', (msg) => {
-                console.log('messenger sent')
-                io.emit('get-message-messenger', msg)
-                console.log(msg)
-            })
-          });
+        const updatedChat = await Chat.findByIdAndUpdate(split[4], {$push: {messages: newMessage._id }}, {new: true}).then( x => x.populate( [{path: 'users', select: '-password'}, {path: 'messages', populate: {path: 'author', select: '-password'}} ]) )             
+        
         res.status(200).json( {chat: updatedChat, message: newMessage, success: true})
     })
 ]
@@ -48,8 +35,11 @@ exports.message_update = [
             res.status(401).json({errors: errors.array()})
             return
         }
-        const updatedMessage = await Message.findByIdAndUpdate(req.params.messageid, {message: req.body.message})
-        res.status(200).json({ message: updatedMessage, success: true})
+        const split = req.baseUrl.split('/')
+        const updatedMessage = await Message.findByIdAndUpdate(req.params.messageid, {message: req.body.message}, {new: true})
+        const chat = await Chat.findById(split[4]).then( x => x.populate( [{path: 'users', select: '-password'}, {path: 'messages', populate: {path: 'author', select: '-password'}} ]) )
+
+        res.status(200).json({ message: updatedMessage, chat: chat, success: true})
     })
 ]
 
@@ -60,7 +50,8 @@ exports.message_delete = asyncHandler( async (req, res, next) => {
         res.status(404).json({error: "Message does not exist."})
         return
     }
-    await Chat.findByIdAndUpdate(split[4], {$pull: {messages: message._id}})
+    const chat = await Chat.findByIdAndUpdate(split[4], {$pull: {messages: message._id}}, {new: true}).then( x => x.populate( [{path: 'users', select: '-password'}, {path: 'messages', populate: {path: 'author', select: '-password'}} ]) )
     const removedMessage = await Message.findByIdAndRemove(req.params.messageid)
-    res.status(200).json({success: true})
+
+    res.status(200).json({success: true, chat: chat, message: req.params.messageid})
 })

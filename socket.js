@@ -3,6 +3,7 @@
 let io;
 
 module.exports = {
+    
    init: function(server) {
        io = socketio(server);
        return io;

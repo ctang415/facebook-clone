@@ -39,6 +39,6 @@ export const LoginContext = createContext(
         refreshToken: () => {},
         socket: null,
         setSender: () => {},
-        sender: null
+        sender: null,
     }
 )

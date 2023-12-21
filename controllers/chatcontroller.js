@@ -3,6 +3,7 @@ const User = require('../models/user')
 const Message = require('../models/message')
 const { body, validationResult } = require('express-validator')
 const asyncHandler = require('express-async-handler')
+const io = require('../socket').get();
 
 exports.chat_detail_get = asyncHandler( async (req, res, next) => {
     const findChat = await Chat.findById(req.params.chatid)
@@ -55,5 +56,18 @@ exports.chat_delete = asyncHandler (async (req, res, next) => {
         User.findByIdAndUpdate(req.body.friendid, {$pull : {chats: req.params.chatid}}, {new: true}),
         Chat.findByIdAndRemove(req.params.chatid)
     ])
-    res.status(200).json({success: true})
+    io.on('connection', (socket) => {
+        socket.removeAllListeners()
+        socket.on('delete-chat', (msg) => {
+            console.log('chat deleted')
+            io.emit('get-delete-chat', msg)
+            console.log(msg)
+        })
+        socket.on('delete-messenger', (msg) => {
+            console.log('chat messenger delete')
+            io.emit('get-delete-messenger', msg)
+            console.log(msg)
+        })
+      });
+    res.status(200).json({success: true, chat: req.params.chatid})
 })

@@ -27,7 +27,7 @@ const ChatModal = () => {
 
     if (chatModal) {
         return (
-            <div className="min-w-[22vw] max-w-[22vw] bg-white shadow-xl fixed mt-16 p-2 right-4 flex flex-col gap-4" ref={chatRef}>
+            <div className="z-50 min-w-[22vw] max-w-[22vw] bg-white shadow-xl fixed mt-16 p-2 right-4 flex flex-col gap-4" ref={chatRef}>
                 <div>
                     <h1 className="text-2xl font-bold">Chats</h1>
                 </div>
@@ -40,7 +40,7 @@ const ChatModal = () => {
                             {result.users.map( user => {
                                 return (
                                     <Link onClick={() => setChatModal(false)}
-                                to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
+                                    to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
                                     <li key={user.id} className={ user.id !== userData.id ? "cursor-pointer flex min-w-full p-3 rounded-md hover:bg-slate-100 gap-2 items-center" : 'hidden'}>
                                         <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
                                         {user.full_name}

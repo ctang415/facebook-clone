@@ -1,14 +1,14 @@
-import { decode } from "html-entities"
 import { useEffect, useState } from "react"
 import { useContext } from "react"
 import { Link } from "react-router-dom"
 import { LoginContext } from "./logincontext"
+import MessengerNavDetail from "./messengernavdetail"
 
 const MessengerNav = () => {
     const { userChat, userData } = useContext(LoginContext)
     const [ results, setResults ] = useState([])
     const [ search, setSearch] = useState('')
-
+    
     useEffect(() => {
         setResults(userData.chats.filter( x => x.users.find( y => y.full_name.includes(search))))
       }, [search])
@@ -35,33 +35,16 @@ const MessengerNav = () => {
                             </div>
                         )
                     })}
-                </ul>
-                
+                </ul>                
             <ul className={ search !== '' ? 'hidden' : "flex flex-col gap-3"}>
-                {userChat ? userChat.map( chat => {
+                {userChat !== undefined ? userChat.map( chat => {
                         return (
                             <div key={chat.id} className="flex flex-row items-center min-w-full">
                             {chat.users.map(user => {
-                                return (
-                                <Link
-                                to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
-                                    <li key={user.id} className={ user.full_name !== userData.full_name ? "min-w-[23vw] flex p-4 rounded-md gap-1 cursor-pointer hover:bg-slate-100 items-center flex-nowrap" : 'hidden'}>
-                                            <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
-                                            <p>{user.full_name}</p>
-                                        <div className="flex flex-nowrap overflow-hidden">
-                                        {chat.messages.map( (message, index) => {
-                                            return (
-                                                <li key={message.id} 
-                                                className={ chat.messages.length - 1 !== index  ? "hidden" : "break-normal text-slate-400 max-w-[14vw] max-h-[4vh]"}>
-                                                {decode(message.message)}
-                                            </li>
-                                            )
-                                        })}
-                                        </div>
-                                    </li>
-                                    </Link>
-                                )
-                            })}
+                            return(
+                            <MessengerNavDetail user={user} chat={chat}/>
+                            )    
+                        })}
                             </div>
                         )
                     }) : null} 

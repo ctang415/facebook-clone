@@ -7,9 +7,10 @@ import CreatePost from "./createpost"
 import CreateMessage from "./createmessage"
 import ChatModal from "./chatmodal"
 import Register from './register'
+import {io} from 'socket.io-client'
 
 const Home = () => {
-    const { setLogin, login, setModal, setMessageModal, userData, setPosts, posts, setUserChat, userChat,
+    const { socket, setLogin, login, setModal, setMessageModal, userData, setPosts, posts, setUserChat, userChat,
     setUserData, setUserList, grabUsers } = useContext(LoginContext) 
     const [ register, setRegister ] = useState(false)
     const [ email, setEmail ] = useState('')
@@ -44,6 +45,7 @@ const Home = () => {
             setErrors(err.errors)
         }
     }
+
     
     if (!login) {
         return (
