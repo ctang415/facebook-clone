@@ -3,7 +3,6 @@ import { useState, useEffect } from "react"
 import { useContext } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
-import { io } from 'socket.io-client'
 
 const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMessage, editMessage, setMessage}) => {
     const { socket, setUserChat, userChat, setLogin, userData, fetchUser, refreshToken, setSender, sender} = useContext(LoginContext)
@@ -12,7 +11,6 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
     const navigate = useNavigate()
     const [ left, setLeft ] = useState('')
     const [ top, setTop ] = useState('')
-   // const socket = useRef()
 
     const closeSettingMenu = (e) => {
         if (settingRef.current && settingMenu && !settingRef.current.contains(e.target)) {
@@ -46,7 +44,6 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
                 if (response.status === 200) {
                     alert('Message successfully deleted')
                     socket.current.emit('delete-messenger', data.chat)          
-                    setSender('')
                     setSettingMenu(false)
                 }
             } catch (err) {
@@ -79,17 +76,16 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
     }
     }
 
-    const deleteMyMessage = (chatId) => {
-       console.log('delete message')
-        setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
-       }
-
-       const deleteMessageFromMessenger = (chatId) => {
-        console.log('delete message messenger')
-        setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
-        
-       }
     useEffect(() => {
+        const deleteMyMessage = (chatId) => {
+            console.log('delete message')
+             setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+            }
+     
+            const deleteMessageFromMessenger = (chatId) => {
+             console.log('delete message messenger')
+             setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+        }     
 
         socket.current.on('get-delete-message', deleteMyMessage)
 
@@ -98,7 +94,6 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
         return () => {
             socket.current.off('get-delete-message', deleteMyMessage)
         }
-
     }, [])
 
     useEffect(() => {

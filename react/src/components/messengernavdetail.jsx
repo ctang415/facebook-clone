@@ -6,7 +6,7 @@ import { decode } from "html-entities"
 import Settings from '../assets/more.svg'
 
 const MessengerNavDetail = ({user, chat}) => {
-    const { socket, userData, refreshToken, setLogin } = useContext(LoginContext)
+    const { socket, userData, refreshToken, fetchUser, setLogin } = useContext(LoginContext)
     const [ settingMenu, setSettingMenu] = useState(false)
     const chatRef = useRef(null)
     const navigate = useNavigate()
@@ -32,9 +32,8 @@ const MessengerNavDetail = ({user, chat}) => {
             const data = await response.json()
             if (response.status === 200) {
                 alert('Successfully deleted chat')
-                socket.current.emit('delete-chat', data.chat)
                 setSender('')
-                //fetchUser()
+                fetchUser()
            }
         } catch (err) {
             console.log(err)

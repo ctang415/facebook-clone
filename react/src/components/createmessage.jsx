@@ -62,6 +62,7 @@ const CreateMessage = () => {
             if (response.status === 200) {
                 fetchUser()
                 setChat(data.chat)
+                socket.current.emit('join', data.chat.id)
             }
         } catch (err) {
             console.log(err)
@@ -152,12 +153,11 @@ const CreateMessage = () => {
             const data = await response.json()
             if (response.status === 200) {
                 alert('Successfully deleted chat')
-                socket.current.emit('delete-messenger', data.chat)
                 setSender('')
                 setMessageSender('')
                 setResult([])
                 setMessageModal(false)
-                //fetchUser()
+                fetchUser()
                 setChat([])
            }
         } catch (err) {
@@ -176,6 +176,7 @@ const CreateMessage = () => {
             createChat(id)
         } else {
             setChat(userData.chats.find(x=> x.users.some( y => y.id === id)))
+            socket.current.emit('join', userData.chats.find(x=> x.users.some( y => y.id === id)).id)
         }
     }
 
@@ -187,23 +188,20 @@ const CreateMessage = () => {
         setResult(userList.filter(user => user.full_name.includes(messageSender)))
     }, [messageSender])
 
-
   useEffect(() => {
-
-      const setNewMessage = (message) => {
-        setUserChat(userChat.map(x => x.id === message.id ? message : x ))
-        console.log('new messenger message')
-      }
-          socket.current.off('get-message-messenger').on('get-message-messenger', setNewMessage)
-
-          const setUpdatedMessage = (message) => {
-          setUserChat(userChat.map( x => x.id === message.id ? message : x)) 
-            console.log('update messenger message')
-          }
-
-        socket.current.off('get-update-messenger').on('get-update-messenger', setUpdatedMessage)
-
-  }, [])
+    const setNewMessage = (message) => {
+      setUserChat(userData.chats.map( x => x.users.some( y => y.id === sender) ? message : x))
+    console.log('new messenger message')
+    }
+    socket.current.off('get-message-messenger', setNewMessage).on('get-message-messenger', setNewMessage)
+    
+    const setUpdatedMessage = (message) => {
+        setUserChat(userChat.map( x => x.id === message.id ? message : x)) 
+        console.log('update messenger message')
+    }
+    socket.current.off('get-update-messenger', setUpdatedMessage).on('get-update-messenger', setUpdatedMessage)
+    
+  }, [createChat, messageSender])
     
     if (messageModal) {
         return (

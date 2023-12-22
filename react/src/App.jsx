@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate, Outlet } from 'react-router'
+import { useNavigate, Outlet } from 'react-router'
 import { LoginContext } from './components/logincontext'
 import './index.css'
 import { io } from 'socket.io-client'
@@ -24,7 +24,6 @@ function App() {
   const [ userChat, setUserChat] = useState([])
   const navigate = useNavigate()
   const socket = useRef()
-  const params = useParams()
   
   const checkCookie = async () => {
     try {
@@ -88,6 +87,7 @@ function App() {
       }
       const data = await response.json()
       if (response.status === 200) {
+        console.log(data)
         setUserData(data.user)
         setPosts(data.user.posts)
         setUserChat(data.user.chats)

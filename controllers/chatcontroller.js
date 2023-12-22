@@ -31,12 +31,12 @@ exports.chat_create_post = asyncHandler ( async (req, res, next) => {
     const newChat = await chat.save()
     const [ user, friendUser ] = await Promise.all (
         [
-            User.findByIdAndUpdate(split[2], {$push: { chats: newChat._id }}),
+            User.findByIdAndUpdate(split[2], {$push: { chats: newChat._id }}, {new: true}).populate(
+                {path: 'chats', populate: [{path: 'messages', populate: { path: 'author', select: '-password'}}, {path: 'users', select: '-password'} ] }),
             User.findByIdAndUpdate(req.body.friendid, {$push: { chats: newChat._id }})
         ]
     ) 
-    res.status(200).json({chat: newChat, success: true})
-
+    res.status(200).json({chat: newChat, user:user, success: true})
 })
 
 exports.chat_delete = asyncHandler (async (req, res, next) => {
@@ -56,18 +56,6 @@ exports.chat_delete = asyncHandler (async (req, res, next) => {
         User.findByIdAndUpdate(req.body.friendid, {$pull : {chats: req.params.chatid}}, {new: true}),
         Chat.findByIdAndRemove(req.params.chatid)
     ])
-    io.on('connection', (socket) => {
-        socket.removeAllListeners()
-        socket.on('delete-chat', (msg) => {
-            console.log('chat deleted')
-            io.emit('get-delete-chat', msg)
-            console.log(msg)
-        })
-        socket.on('delete-messenger', (msg) => {
-            console.log('chat messenger delete')
-            io.emit('get-delete-messenger', msg)
-            console.log(msg)
-        })
-      });
+
     res.status(200).json({success: true, chat: req.params.chatid})
 })

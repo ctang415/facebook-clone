@@ -36,11 +36,10 @@ let io = require('./socket').init(server)
 
 io.on('connection', (socket) => {
   console.log('connected')
-  
+
   socket.on('join', function(room) {
       socket.join(room);
-      console.log(room)
-      console.log('joined')
+      console.log('joined ' + room)
   });
   
   socket.on('new-message-add', (message) => {
@@ -76,7 +75,6 @@ io.on('connection', (socket) => {
 })
 
 app.set('socketio', io);
-
 
 const index = require('./routes/index')
 

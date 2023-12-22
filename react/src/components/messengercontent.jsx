@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom"
 import { LoginContext } from "./logincontext"
 import Message from "./message"
 import Send from '../assets/send.svg'
-import {io} from 'socket.io-client'
 
 const MessengerContent = () => {
     const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
@@ -11,7 +10,6 @@ const MessengerContent = () => {
     const [ message, setMessage ] = useState('')
     const navigate = useNavigate()
     const [ editMessage, setEditMessage ] = useState('')
-    //const socket = useRef()
 
     const createMessage = async (e) => {
         const newMessage = { message: message, timestamp: Date.now() }
@@ -93,7 +91,6 @@ const MessengerContent = () => {
         useEffect(() => {
             socket.current.emit('join', userChat.find( x => x.users.some( y => y.id === params.messengerid)).id)
         }, [params])
-
 
     if (params.messengerid !== undefined && userChat.find( x => x.users.some( y => y.id === params.messengerid))) {
         return (
