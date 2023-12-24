@@ -5,7 +5,7 @@ import Message from "./message"
 import Send from '../assets/send.svg'
 
 const MessengerContent = () => {
-    const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken } = useContext(LoginContext)
+    const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken, sender } = useContext(LoginContext)
     const params = useParams()
     const [ message, setMessage ] = useState('')
     const navigate = useNavigate()
@@ -73,23 +73,31 @@ const MessengerContent = () => {
             
         }
 
-        useEffect(() => {
-            const getNewMessage = (message) => {
-                setUserChat(userChat.map( x => x.id === message.id ? message : x))
-                console.log('get new message')
-            }
-           socket.current.off('get-message', getNewMessage).on('get-message', getNewMessage)
+    useEffect(() => {
+        const getNewMessage = (message) => {
+            setUserChat(userChat.map( x => x.id === message.id ? message : x))
+            console.log('get new message')
+        }
+           
+        socket.current.on('get-message', getNewMessage)
 
-            const getUpdatedMessage = (message) => {
-                setUserChat(userChat.map( x => x.id === message.id ? message : x))
-                console.log('get-update-message')
-               }
-                socket.current.off('get-update-message', getUpdatedMessage).on('get-update-message', getUpdatedMessage)
+        const getUpdatedMessage = (message) => {
+            setUserChat(userChat.map( x => x.id === message.id ? message : x))
+            console.log('get-update-message')
+        }
+
+        socket.current.on('get-update-message', getUpdatedMessage)
                 
-        }, [])
+        return () => {
+            socket.current.off('get-update-message')
+            socket.current.off('get-message')
+        }
+    }, [])
 
         useEffect(() => {
+            if (params.messengerid !== undefined) {
             socket.current.emit('join', userChat.find( x => x.users.some( y => y.id === params.messengerid)).id)
+            }
         }, [params])
 
     if (params.messengerid !== undefined && userChat.find( x => x.users.some( y => y.id === params.messengerid))) {

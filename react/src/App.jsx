@@ -22,6 +22,8 @@ function App() {
   const [ posts, setPosts ] = useState([])
   const [ userList, setUserList] = useState([])
   const [ userChat, setUserChat] = useState([])
+  const [ messageSender, setMessageSender ] = useState('')
+  const [ chat, setChat ] = useState([])
   const navigate = useNavigate()
   const socket = useRef()
   
@@ -175,7 +177,7 @@ function App() {
         userData, setUserData, login, setLogin, userModal, setUserModal, editPost, setEditPost, allFriends, setAllFriends,
         friendsRequest, setFriendsRequest, feed, setFeed, discover, setDiscover, myGroups, setMyGroups, chatModal, socket,
         setChatModal, fetchUser, setPosts, posts, userList, setUserList, userChat, setUserChat, refreshToken, grabUsers,
-        sender, setSender}}>
+        sender, setSender, messageSender, setMessageSender, setChat, chat}}>
         <Outlet/>
       </LoginContext.Provider>
     </div>

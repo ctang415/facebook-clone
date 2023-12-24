@@ -40,5 +40,9 @@ export const LoginContext = createContext(
         socket: null,
         setSender: () => {},
         sender: null,
+        messageSender: null,
+        setMessageSender: () => {},
+        chat: null,
+        setChat: () => {}
     }
 )

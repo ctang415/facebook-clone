@@ -79,20 +79,21 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
     useEffect(() => {
         const deleteMyMessage = (chatId) => {
             console.log('delete message')
-             setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
-            }
+            setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+        }
      
-            const deleteMessageFromMessenger = (chatId) => {
-             console.log('delete message messenger')
-             setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+        const deleteMessageFromMessenger = (chatId) => {
+            console.log('delete message messenger')
+            setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
         }     
 
         socket.current.on('get-delete-message', deleteMyMessage)
 
-          socket.current.off('get-delete-message', deleteMessageFromMessenger).on('get-delete-messenger', deleteMessageFromMessenger)
+        socket.current.on('get-delete-messenger', deleteMessageFromMessenger)
 
         return () => {
-            socket.current.off('get-delete-message', deleteMyMessage)
+            socket.current.off('get-delete-message')
+            socket.current.off('get-delete-messenger')
         }
     }, [])
 

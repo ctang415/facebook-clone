@@ -8,11 +8,9 @@ import { useRef } from 'react'
 
 const CreateMessage = () => {
     const { setLogin, userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal,
-    socket, refreshToken, sender, setSender} = useContext(LoginContext)
-    const [ messageSender, setMessageSender ] = useState('')
+    socket, refreshToken, sender, setSender, messageSender, setMessageSender, chat, setChat} = useContext(LoginContext)
     const [ result, setResult ] = useState([])
     const [ search, setSearch ] = useState(false)
-    const [ chat, setChat ] = useState([])
     const [ message, setMessage ] = useState('')
     const [ chatModal, setChatModal ] = useState(false)
     const [ editMessage, setEditMessage ] = useState('')
@@ -89,7 +87,7 @@ const CreateMessage = () => {
             }
             const data = await response.json()
             if (response.status === 200) {
-                socket.current.emit('new-messenger-add', data.chat)
+                socket.current.emit('new-message-add', data.chat)
                 setMessage('')
             }
         } catch (err) {
@@ -172,7 +170,7 @@ const CreateMessage = () => {
     }
 
     const checkChat = (id) => {
-        if (!(userData.chats.find(x => x.users.some( y => y.id === id)))) {
+        if ( !(userData.chats.find(x => x.users.some( y => y.id === id))) ) {
             createChat(id)
         } else {
             setChat(userData.chats.find(x=> x.users.some( y => y.id === id)))
@@ -185,30 +183,42 @@ const CreateMessage = () => {
          }, [closeChatMenu]);
 
     useEffect(() => {
-        setResult(userList.filter(user => user.full_name.includes(messageSender)))
+        setResult(userList.filter(user => user.id !== userData.id).filter(user => user.full_name.includes(messageSender)))
     }, [messageSender])
 
   useEffect(() => {
     const setNewMessage = (message) => {
-      setUserChat(userData.chats.map( x => x.users.some( y => y.id === sender) ? message : x))
-    console.log('new messenger message')
+        console.log(message)
+        setUserChat(userChat.map( x => x.id === message.id ? message : x))
+        //setUserChat(userData.chats.map( x => x.users.some( y => y.id === sender) ? message : x))
+        console.log('new messenger message')
     }
-    socket.current.off('get-message-messenger', setNewMessage).on('get-message-messenger', setNewMessage)
+
+    socket.current.on('get-message', setNewMessage)
     
     const setUpdatedMessage = (message) => {
         setUserChat(userChat.map( x => x.id === message.id ? message : x)) 
         console.log('update messenger message')
     }
-    socket.current.off('get-update-messenger', setUpdatedMessage).on('get-update-messenger', setUpdatedMessage)
+    socket.current.on('get-update-messenger', setUpdatedMessage)
     
+    return () => {
+        socket.current.off('get-update-messenger')
+        socket.current.off('get-message-messenger')
+    }
   }, [createChat, messageSender])
+
+  useEffect(() => {
+    console.log(sender)
+    
+  }, [])
     
     if (messageModal) {
         return (
             <div className="p-4 fixed right-20 bottom-1 bg-white min-h-[65vh] max-h-[65vh] min-w-[20vw] max-w-[20vw] shadow-2xl rounded z-20">
                 <div className="flex flex-row items-center">
                     <p className={ sender !== '' ? 'hidden' : 'flex' }>New message</p>
-                    <button onClick={() => { setMessageModal(false); setSender(''); setMessageSender(''); setResult(''); }} 
+                    <button onClick={() => { setMessageModal(false); setSender(''); setMessageSender(''); setResult(''); fetchUser() }} 
                         type="button" className="text-blue-600 bg-transparent hover:bg-gray-200 rounded-full text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
                         <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
@@ -261,7 +271,8 @@ const CreateMessage = () => {
                                 <div key={userChat.find(x => x.users.some( y => y.id === sender)).id}>
                                     <ul className='flex flex-col gap-3'>
                                         <Message setEditMessage={setEditMessage} editMessage={editMessage} setMessage={setMessage}
-                                         messages={userChat.find(x => x.users.some( y => y.id === sender)).messages}/>
+                                         messages={ sender !== userData.id ? userChat.find(x => x.users.some( y => y.id === sender)).messages
+                                        : []}/>
                                     </ul>        
                                 </div>
                             </div>
