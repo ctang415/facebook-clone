@@ -10,7 +10,7 @@ const Message = ({messages, editMessage, setEditMessage, setMessage}) => {
                 <li className='flex flex-col relative' key={message.id}>
                     <MessageDetail messages={messages} message={message} index={index} setEditMessage={setEditMessage}
                     editMessage={editMessage} setMessage={setMessage} />
-                    <AlwaysScrollToBottom/>                         
+                    <AlwaysScrollToBottom/>                
                 </li>
             )
         })}

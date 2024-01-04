@@ -50,29 +50,31 @@ const MessengerNavDetail = ({user, chat}) => {
          }, [closeChatMenu]);
 
     return (
-        <Link key={user.id}
-        to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
-            <li className={ user.full_name !== userData.full_name ? "min-w-[23vw] flex p-4 rounded-md gap-1 cursor-pointer hover:bg-slate-100 items-center flex-nowrap" : 'hidden'}>
-                <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
-                <p>{user.full_name}</p>
-                <div className="flex flex-nowrap overflow-hidden">
-                    {chat.messages.map( (message, index) => {
-                        return (
+        <>
+            <div className={ user.full_name !== userData.full_name ? "min-w-[23vw] relative flex p-4 rounded-md cursor-pointer hover:bg-slate-100 items-center gap-1 justify-between flex-nowrap" : 'hidden'}>
+                <Link className="flex gap-3" key={user.id}
+                to={ user.id !== userData.id ? `/messenger/${user.id}` : null}>
+                    <img className="max-h-[3vh]" src={user.avatar} alt="User icon"/>
+                    <p>{user.full_name}</p>
+                    <div className="flex flex-nowrap overflow-hidden">
+                        {chat.messages.map( (message, index) => {
+                            return (
                             <li key={message.id} 
                             className={ chat.messages.length - 1 !== index  ? "hidden" : "break-normal text-slate-400 max-w-[14vw] max-h-[4vh]"}>
                                 {decode(message.message)}
                             </li>
                         )
-                    })}
-                </div>
+                        })}
+                    </div>
+                </Link>
                 <img onClick={() => {setSettingMenu(true); setSender(user.id) }}
-                src={Settings} alt="Settings icon" className=" hover:bg-slate-200 rounded-xl"/>
-            </li>
-            <ul className={settingMenu ? 'absolute bg-white rounded-lg gap-2 flex flex-col shadow-xl z-60 border-2' : 'hidden'}
-            ref={chatRef}>
+                src={Settings} alt="Settings icon" className="hover:bg-slate-200 rounded-xl"/>
+                <ul className={settingMenu ? 'absolute bg-white rounded-lg gap-2 flex flex-col shadow-xl z-60 border-2 right-1' : 'hidden'}
+                ref={chatRef}>
                 <li onClick={() => deleteChat() } className="p-2 hover:bg-slate-100 cursor-pointer">Delete chat</li>
             </ul>
-        </Link>
+            </div>
+        </>
     )
 }
 

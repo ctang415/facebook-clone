@@ -116,7 +116,7 @@ const FriendsContent = () => {
         )
     } else if (friendsRequest && !allFriends) {
         return (
-            <div className="min-h-full w-screen flex pt-20">
+            <div className="min-h-full w-screen pt-20">
             <div className="items-center justify-center">
                 <h3 className={ userData.friends.filter(friend => friend.status === "Pending") ? "hidden" :"text-xl"}>
                 When you have friend requests or suggestions, you'll see them here.
@@ -128,18 +128,18 @@ const FriendsContent = () => {
                         <div key={x.id}> 
                             {x.users.filter( y => y.id !== userData.id).map(user => {
                             return (
-                                <Link to={`/profiles/${user.id}`} key={user.id}>
                                 <li className="flex flex-row border-1 bg-white p-6 rounded-md shadow-md justify-between min-w-[25vw] min-h-[12vh]">
+                                <Link to={`/profiles/${user.id}`} key={user.id}>
                                     <div className="flex flex-row gap-2 p-2">
                                         <img className="max-h-[3vh]" src={user.avatar} alt="Friend icon"/>
                                         <p>{user.full_name}</p>
                                     </div>
+                                </Link>
                                     <div className="flex flex-row gap-2">
                                     <button className={ x.sender !== userData.id ? "p-2 bg-green-500 text-white rounded-md": 'hidden'} onClick={() => acceptRequest(x._id)}>Approve</button>
                                     <button className="p-2 bg-red-500 text-white rounded-md" onClick={() => removeRequest(x._id)}>Remove</button>
                                     </div>
                                 </li>
-                                </Link>
                                 )
                         })
                     }

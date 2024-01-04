@@ -65,7 +65,6 @@ passport.use(
                     { path: 'chats', populate: [{ path: 'messages', populate: {path: 'author', select: '-password'}}, {path: 'users', select: '-password'}]},
                     {path: 'friends', populate: {path: 'users', select: '-password', populate: { path: 'posts', options: { sort: { 'timestamp' : 1}},
                     populate: [{ path: 'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'}} ]}} } ])
-//                    console.log(limitedUser)
                 return done(null, limitedUser);
             }
         }
@@ -92,11 +91,14 @@ app.post('/', function (req, res, next) {
             const newToken = new Token( {
                 token: refreshToken
             })
-            newToken.save()
-            const updatedUser = await User.findByIdAndUpdate(user.id, {token : newToken.id }, {new: true}).select('-password').populate(
+            newToken.save();
+            const updatedUser = await User.findByIdAndUpdate(user.id, {token : newToken.id }, {new: true}).select('-password')
+            .populate(
                 [{path :'posts', options: { sort: { 'timestamp' : 1}},
                 populate: [{ path: 'author', select: '-password'}, { path: 'comments', populate: { path: 'author', select: '-password'} } ]  }, 
-                { path: 'chats', populate: [{ path: 'messages', populate: {path: 'author', select: '-password'}}, {path: 'users', select: '-password'}]},
+                { path: 'chats', populate: [
+                    { path: 'messages',
+                     populate: {path: 'author', select: '-password'}}, {path: 'users', select: '-password'}]},
                 {path: 'friends', populate: {path: 'users', select: '-password', populate: { path: 'posts', options: { sort: { 'timestamp' : 1}},
                 populate: [{ path: 'author', select: '-password'}, {path: 'comments', populate: {path: 'author', select: '-password'}} ]}} } ])  
                 req.token = refreshToken
