@@ -1,5 +1,5 @@
-import AlwaysScrollToBottom from "./scrolltobottom"
-import MessageDetail from './messagedetail'
+import AlwaysScrollToBottom from "./scrolltobottom";
+import MessageDetail from './messagedetail';
 
 const Message = ({messages, editMessage, setEditMessage, setMessage}) => {
     

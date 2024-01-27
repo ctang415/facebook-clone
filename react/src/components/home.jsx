@@ -1,24 +1,24 @@
-import { useContext, useEffect, useState } from "react"
-import { LoginContext } from "./logincontext"
-import Navbar from "./navbar"
-import Post from './post'
-import NewMessage from '../assets/newmessage.svg'
-import CreatePost from "./createpost"
-import CreateMessage from "./createmessage"
-import ChatModal from "./chatmodal"
-import Register from './register'
+import { useContext, useEffect, useState } from "react";
+import { LoginContext } from "./logincontext";
+import Navbar from "./navbar";
+import Post from './post';
+import NewMessage from '../assets/newmessage.svg';
+import CreatePost from "./createpost";
+import CreateMessage from "./createmessage";
+import ChatModal from "./chatmodal";
+import Register from './register';
 
 const Home = () => {
     const { setLogin, login, setModal, setMessageModal, userData, setPosts, posts, setUserChat, userChat,
-    setUserData, setUserList, grabUsers } = useContext(LoginContext) 
-    const [ register, setRegister ] = useState(false)
-    const [ email, setEmail ] = useState('')
-    const [ password, setPassword ] = useState('')
-    const [ errors, setErrors] = useState([])
+    setUserData, setUserList, grabUsers } = useContext(LoginContext);
+    const [ register, setRegister ] = useState(false);
+    const [ email, setEmail ] = useState('');
+    const [ password, setPassword ] = useState('');
+    const [ errors, setErrors] = useState([]);
 
     const loginToAccount = async (e) => {
-        e.preventDefault()
-        setErrors([])
+        e.preventDefault();
+        setErrors([]);
         const account = { email: email, password: password}
         try {
             const response = await fetch ('http://localhost:4000', {
@@ -26,25 +26,24 @@ const Home = () => {
                 credentials: 'include', body: JSON.stringify(account)
             })
             if (!response.ok) {
-                throw await response.json()
+                throw await response.json();
             }
-            const data = await response.json()
+            const data = await response.json();
             if (response.status === 200) {
-                alert('success')
-                setLogin(true)
-                setUserData(data.user)
-                setPosts(data.user.posts)
-                setUserChat(data.user.chats)
-                data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ))
-                grabUsers()
-                console.log(data)
+                alert('success');
+                setLogin(true);
+                setUserData(data.user);
+                setPosts(data.user.posts);
+                setUserChat(data.user.chats);
+                data.user.friends.map(friend => friend.status === "Friends" && friend.users.filter( x => x.id !== data.user.id ? x.posts.map(y => setPosts( prev => [...prev, y] )) : x ));
+                grabUsers();
+                console.log(data);
             }
         } catch (err) {
-            console.log(err)
-            setErrors(err.errors)
+            console.log(err);
+            setErrors(err.errors);
         }
     }
-
     
     if (!login) {
         return (

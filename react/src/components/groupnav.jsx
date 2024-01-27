@@ -1,8 +1,8 @@
-import { useContext } from "react"
-import { LoginContext } from "./logincontext"
+import { useContext } from "react";
+import { LoginContext } from "./logincontext";
 
 const GroupNav = () => {
-    const { myGroups, setMyGroups, discover, setDiscover, feed, setFeed} = useContext(LoginContext)
+    const { myGroups, setMyGroups, discover, setDiscover, feed, setFeed} = useContext(LoginContext);
     
     return (
         <div className="bg-white min-h-screen w-[25vw] p-2 shadow-xl">

@@ -1,18 +1,19 @@
-import Home from '../assets/home.svg'
-import Friend from '../assets/friend.svg'
-import Group from '../assets/group.svg'
-import Message from '../assets/message.svg'
-import Notification from '../assets/notification.svg'
-import Account from '../assets/account.svg'
-import UserModal from './usermodal'
-import { useContext, useState } from 'react'
-import { LoginContext } from './logincontext'
-import { Link } from 'react-router-dom'
-import Searchbar from './searchbar'
+import Home from '../assets/home.svg';
+import Friend from '../assets/friend.svg';
+import Group from '../assets/group.svg';
+import Message from '../assets/message.svg';
+import Notification from '../assets/notification.svg';
+import Account from '../assets/account.svg';
+import UserModal from './usermodal';
+import { useContext, useState } from 'react';
+import { LoginContext } from './logincontext';
+import { Link } from 'react-router-dom';
+import Searchbar from './searchbar';
 
 const Navbar = () => {
-    const { userModal, setUserModal, setFriendsRequest, setAllFriends, setChatModal, chatModal, usersList } = useContext(LoginContext)
-    const [ search, setSearch ] = useState('')
+    const { userModal, setUserModal, setFriendsRequest, setAllFriends, setChatModal, chatModal, usersList } = useContext(LoginContext);
+    const [ search, setSearch ] = useState('');
+    
     return (
         <nav className="fixed bg-white flex flex-row justify-between items-center p-2 w-full shadow-md z-50">
             <div className='flex flex-row gap-4 items-center relative'>

@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react"
-import { useContext } from "react"
-import { Link } from "react-router-dom"
-import { LoginContext } from "./logincontext"
-import MessengerNavDetail from "./messengernavdetail"
+import { useEffect, useState } from "react";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import { LoginContext } from "./logincontext";
+import MessengerNavDetail from "./messengernavdetail";
 
 const MessengerNav = () => {
-    const { userChat, userData } = useContext(LoginContext)
-    const [ results, setResults ] = useState([])
-    const [ search, setSearch] = useState('')
+    const { userChat, userData } = useContext(LoginContext);
+    const [ results, setResults ] = useState([]);
+    const [ search, setSearch] = useState('');
     
     useEffect(() => {
-        setResults(userData.chats.filter( x => x.users.find( y => y.full_name.includes(search))))
-      }, [search])
+        setResults(userData.chats.filter( x => x.users.find( y => y.full_name.includes(search))));
+      }, [search]);
 
     return (
         <div className="bg-white min-w-[25vw] max-w-[25vw] min-h-[100vh] p-2 shadow-xl gap-4 flex flex-col pt-16">

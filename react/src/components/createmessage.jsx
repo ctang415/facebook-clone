@@ -1,21 +1,21 @@
-import Send from '../assets/send.svg'
-import Message from './message'
-import { useState, useEffect } from 'react'
-import { LoginContext } from './logincontext'
-import { useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useRef } from 'react'
+import Send from '../assets/send.svg';
+import Message from './message';
+import { useState, useEffect } from 'react';
+import { LoginContext } from './logincontext';
+import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 
 const CreateMessage = () => {
     const { setLogin, userChat, setUserChat, userList, fetchUser, userData, messageModal, setMessageModal,
-    socket, refreshToken, sender, setSender, messageSender, setMessageSender, chat, setChat} = useContext(LoginContext)
-    const [ result, setResult ] = useState([])
-    const [ search, setSearch ] = useState(false)
-    const [ message, setMessage ] = useState('')
-    const [ chatModal, setChatModal ] = useState(false)
-    const [ editMessage, setEditMessage ] = useState('')
-    const chatRef = useRef(null)
-    const navigate = useNavigate()
+    socket, refreshToken, sender, setSender, messageSender, setMessageSender, chat, setChat} = useContext(LoginContext);
+    const [ result, setResult ] = useState([]);
+    const [ search, setSearch ] = useState(false);
+    const [ message, setMessage ] = useState('');
+    const [ chatModal, setChatModal ] = useState(false);
+    const [ editMessage, setEditMessage ] = useState('');
+    const chatRef = useRef(null);
+    const navigate = useNavigate();
 
     const refreshTokenChat = async (id, fn) => {
         const token = { token: userData.token }
@@ -25,16 +25,16 @@ const CreateMessage = () => {
             body: JSON.stringify(token)
           })
           if (!response.ok) {
-            throw await response.json()
+            throw await response.json();
           }
-          let data = await response.json()
+          let data = await response.json();
           if (response.status === 200) {
-            console.log('token refreshed')
-            console.log(data)
-            fn(id)
+            console.log('token refreshed');
+            console.log(data);
+            fn(id);
           }
         } catch (err) {
-          console.log(err)
+          console.log(err);
         }
       }
 
@@ -47,23 +47,23 @@ const CreateMessage = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshTokenChat(id, createChat)
+                    refreshTokenChat(id, createChat);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setChat([])
-                    navigate('/')
+                    setLogin(false);
+                    setChat([]);
+                    navigate('/');
                 } else {
-                    throw await response.json()
+                    throw await response.json();
                 }
             }
-            const data = await response.json()
+            const data = await response.json();
             if (response.status === 200) {
-                fetchUser()
-                setChat(data.chat)
-                socket.current.emit('join', data.chat.id)
+                fetchUser();
+                setChat(data.chat);
+                socket.current.emit('join', data.chat.id);
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -76,22 +76,22 @@ const CreateMessage = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, createMessage)
+                    refreshToken(e, createMessage);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setMessage('')
-                    navigate('/')
+                    setLogin(false);
+                    setMessage('');
+                    navigate('/');
                 } else {
-                    throw await response.json()
+                    throw await response.json();
                 }
             }
-            const data = await response.json()
+            const data = await response.json();
             if (response.status === 200) {
-                socket.current.emit('new-message-add', data.chat)
-                setMessage('')
+                socket.current.emit('new-message-add', data.chat);
+                setMessage('');
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -104,26 +104,26 @@ const CreateMessage = () => {
                 })
                 if (!response.ok) {
                     if (response.status === 404) {
-                        setLogin(false)
-                        setEditMessage('')
-                        setMessage('')
-                        navigate('/')
+                        setLogin(false);
+                        setEditMessage('');
+                        setMessage('');
+                        navigate('/');
                     }
                     if (response.status === 403) {
-                        refreshToken(e, editChatMessage)
+                        refreshToken(e, editChatMessage);
                     } else {
-                        throw await response.json()
+                        throw await response.json();
                     }
                 }
-                const data = await response.json()
+                const data = await response.json();
                 if (response.status === 200) {
-                    alert('Message successfully updated!')
-                    socket.current.emit('update-messenger', data.chat)
-                    setEditMessage('')
-                    setMessage('')
+                    alert('Message successfully updated!');
+                    socket.current.emit('update-messenger', data.chat);
+                    setEditMessage('');
+                    setMessage('');
                 }
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
             
         }
@@ -136,45 +136,45 @@ const CreateMessage = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, deleteChat)
+                    refreshToken(e, deleteChat);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setSender('')
-                    setResult([])
-                    setMessageModal(false)
-                    setChat([])
-                    navigate('/')
+                    setLogin(false);
+                    setSender('');
+                    setResult([]);
+                    setMessageModal(false);
+                    setChat([]);
+                    navigate('/');
                 } else {
-                throw await response.json()
+                throw await response.json();
                 }
             }
-            const data = await response.json()
+            const data = await response.json();
             if (response.status === 200) {
-                alert('Successfully deleted chat')
-                setSender('')
-                setMessageSender('')
-                setResult([])
-                setMessageModal(false)
-                fetchUser()
-                setChat([])
+                alert('Successfully deleted chat');
+                setSender('');
+                setMessageSender('');
+                setResult([]);
+                setMessageModal(false);
+                fetchUser();
+                setChat([]);
            }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     const closeChatMenu = (e) => {
         if (chatRef.current && chatModal && !chatRef.current.contains(e.target)) {
-          setChatModal(false)
+          setChatModal(false);
         }
     }
 
     const checkChat = (id) => {
         if ( !(userData.chats.find(x => x.users.some( y => y.id === id))) ) {
-            createChat(id)
+            createChat(id);
         } else {
-            setChat(userData.chats.find(x=> x.users.some( y => y.id === id)))
-            socket.current.emit('join', userData.chats.find(x=> x.users.some( y => y.id === id)).id)
+            setChat(userData.chats.find(x=> x.users.some( y => y.id === id)));
+            socket.current.emit('join', userData.chats.find(x=> x.users.some( y => y.id === id)).id);
         }
     }
 
@@ -183,35 +183,26 @@ const CreateMessage = () => {
          }, [closeChatMenu]);
 
     useEffect(() => {
-        setResult(userList.filter(user => user.id !== userData.id).filter(user => user.full_name.includes(messageSender)))
-    }, [messageSender])
+        setResult(userList.filter(user => user.id !== userData.id).filter(user => user.full_name.includes(messageSender)));
+    }, [messageSender]);
 
   useEffect(() => {
     const setNewMessage = (message) => {
-        console.log(message)
-        setUserChat(userChat.map( x => x.id === message.id ? message : x))
-        //setUserChat(userData.chats.map( x => x.users.some( y => y.id === sender) ? message : x))
-        console.log('new messenger message')
+        setUserChat(userChat.map( x => x.id === message.id ? message : x));
     }
 
-    socket.current.on('get-message', setNewMessage)
+    socket.current.on('get-message', setNewMessage);
     
     const setUpdatedMessage = (message) => {
-        setUserChat(userChat.map( x => x.id === message.id ? message : x)) 
-        console.log('update messenger message')
+        setUserChat(userChat.map( x => x.id === message.id ? message : x));
     }
-    socket.current.on('get-update-messenger', setUpdatedMessage)
+    socket.current.on('get-update-messenger', setUpdatedMessage);
     
     return () => {
-        socket.current.off('get-update-messenger')
-        socket.current.off('get-message-messenger')
+        socket.current.off('get-update-messenger');
+        socket.current.off('get-message-messenger');
     }
-  }, [createChat, messageSender])
-
-  useEffect(() => {
-    console.log(sender)
-    
-  }, [])
+  }, [createChat, messageSender]);
     
     if (messageModal) {
         return (

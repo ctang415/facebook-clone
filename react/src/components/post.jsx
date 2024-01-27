@@ -1,19 +1,19 @@
-import Like from '../assets/like.svg'
-import CommentIcon from '../assets/comment.svg'
-import Comment from './comment'
-import Settings from '../assets/more.svg'
-import { useContext, useState, useEffect } from 'react'
-import { LoginContext } from './logincontext'
-import SettingsModal from './settingsmodal'
-import { decode } from 'html-entities'
-import Liked from '../assets/liked.svg'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import Like from '../assets/like.svg';
+import CommentIcon from '../assets/comment.svg';
+import Comment from './comment';
+import Settings from '../assets/more.svg';
+import { useContext, useState, useEffect } from 'react';
+import { LoginContext } from './logincontext';
+import SettingsModal from './settingsmodal';
+import { decode } from 'html-entities';
+import Liked from '../assets/liked.svg';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const Post = ( {post}) => {
-    const { refreshToken, setLogin, userData, fetchUser }  = useContext(LoginContext)
-    const [settingMenu, setSettingMenu] = useState(false)
-    const params = useParams()
-    const navigate = useNavigate()
+    const { refreshToken, setLogin, userData, fetchUser }  = useContext(LoginContext);
+    const [settingMenu, setSettingMenu] = useState(false);
+    const params = useParams();
+    const navigate = useNavigate();
     
     const likePost = async (e) => {
         try {
@@ -22,20 +22,20 @@ const Post = ( {post}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, likePost)
+                    refreshToken(e, likePost);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    navigate('/')
+                    setLogin(false);
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                fetchUser()
+                fetchUser();
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -46,20 +46,20 @@ const Post = ( {post}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, unlikePost)
+                    refreshToken(e, unlikePost);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    navigate('/')
+                    setLogin(false);
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                fetchUser()
+                fetchUser();
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
     

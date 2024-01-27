@@ -1,10 +1,10 @@
-import { useContext } from "react"
-import { LoginContext } from "./logincontext"
-import Back from '../assets/back.svg'
-import { Link } from 'react-router-dom'
+import { useContext } from "react";
+import { LoginContext } from "./logincontext";
+import Back from '../assets/back.svg';
+import { Link } from 'react-router-dom';
 
 const FriendsNav = () => {
-    const { userData, friendsRequest, setFriendsRequest, allFriends, setAllFriends } = useContext(LoginContext)
+    const { userData, friendsRequest, setFriendsRequest, allFriends, setAllFriends } = useContext(LoginContext);
 
     if (friendsRequest && !allFriends) {
         return (

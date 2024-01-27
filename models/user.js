@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema
-const { DateTime } = require('luxon')
+const { DateTime } = require('luxon');
 
 const UserSchema = new Schema (
     {
@@ -24,19 +24,19 @@ const UserSchema = new Schema (
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
     }
-)
+);
 
-UserSchema.virtual('full_name').get( function () {
-    let fullName = `${this.first_name} ${this.last_name}`
-    return fullName
-})
+UserSchema.virtual('full_name').get(function () {
+    let fullName = `${this.first_name} ${this.last_name}`;
+    return fullName;
+});
 
 UserSchema.virtual('birthdate_formatted').get(function () {
-    return DateTime.fromJSDate(this.birthdate).toFormat('yyyy-MM-dd')
-})
+    return DateTime.fromJSDate(this.birthdate).toFormat('yyyy-MM-dd');
+});
 
 UserSchema.virtual('url').get(function () {
-    return `/users/${this._id}`
-})
+    return `/users/${this._id}`;
+});
 
 module.exports = mongoose.model('User', UserSchema)

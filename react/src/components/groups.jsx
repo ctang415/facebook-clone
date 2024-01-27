@@ -1,14 +1,14 @@
-import { useContext } from "react"
-import CreateMessage from "./createmessage"
-import GroupContent from "./groupcontent"
-import GroupNav from "./groupnav"
-import { LoginContext } from "./logincontext"
-import Navbar from "./navbar"
-import NewMessage from '../assets/newmessage.svg'
-import ChatModal from "./chatmodal"
+import { useContext } from "react";
+import CreateMessage from "./createmessage";
+import GroupContent from "./groupcontent";
+import GroupNav from "./groupnav";
+import { LoginContext } from "./logincontext";
+import Navbar from "./navbar";
+import NewMessage from '../assets/newmessage.svg';
+import ChatModal from "./chatmodal";
 
 const Groups = () => {
-    const {setMessageModal} = useContext(LoginContext)
+    const {setMessageModal} = useContext(LoginContext);
 
     return (
         <>

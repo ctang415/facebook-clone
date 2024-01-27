@@ -1,24 +1,24 @@
-import { useRef } from "react"
-import { useEffect } from "react"
-import { useContext } from "react"
-import { useNavigate } from "react-router-dom"
-import { LoginContext } from "./logincontext"
+import { useRef } from "react";
+import { useEffect } from "react";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { LoginContext } from "./logincontext";
 
 const SettingsModal = ({settingMenu, setSettingMenu, post}) => {
-    const { setLogin, setEditPost, setModal, userData, fetchUser, refreshToken} = useContext(LoginContext)
-    const settingRef = useRef(null)
-    const navigate = useNavigate()
+    const { setLogin, setEditPost, setModal, userData, fetchUser, refreshToken} = useContext(LoginContext);
+    const settingRef = useRef(null);
+    const navigate = useNavigate();
 
     const closeSettingMenu = (e) => {
         if (settingRef.current && settingMenu && !settingRef.current.contains(e.target)) {
-          setSettingMenu(false)
+          setSettingMenu(false);
         }
     }
 
     const editPost = () => {
-        setSettingMenu(false)
-        setEditPost(post)
-        setModal(true)
+        setSettingMenu(false);
+        setEditPost(post);
+        setModal(true);
     }
 
     const deletePost = async (e) => {
@@ -28,21 +28,21 @@ const SettingsModal = ({settingMenu, setSettingMenu, post}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, deletePost)
+                    refreshToken(e, deletePost);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    navigate('/')
+                    setLogin(false);
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                alert('Post successfully deleted')
-                fetchUser()
+                alert('Post successfully deleted');
+                fetchUser();
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 

@@ -1,14 +1,14 @@
-import { decode } from "html-entities"
-import { useContext } from "react"
-import { useState } from "react"
-import { LoginContext } from "./logincontext"
-import MessageSettingsModal from "./messagesettingsmodal"
-import Settings from '../assets/more.svg'
-import { useEffect } from "react"
+import { decode } from "html-entities";
+import { useContext } from "react";
+import { useState } from "react";
+import { LoginContext } from "./logincontext";
+import MessageSettingsModal from "./messagesettingsmodal";
+import Settings from '../assets/more.svg';
+import { useEffect } from "react";
 
 const MessageDetail = ({ messages, index, message, setEditMessage, editMessage, setMessage}) => {
-    const { userData } = useContext(LoginContext)
-    const [ settingMenu, setSettingMenu ] = useState(false)
+    const { userData } = useContext(LoginContext);
+    const [ settingMenu, setSettingMenu ] = useState(false);
 
     return (
         <>

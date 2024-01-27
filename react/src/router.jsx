@@ -1,12 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import App from './App'
-import Home from './components/home'
-import Error from './components/error'
-import Profile from './components/profile'
-import Post from './components/post'
-import Friends from './components/friends'
-import Groups from './components/groups'
-import Messenger from './components/messenger'
+import App from './App';
+import Home from './components/home';
+import Error from './components/error';
+import Profile from './components/profile';
+import Post from './components/post';
+import Friends from './components/friends';
+import Groups from './components/groups';
+import Messenger from './components/messenger';
 
 const Router = () => {
     const router = createBrowserRouter (

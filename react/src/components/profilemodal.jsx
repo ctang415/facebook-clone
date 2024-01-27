@@ -1,20 +1,20 @@
-import { useEffect, useContext, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { LoginContext } from "./logincontext"
+import { useEffect, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LoginContext } from "./logincontext";
 
 const ProfileModal = ({setProfileEdit, profileEdit}) => {
-    const { userData, fetchUser, setLogin, refreshToken } = useContext(LoginContext)
-    const navigate = useNavigate()
-    const [ errors, setErrors ] = useState([])
-    const [ firstName, setFirstName ] = useState(userData.first_name)
-    const [ lastName, setLastName ] = useState(userData.last_name)
-    const [ email, setEmail ] = useState(userData.email)
-    const [ password, setPassword] = useState('')
-    const [ newPassword, setNewPassword ] = useState('')
+    const { userData, fetchUser, setLogin, refreshToken } = useContext(LoginContext);
+    const navigate = useNavigate();
+    const [ errors, setErrors ] = useState([]);
+    const [ firstName, setFirstName ] = useState(userData.first_name);
+    const [ lastName, setLastName ] = useState(userData.last_name);
+    const [ email, setEmail ] = useState(userData.email);
+    const [ password, setPassword] = useState('');
+    const [ newPassword, setNewPassword ] = useState('');
    
     const updatedProfile = async (e) => {
-        setErrors([])
-        e.preventDefault()
+        setErrors([]);
+        e.preventDefault();
         let updatedInformation;
         if (newPassword === '') {
             updatedInformation = { 
@@ -34,40 +34,40 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, updatedProfile)
+                    refreshToken(e, updatedProfile);
                 } else if(response.status === 404) {
-                    setLogin(false)
-                    setProfileEdit(false)
-                    navigate('/')
+                    setLogin(false);
+                    setProfileEdit(false);
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                alert('Successfully updated profile!')
-                fetchUser()
-                setEmail(userData.email)
-                setFirstName(userData.firstName)
-                setLastName(userData.lastName)
-                setPassword('')
-                setNewPassword('')
-                setProfileEdit(false)
+                alert('Successfully updated profile!');
+                fetchUser();
+                setEmail(userData.email);
+                setFirstName(userData.firstName);
+                setLastName(userData.lastName);
+                setPassword('');
+                setNewPassword('');
+                setProfileEdit(false);
             }
         } catch (err) {
-            console.log(err)
-            setErrors(err.errors)
+            console.log(err);
+            setErrors(err.errors);
         }
     }
 
     const resetForm = () => {
-        setProfileEdit(false)
-        setEmail(userData.email)
-        setFirstName(userData.first_name)
-        setLastName(userData.last_name)
-        setPassword('')
-        setNewPassword('')
-        setErrors([])
+        setProfileEdit(false);
+        setEmail(userData.email);
+        setFirstName(userData.first_name);
+        setLastName(userData.last_name);
+        setPassword('');
+        setNewPassword('');
+        setErrors([]);
     }
     
     const deleteAccount = async (e) => {
@@ -77,21 +77,21 @@ const ProfileModal = ({setProfileEdit, profileEdit}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, deleteAccount)
+                    refreshToken(e, deleteAccount);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    navigate('/')
+                    setLogin(false);
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                setLogin(false)
-                navigate('/')
+                setLogin(false);
+                navigate('/');
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
     

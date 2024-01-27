@@ -1,16 +1,16 @@
-import { useContext } from "react"
-import { useState, useEffect, useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { LoginContext } from "./logincontext"
-import { decode } from "html-entities"
-import Settings from '../assets/more.svg'
+import { useContext } from "react";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginContext } from "./logincontext";
+import { decode } from "html-entities";
+import Settings from '../assets/more.svg';
 
 const MessengerNavDetail = ({user, chat}) => {
-    const { socket, userData, refreshToken, fetchUser, setLogin } = useContext(LoginContext)
-    const [ settingMenu, setSettingMenu] = useState(false)
-    const chatRef = useRef(null)
-    const navigate = useNavigate()
-    const [ sender, setSender ] = useState('')
+    const { socket, userData, refreshToken, fetchUser, setLogin } = useContext(LoginContext);
+    const [ settingMenu, setSettingMenu] = useState(false);
+    const chatRef = useRef(null);
+    const navigate = useNavigate();
+    const [ sender, setSender ] = useState('');
 
     const deleteChat = async (e) => {
         try {
@@ -20,34 +20,35 @@ const MessengerNavDetail = ({user, chat}) => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, deleteChat)
+                    refreshToken(e, deleteChat);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setSender('')
-                    navigate('/')
+                    setLogin(false);
+                    setSender('');
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            const data = await response.json()
+            const data = await response.json();
             if (response.status === 200) {
-                alert('Successfully deleted chat')
-                setSender('')
-                fetchUser()
+                alert('Successfully deleted chat');
+                setSender('');
+                fetchUser();
            }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     const closeChatMenu = (e) => {
         if (chatRef.current && settingMenu && !chatRef.current.contains(e.target)) {
-          setSettingMenu(false)
+          setSettingMenu(false);
         }
     }
+
     useEffect(() => {
         document.addEventListener("mousedown", closeChatMenu);
-         }, [closeChatMenu]);
+    }, [closeChatMenu]);
 
     return (
         <>

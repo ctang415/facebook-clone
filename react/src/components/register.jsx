@@ -1,42 +1,42 @@
-import { useState } from "react"
-import moment from 'moment'
-import User from '../assets/account.svg'
+import { useState } from "react";
+import moment from 'moment';
+import User from '../assets/account.svg';
 
 const Register = ({register, setRegister}) => {
-    const [ errors, setErrors ] = useState([])
-    const [ firstName, setFirstName] = useState('')
-    const [ lastName, setLastName ] = useState('')
-    const [ email, setEmail] = useState('')
-    const [ password, setPassword] = useState('')
-    const [ birthday, setBirthday] = useState('')
+    const [ errors, setErrors ] = useState([]);
+    const [ firstName, setFirstName] = useState('');
+    const [ lastName, setLastName ] = useState('');
+    const [ email, setEmail] = useState('');
+    const [ password, setPassword] = useState('');
+    const [ birthday, setBirthday] = useState('');
 
     const clearForm = () => {
-        setFirstName('')
-        setLastName('')
-        setEmail('')
-        setPassword('')
-        setBirthday('')
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setPassword('');
+        setBirthday('');
     }
 
     const registerAccount = async (e) => {
-        e.preventDefault()
-        setErrors([])
+        e.preventDefault();
+        setErrors([]);
         const registerData = { first_name: firstName, last_name: lastName, email: email, password: password, birthdate: moment(birthday).format('YYYY-MM-DD'), avatar: User}
         try {
-        const response = await fetch ('http://localhost:3000/users', {
+            const response = await fetch ('http://localhost:3000/users', {
             method: 'POST', headers: {'Content-type': 'application/json'}, body: JSON.stringify(registerData)})
             if (!response.ok) {
-                throw await response.json()
+                throw await response.json();
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                alert('Account successfully created!')
-                setRegister(false)
-                clearForm()
+                alert('Account successfully created!');
+                setRegister(false);
+                clearForm();
             }
         } catch (err) {
-            setErrors(err.errors)
-            console.log(err)
+            setErrors(err.errors);
+            console.log(err);
         }
     }
 

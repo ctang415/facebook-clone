@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema
-const { DateTime } = require('luxon')
+const { DateTime } = require('luxon');
 
 const CommentSchema = new Schema (
     {
@@ -13,13 +13,13 @@ const CommentSchema = new Schema (
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
     }
-)
+);
 CommentSchema.virtual('url').get(function() {
     return `/comments/${this._id}`
-})
+});
 
 CommentSchema.virtual('timestamp_formatted').get(function () {
     return DateTime.fromJSDate(this.timestamp).toFormat('yyyy-MM-dd')
-})
+});
 
 module.exports = mongoose.model('Comment', CommentSchema)

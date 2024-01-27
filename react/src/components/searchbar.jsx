@@ -1,26 +1,25 @@
-import { useRef } from "react"
-import { useState, useEffect, useContext } from "react"
-import { LoginContext } from "./logincontext"
-import {Link} from 'react-router-dom'
+import { useRef } from "react";
+import { useState, useEffect, useContext } from "react";
+import { LoginContext } from "./logincontext";
+import {Link} from 'react-router-dom';
 
 const Searchbar = ( {search, setSearch} ) => {
-    const { userList } = useContext(LoginContext)
-    const [ result, setResult ] = useState([])
-    const searchRef = useRef(null)
+    const { userList } = useContext(LoginContext);
+    const [ result, setResult ] = useState([]);
+    const searchRef = useRef(null);
 
     const closeSearchMenu = (e) => {
         if (searchRef.current && search !== '' && !searchRef.current.contains(e.target)) {
-          setSearch('')
+          setSearch('');
         }
     }
     useEffect(() => {
      document.addEventListener("mousedown", closeSearchMenu);
       }, [closeSearchMenu]);
 
-
     useEffect(() => {
-        setResult(userList.filter(user => user.full_name.includes(search)))
-    }, [search])
+        setResult(userList.filter(user => user.full_name.includes(search)));
+    }, [search]);
     
     if (search !== '') {
         return (

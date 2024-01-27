@@ -5,7 +5,7 @@ const AlwaysScrollToBottom = () => {
     
     useEffect(() => {
         elementRef.current.scrollIntoView()
-    }, [])
+    }, []);
     
     return (
         <div ref={elementRef} />

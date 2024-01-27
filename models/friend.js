@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const FriendSchema = new Schema (
     {
@@ -10,6 +10,6 @@ const FriendSchema = new Schema (
     {
         minimize: false,
     }
-)
+);
 
 module.exports = mongoose.model('Friend', FriendSchema)

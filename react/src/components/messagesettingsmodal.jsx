@@ -1,27 +1,27 @@
-import { useRef } from "react"
-import { useState, useEffect } from "react"
-import { useContext } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { LoginContext } from "./logincontext"
+import { useRef } from "react";
+import { useState, useEffect } from "react";
+import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { LoginContext } from "./logincontext";
 
 const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMessage, editMessage, setMessage}) => {
-    const { socket, setUserChat, userChat, setLogin, userData, fetchUser, refreshToken, setSender, sender} = useContext(LoginContext)
-    const params = useParams()
-    const settingRef = useRef(null)
-    const navigate = useNavigate()
-    const [ left, setLeft ] = useState('')
-    const [ top, setTop ] = useState('')
+    const { socket, setUserChat, userChat, setLogin, userData, fetchUser, refreshToken, setSender, sender} = useContext(LoginContext);
+    const params = useParams();
+    const settingRef = useRef(null);
+    const navigate = useNavigate();
+    const [ left, setLeft ] = useState('');
+    const [ top, setTop ] = useState('');
 
     const closeSettingMenu = (e) => {
         if (settingRef.current && settingMenu && !settingRef.current.contains(e.target)) {
-          setSettingMenu(false)
+          setSettingMenu(false);
         }
     }
 
     const editMyMessage = () => {
-        setSettingMenu(false)
-        setEditMessage(message)
-        setMessage(message.message)
+        setSettingMenu(false);
+        setEditMessage(message);
+        setMessage(message.message);
     }
 
     const deleteMessage = async (e) => {
@@ -32,70 +32,67 @@ const MessageSettingsModal = ({message, settingMenu, setSettingMenu, setEditMess
                 })
                 if (!response.ok) {
                     if (response.status === 403) {
-                        refreshToken(e, deleteMessage)
+                        refreshToken(e, deleteMessage);
                     } else if (response.status === 404) {
-                        setLogin(false)
-                        navigate('/')
+                        setLogin(false);
+                        navigate('/');
                     } else {
-                    throw await response.json()
+                    throw await response.json();
                     }
                 }
-                const data = await response.json()
+                const data = await response.json();
                 if (response.status === 200) {
-                    alert('Message successfully deleted')
-                    socket.current.emit('delete-messenger', data.chat)          
-                    setSettingMenu(false)
+                    alert('Message successfully deleted');
+                    socket.current.emit('delete-messenger', data.chat);
+                    setSettingMenu(false);
                 }
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
         } else {
-        try {
-            const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === params.messengerid)).url}/messages/${message.id}`, {
+            try {
+                const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === params.messengerid)).url}/messages/${message.id}`, {
                 method: 'DELETE', headers: {'Content-type': 'application/json'}, credentials: 'include'
-            })
-            if (!response.ok) {
-                if (response.status === 403) {
-                    refreshToken(e, deleteMessage)
-                } else if (response.status === 404) {
-                    setLogin(false)
-                    navigate('/')
-                } else {
-                throw await response.json()
+                })
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        refreshToken(e, deleteMessage);
+                    } else if (response.status === 404) {
+                        setLogin(false);
+                        navigate('/');
+                    } else {
+                        throw await response.json();
+                    }
                 }
+                const data = await response.json();
+                if (response.status === 200) {
+                    alert('Message successfully deleted');
+                    socket.current.emit('delete-message', data.chat);
+                    setSettingMenu(false);
+                }
+            } catch (err) {
+                console.log(err);
             }
-            const data = await response.json()
-            if (response.status === 200) {
-                alert('Message successfully deleted')
-                socket.current.emit('delete-message', data.chat)                
-               setSettingMenu(false)
-            }
-        } catch (err) {
-            console.log(err)
         }
-    }
     }
 
     useEffect(() => {
         const deleteMyMessage = (chatId) => {
-            console.log('delete message')
-            setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+            setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x));
         }
      
         const deleteMessageFromMessenger = (chatId) => {
-            console.log('delete message messenger')
-            setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x))
+            setUserChat(userChat.map( x => x.id === chatId.id ? chatId : x));
         }     
 
-        socket.current.on('get-delete-message', deleteMyMessage)
-
-        socket.current.on('get-delete-messenger', deleteMessageFromMessenger)
+        socket.current.on('get-delete-message', deleteMyMessage);
+        socket.current.on('get-delete-messenger', deleteMessageFromMessenger);
 
         return () => {
-            socket.current.off('get-delete-message')
-            socket.current.off('get-delete-messenger')
+            socket.current.off('get-delete-message');
+            socket.current.off('get-delete-messenger');
         }
-    }, [])
+    }, []);
 
     useEffect(() => {
      document.addEventListener("mousedown", closeSettingMenu);

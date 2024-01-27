@@ -1,14 +1,14 @@
-import { useContext, useEffect, useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { LoginContext } from "./logincontext"
+import { useContext, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { LoginContext } from "./logincontext";
 
 const UserModal = ( {userModal, setUserModal}) => {
-    const { setLogin, userData, socket } = useContext(LoginContext)
-    const userMenuRef = useRef(null)
-    const navigate = useNavigate()
+    const { setLogin, userData, socket } = useContext(LoginContext);
+    const userMenuRef = useRef(null);
+    const navigate = useNavigate();
 
     const logout = async () => {
-        setUserModal(false)
+        setUserModal(false);
         const deleteToken = { token: userData.token, user: userData.id }
         try {
             const response = await fetch ('http://localhost:4000/', {
@@ -16,27 +16,27 @@ const UserModal = ( {userModal, setUserModal}) => {
                 credentials: 'include', body: JSON.stringify(deleteToken)
             })
             if (!response.ok) {
-                setLogin(false)
-                navigate('/')
-                throw await response.json()
+                setLogin(false);
+                navigate('/');
+                throw await response.json();
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
                 socket.current.on("disconnect", () => {
                     console.log(socket.id); // undefined
                   });
-                alert('Successfully logged out')
-                setLogin(false)
-                navigate('/')
+                alert('Successfully logged out');
+                setLogin(false);
+                navigate('/');
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     const closeUserMenu = (e) => {
         if (userMenuRef.current && userModal && !userMenuRef.current.contains(e.target)){
-          setUserModal(false)
+          setUserModal(false);
         }
     }
 

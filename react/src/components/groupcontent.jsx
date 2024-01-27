@@ -1,8 +1,8 @@
-import { useContext } from "react"
-import { LoginContext } from "./logincontext"
+import { useContext } from "react";
+import { LoginContext } from "./logincontext";
 
 const GroupContent = () => {
-    const { feed, discover, myGroups } = useContext(LoginContext)
+    const { feed, discover, myGroups } = useContext(LoginContext);
 
     if (discover && !feed && !myGroups) {
         return (

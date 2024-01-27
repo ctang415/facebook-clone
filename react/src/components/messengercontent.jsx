@@ -1,15 +1,15 @@
-import { useState, useEffect, useContext, useRef } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { LoginContext } from "./logincontext"
-import Message from "./message"
-import Send from '../assets/send.svg'
+import { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { LoginContext } from "./logincontext";
+import Message from "./message";
+import Send from '../assets/send.svg';
 
 const MessengerContent = () => {
-    const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken, sender } = useContext(LoginContext)
-    const params = useParams()
-    const [ message, setMessage ] = useState('')
-    const navigate = useNavigate()
-    const [ editMessage, setEditMessage ] = useState('')
+    const { socket, userChat, setUserChat, setLogin, userData, fetchUser, refreshToken, sender } = useContext(LoginContext);
+    const params = useParams();
+    const [ message, setMessage ] = useState('');
+    const navigate = useNavigate();
+    const [ editMessage, setEditMessage ] = useState('');
 
     const createMessage = async (e) => {
         const newMessage = { message: message, timestamp: Date.now() }
@@ -20,22 +20,22 @@ const MessengerContent = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, createMessage)
+                    refreshToken(e, createMessage);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setMessage('')
-                    navigate('/')
+                    setLogin(false);
+                    setMessage('');
+                    navigate('/');
                 } else {
-                throw await response.json()
+                    throw await response.json();
                 }
             }
-            const data = await response.json()
+            const data = await response.json();
             if (response.status === 200) {
-                socket.current.emit('new-message-add', data.chat )
-                setMessage('')
+                socket.current.emit('new-message-add', data.chat);
+                setMessage('');
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
@@ -48,57 +48,53 @@ const MessengerContent = () => {
                 })
                 if (!response.ok) {
                     if (response.status === 404) {
-                        setLogin(false)
-                        setEditMessage('')
-                        setMessage('')
-                        navigate('/')
+                        setLogin(false);
+                        setEditMessage('');
+                        setMessage('');
+                        navigate('/');
                     }
                     if (response.status === 403) {
-                        refreshToken(e, editChatMessage)
+                        refreshToken(e, editChatMessage);
                     } else {
-                        throw await response.json()
+                        throw await response.json();
                     }
                 }
-                const data = await response.json()
+                const data = await response.json();
                 if (response.status === 200) {
-                    alert('Message successfully updated!')
-                    socket.current.emit('update-message', data.chat)
-                    setEditMessage('')
-                    setMessage('')
-                    console.log('edit')
+                    alert('Message successfully updated!');
+                    socket.current.emit('update-message', data.chat);
+                    setEditMessage('');
+                    setMessage('');
                 }
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
-            
         }
 
     useEffect(() => {
         const getNewMessage = (message) => {
-            setUserChat(userChat.map( x => x.id === message.id ? message : x))
-            console.log('get new message')
+            setUserChat(userChat.map( x => x.id === message.id ? message : x));
         }
            
-        socket.current.on('get-message', getNewMessage)
+        socket.current.on('get-message', getNewMessage);
 
         const getUpdatedMessage = (message) => {
-            setUserChat(userChat.map( x => x.id === message.id ? message : x))
-            console.log('get-update-message')
+            setUserChat(userChat.map( x => x.id === message.id ? message : x));
         }
 
-        socket.current.on('get-update-message', getUpdatedMessage)
+        socket.current.on('get-update-message', getUpdatedMessage);
                 
         return () => {
-            socket.current.off('get-update-message')
-            socket.current.off('get-message')
+            socket.current.off('get-update-message');
+            socket.current.off('get-message');
         }
-    }, [])
+    }, []);
 
-        useEffect(() => {
-            if (params.messengerid !== undefined) {
-            socket.current.emit('join', userChat.find( x => x.users.some( y => y.id === params.messengerid)).id)
-            }
-        }, [params])
+    useEffect(() => {
+        if (params.messengerid !== undefined) {
+            socket.current.emit('join', userChat.find( x => x.users.some( y => y.id === params.messengerid)).id);
+        }
+    }, [params]);
 
     if (params.messengerid !== undefined && userChat.find( x => x.users.some( y => y.id === params.messengerid))) {
         return (

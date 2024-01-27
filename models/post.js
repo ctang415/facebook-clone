@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 const Schema = mongoose.Schema
-const { DateTime } = require('luxon')
+const { DateTime } = require('luxon');
 
 const PostSchema = new Schema (
     {
@@ -15,14 +15,14 @@ const PostSchema = new Schema (
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
     }
-)
+);
 
 PostSchema.virtual('timestamp_formatted').get(function () {
-    return DateTime.fromJSDate(this.timestamp).toFormat('yyyy-MM-dd')
-})
+    return DateTime.fromJSDate(this.timestamp).toFormat('yyyy-MM-dd');
+});
 
 PostSchema.virtual('url').get(function () {
-    return `/posts/${this._id}`
-})
+    return `/posts/${this._id}`;
+});
 
 module.exports = mongoose.model('Post', PostSchema)

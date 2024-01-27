@@ -1,22 +1,22 @@
-import { useState, useRef, useEffect, useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { LoginContext } from './logincontext'
+import { useState, useRef, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { LoginContext } from './logincontext';
 
 const CreatePost = () => {
-    const { setLogin, modal, setModal, editPost, setEditPost, userData, fetchUser, refreshToken } = useContext(LoginContext)
-    const postRef = useRef(null)
-    const [ post, setPost ] = useState('')
-    const navigate = useNavigate()
+    const { setLogin, modal, setModal, editPost, setEditPost, userData, fetchUser, refreshToken } = useContext(LoginContext);
+    const postRef = useRef(null);
+    const [ post, setPost ] = useState('');
+    const navigate = useNavigate();
 
     const closePostMenu = (e) => {
         if (postRef.current && modal && !postRef.current.contains(e.target)){
-          setModal(false)
-          setEditPost('')
+          setModal(false);
+          setEditPost('');
         }
     }
 
     const createPost = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         const newPost = { message: post, author: userData._id }
         try {
             const response = await fetch(`http://localhost:3000/users/${userData._id}/posts`, {
@@ -25,30 +25,30 @@ const CreatePost = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, createPost)
+                    refreshToken(e, createPost);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setPost('')
-                    setModal(false)
-                    navigate('/')
+                    setLogin(false);
+                    setPost('');
+                    setModal(false);
+                    navigate('/');
                 } else {                
-                    throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                alert('Post successfully created!')
-                setPost('')
-                setModal(false)
-                fetchUser()
+                alert('Post successfully created!');
+                setPost('');
+                setModal(false);
+                fetchUser();
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     const updatePost = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         const updatedPost = { message: post}
         try {
             const response = await fetch (`http://localhost:3000/users/${userData._id}${editPost.url}`, {
@@ -57,35 +57,34 @@ const CreatePost = () => {
             })
             if (!response.ok) {
                 if (response.status === 403) {
-                    refreshToken(e, updatePost)
+                    refreshToken(e, updatePost);
                 } else if (response.status === 404) {
-                    setLogin(false)
-                    setPost('')
-                    setModal(false)
-                    setEditPost('')
-                    navigate('/')
+                    setLogin(false);
+                    setPost('');
+                    setModal(false);
+                    setEditPost('');
+                    navigate('/');
                 } else {
-                    throw await response.json()
+                    throw await response.json();
                 }
             }
-            await response.json()
+            await response.json();
             if (response.status === 200) {
-                alert('Post successfully updated!')
-                setPost('')
-                setModal(false)
-                setEditPost('')
-                fetchUser()
+                alert('Post successfully updated!');
+                setPost('');
+                setModal(false);
+                setEditPost('');
+                fetchUser();
             }
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     }
 
     useEffect(() => {
         document.addEventListener("mousedown", closePostMenu);
       }, [closePostMenu]);
-
-    
+      
     if (modal) {
         return (
             <dialog open className="relative z-10">
