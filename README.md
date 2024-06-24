@@ -1,10 +1,34 @@
-# facebook-clone
+## What is Odinbook?
+Odinbook is a full-stack application which is a Facebook clone that was developed using the MERN stack. This web application has basic CRUD functionalities that allows the user to create an account, read posts, update comments, delete friends, and more. JSON web tokens are used to handle the authentication of users which will allow or deny clients access to the API and Socket IO allows for real-time messaging to occur between clients.
 
-The Facebook Clone is a full-stack project that I developed using ReactJS/Tailwind for the frontend and Node/Express for the backend. I used Mongoose to create the models that stored my web application's data and then created my own REST API for the client/user to create, read, update, and delete information from their profiles such as their posts, comments, and friends' list. I opted to use JSON web tokens to handle the authentication of users because a social media website has to be able to manage a lot of people using the page at the same time, so I figured that JWTs would reduce the traffic and load on the database server which could get too many requests for user identification when calling the API. Another reason I chose JWT was because I wanted to challenge myself to implement refresh and access tokens which is something I failed to do in one of my previous projects and I saw this project as a good opportunity to revisit it.
+## How it works:
+- Create or login to your Odinbook account to begin connecting with other users.
+- View the latest posts from your friends on your home feed and show support by liking their post or leaving a comment.
+- Share your thoughts by making your own posts which you can edit or delete whenever you want.
+- Search for other users and connect with them by adding them to your friends list.
+- Send messages to your friends and receive real-time updates of the conversation to your browser.
 
+**How to run locally on your computer**: Use `npm run dev` in the src folder to run the application, use `npm run devstart2` in the routes folder to run the auth server for JSON webtokens, and use `nodemon app.js` in the default folder to run the server for the API.
+
+## What it looks like:
+![Screenshot of the login page](https://imgur.com/gEG6Ces.jpg)
+_View of the Home Page (Logged out)_
+![Screenshot of the home page feed](https://imgur.com/Mko4nhS.jpg)
+_View of the Home Page (Logged in)_
+![Screenshot of the pop-up chat messenger](https://imgur.com/kCvPabF.jpg)
+_View of the Pop-up Chat Messenger_
+![Screenshot of the post creation pop-up](https://imgur.com/L2RnKZP.jpg)
+_View of the Post Creation Pop-up_
+![Screenshot of a user's profile](https://imgur.com/2jG36ev.jpg)
+_View of a User's Profile Page_
+![Screenshot of the friends page](https://imgur.com/nsqkWRE.jpg)
+_View of the Friends Page_
+
+
+### Other thoughts
 The frontend of this project was built with React because I find that the reusable function components and hooks make it easy to create interactive user interfaces. While it may get messy to have multiple components that make up a single page, I like that each function is pure and has its own purpose. As for designing the interface itself, I decided to try Tailwind for the first time to style my application and I was really surprised by how easy it was to learn the syntax thanks to the documentation available. Prior to working with Tailwind, I was already doing a lot of inline CSS by using the styled-components library, but I heard many good things about Tailwind, so I tried it out and found it super intuitive to use. I love the option of having default values for the CSS attributes because it saves time in having to adjust the numbers until the element looks just right, and I think Tailwind definitely suits my style because I find it convenient being able to write my CSS in the same document as my JavaScript.
 
-The backend was built with Express and I used MongoDB as my database because it's been easy to work with. The API for interacting with the database was made with REST guidelines in mind where endpoint paths are represented by nouns and the HTTP methods describe the request method, operations are stateless, and errors return the appropriate response codes. I tested the API with Postman to make sure each method returned the right data or error response and then set up JSON web tokens to authenticate users so that I could approve their requests to the API. 
+The backend was built with Express and I used MongoDB as my database because it's been easy to work with. The API for interacting with the database was made with REST guidelines in mind where endpoint paths are represented by nouns and the HTTP methods describe the request method, operations are stateless, and errors return the appropriate response codes. I tested the API with Postman to make sure each method returned the right data or error response and then set up JSON web tokens to authenticate users so that I could approve their requests to the API. I opted to use JSON web tokens to handle the authentication of users because a social media website has to be able to manage a lot of people using the page at the same time, so I figured that JWTs would reduce the traffic and load on the database server which could get too many requests for user identification when calling the API. Another reason I chose JWT was because I wanted to challenge myself to implement refresh and access tokens which is something I failed to do in one of my previous projects and I saw this project as a good opportunity to revisit it.
 
 The concept of refresh and access tokens were confusing at the beginning, especially because I kept mixing the two of them up with each other, but I eventually figured out that access tokens were meant for users to access the API with while refresh tokens were meant for users to generate new access tokens with because access tokens expire faster than the refresh tokens. I decided to store my refresh token in MongoDB with an expiration time of 30 minutes which meant that I could keep generating new access tokens within that half an hour window. The refresh token is simply proof that the user has logged in with the right credentials and that token gives them the authority to create access tokens which are stored in a cookie that expires after 15 minutes. I wanted to keep the expiration times short in case the tokens happen to be stolen to limit the amount of damage that could be potentially caused during the 15 minutes that the access token is valid. While there seems to be a lot of discourse surrounding JWT and the security behind their usage, I found storing the refresh token in my database and storing the access token into an HTTP only cookie to work for me.
 

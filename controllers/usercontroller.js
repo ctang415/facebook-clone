@@ -197,4 +197,3 @@ exports.user_delete = ( async (req, res, next) => {
     await User.findByIdAndRemove(req.params.userid);
     res.status(200).json({success: true});
 })
-
