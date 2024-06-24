@@ -12,6 +12,7 @@ const MessengerContent = () => {
     const [ editMessage, setEditMessage ] = useState('');
 
     const createMessage = async (e) => {
+        e.preventDefault();
         const newMessage = { message: message, timestamp: Date.now() }
         try {
             const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === params.messengerid)).url}/messages`, {
@@ -40,6 +41,7 @@ const MessengerContent = () => {
     }
 
     const editChatMessage = async (e) => {
+        e.preventDefault();
         const editedMessage = { message: message }
             try {
                 const response = await fetch (`http://localhost:3000${userData.url}${userChat.find( x => x.users.some( y => y.id === params.messengerid)).url}/messages/${editMessage.id}`, {
@@ -125,7 +127,7 @@ const MessengerContent = () => {
                     </ul>
                 </div>
             </div>
-            <form className='flex flex-row gap-2 items-center pb-6 min-w-full justify-center'>
+            <form className='flex flex-row gap-2 items-center pb-6 min-w-full justify-center' onSubmit={ editMessage !== '' ? (e) => editChatMessage(e) : (e) => createMessage(e)}>
                 <button onClick={() => { setEditMessage(''); setMessage('') }} 
                 type="button" className={ editMessage !== '' ? "text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" : "hidden"} data-modal-hide="default-modal">
                     <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">

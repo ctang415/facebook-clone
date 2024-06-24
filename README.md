@@ -24,7 +24,6 @@ _View of a User's Profile Page_
 ![Screenshot of the friends page](https://imgur.com/nsqkWRE.jpg)
 _View of the Friends Page_
 
-
 ### Other thoughts
 The frontend of this project was built with React because I find that the reusable function components and hooks make it easy to create interactive user interfaces. While it may get messy to have multiple components that make up a single page, I like that each function is pure and has its own purpose. As for designing the interface itself, I decided to try Tailwind for the first time to style my application and I was really surprised by how easy it was to learn the syntax thanks to the documentation available. Prior to working with Tailwind, I was already doing a lot of inline CSS by using the styled-components library, but I heard many good things about Tailwind, so I tried it out and found it super intuitive to use. I love the option of having default values for the CSS attributes because it saves time in having to adjust the numbers until the element looks just right, and I think Tailwind definitely suits my style because I find it convenient being able to write my CSS in the same document as my JavaScript.
 
