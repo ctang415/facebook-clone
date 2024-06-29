@@ -80,7 +80,8 @@ const Comment = ({id, postId, comments}) => {
     return (
         <div className='flex flex-col gap-2'>
             <div className='flex flex-col gap-2 max-h-[25vh] overflow-scroll'>
-                {comments.map(comment => {
+            {comments.map(comment => {
+                if (comment.author !== null) {
                     return (
                         <div className='flex flex-row gap-1' key={comment._id}>
                             <CommentsModal postId={postId} comment={comment} commentModal={commentModal} setCommentModal={setCommentModal} 
@@ -104,6 +105,7 @@ const Comment = ({id, postId, comments}) => {
                             </div>
                         </div>  
                     )
+                }
                 })}
             </div>
             <form className='flex flex-row gap-2 min-w-fit' onSubmit={createComment}>

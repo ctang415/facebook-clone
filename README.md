@@ -1,6 +1,10 @@
 ## What is Odinbook?
 Odinbook is a full-stack application which is a Facebook clone that was developed using the MERN stack. This web application has basic CRUD functionalities that allows the user to create an account, read posts, update comments, delete friends, and more. JSON web tokens are used to handle the authentication of users which will allow or deny clients access to the API and Socket IO allows for real-time messaging to occur between clients.
 
+<p align="center">
+    <img src="react/src/assets/Demo.gif" alt="Demo of application" width="500"/>
+</p>
+
 ## How it works:
 - Create or login to your Odinbook account to begin connecting with other users.
 - View the latest posts from your friends on your home feed and show support by liking their post or leaving a comment.
@@ -12,17 +16,21 @@ Odinbook is a full-stack application which is a Facebook clone that was develope
 
 ## What it looks like:
 ![Screenshot of the login page](https://imgur.com/gEG6Ces.jpg)
-_View of the Home Page (Logged out)_
+<p align="center"><i>View of the Home Page (Logged out)</i></p>
+
 ![Screenshot of the home page feed](https://imgur.com/Mko4nhS.jpg)
-_View of the Home Page (Logged in)_
+<p align="center"><i>View of the Home Page (Logged in)</i></p>
 ![Screenshot of the pop-up chat messenger](https://imgur.com/kCvPabF.jpg)
-_View of the Pop-up Chat Messenger_
+<p align="center"><i>View of the Pop-up Chat Messenger</i></p>
+
 ![Screenshot of the post creation pop-up](https://imgur.com/L2RnKZP.jpg)
-_View of the Post Creation Pop-up_
+<p align="center"><i>View of the Post Creation Pop-up</i></p>
+
 ![Screenshot of a user's profile](https://imgur.com/2jG36ev.jpg)
-_View of a User's Profile Page_
+<p align="center"><i>View of a User's Profile Page</i></p>
+
 ![Screenshot of the friends page](https://imgur.com/nsqkWRE.jpg)
-_View of the Friends Page_
+<p align="center"><i>View of the Friends Page</i></p>
 
 ### Other thoughts
 The frontend of this project was built with React because I find that the reusable function components and hooks make it easy to create interactive user interfaces. While it may get messy to have multiple components that make up a single page, I like that each function is pure and has its own purpose. As for designing the interface itself, I decided to try Tailwind for the first time to style my application and I was really surprised by how easy it was to learn the syntax thanks to the documentation available. Prior to working with Tailwind, I was already doing a lot of inline CSS by using the styled-components library, but I heard many good things about Tailwind, so I tried it out and found it super intuitive to use. I love the option of having default values for the CSS attributes because it saves time in having to adjust the numbers until the element looks just right, and I think Tailwind definitely suits my style because I find it convenient being able to write my CSS in the same document as my JavaScript.
