@@ -20,6 +20,7 @@ Odinbook is a full-stack application which is a Facebook clone that was develope
 
 ![Screenshot of the home page feed](https://imgur.com/Mko4nhS.jpg)
 <p align="center"><i>View of the Home Page (Logged in)</i></p>
+
 ![Screenshot of the pop-up chat messenger](https://imgur.com/kCvPabF.jpg)
 <p align="center"><i>View of the Pop-up Chat Messenger</i></p>
 
